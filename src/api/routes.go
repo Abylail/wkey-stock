@@ -25,7 +25,11 @@ func setProduct(server *echo.Echo, controller *product_controller.Controller) {
 }
 
 func setCategory(server *echo.Echo, controller *category_controller.Controller) {
-	group := server.Group("/api/v1/stock/category")
+	clientGroup := server.Group("/api/v1/stock/category")
 
-	group.GET("/get", controller.Get)
+	clientGroup.GET("/get", controller.GetClientREST)
+
+	adminGroup := server.Group("/admin/api/v1/stock/category")
+
+	adminGroup.GET("/get", controller.GetAdminREST)
 }
