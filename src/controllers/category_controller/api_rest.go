@@ -14,7 +14,9 @@ func (controller *Controller) GetClientREST(ctx echo.Context) error {
 }
 
 func (controller *Controller) GetAdminREST(ctx echo.Context) error {
-	list, err := controller._getAdmin()
+	searchQuery := ctx.QueryParam("query")
+
+	list, err := controller._getAdmin(searchQuery)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
