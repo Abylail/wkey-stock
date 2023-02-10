@@ -19,17 +19,21 @@ func setRoutes(server *echo.Echo, apiControllers *controllers.ApiControllers, _ 
 }
 
 func setProduct(server *echo.Echo, controller *product_controller.Controller) {
-	group := server.Group("/api/v1/stock/product")
+	adminGroup := server.Group("/admin/api/v1/stock/product")
 
-	group.GET("/get", controller.Get)
+	adminGroup.GET("/get", controller.GetAdminREST)
+
+	clientGroup := server.Group("/api/v1/stock/product")
+
+	clientGroup.GET("/get", controller.GetClientREST)
 }
 
 func setCategory(server *echo.Echo, controller *category_controller.Controller) {
-	clientGroup := server.Group("/api/v1/stock/category")
-
-	clientGroup.GET("/get", controller.GetClientREST)
-
 	adminGroup := server.Group("/admin/api/v1/stock/category")
 
 	adminGroup.GET("/get", controller.GetAdminREST)
+
+	clientGroup := server.Group("/api/v1/stock/category")
+
+	clientGroup.GET("/get", controller.GetClientREST)
 }

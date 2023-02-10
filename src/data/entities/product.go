@@ -1,5 +1,20 @@
 package entities
 
-type ProductGet struct {
-	//
+import "time"
+
+type AdminProductGet struct {
+	ID                int       `db:"id"`
+	Title             string    `db:"title"`
+	Price             int       `db:"price"`
+	VendorCode        string    `db:"vendor_code"`
+	Barcode           string    `db:"barcode"`
+	UnitName          string    `db:"unit_name"`
+	CategoryID        int       `db:"category_id"`
+	CategoryName      string    `db:"category_name"`
+	CreatedAt         time.Time `db:"created_at"`
+	UpdatedAt         time.Time `db:"updated_at"`
+	AdditionalPercent any       `db:"additional_percent"`
+	DescriptionRU     *string   `db:"description_ru"`
+	DescriptionKZ     *string   `db:"description_kz"`
+	Count             int       `db:"count"`
 }
