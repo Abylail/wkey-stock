@@ -99,3 +99,44 @@ func (controller *Controller) _getAdmin(from, to int, searchQuery, categoryKey s
 		List:      productList,
 	}, nil
 }
+
+func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProductItem, *models.Error) {
+	logger := definition.Logger
+
+	product, err := controller.productRepo.GetAdminByID(productID)
+	if err != nil {
+		logger.Error(err, "Get admin product by id error", layers.Database)
+		return nil, errors.AdminProductGet.With(err)
+	}
+
+	if product == nil {
+		return nil, errors.AdminProductNotFound
+	}
+
+	images, err := controller.productRepo.GetImages([]int{productID})
+	if err != nil {
+		logger.Error(err, "Get product images error", layers.Database)
+		return nil, errors.ProductImagesGet.With(err)
+	}
+
+	return &models.AdminProductItem{
+		ID:                product.ID,
+		Title:             product.Title,
+		Price:             product.Price,
+		VendorCode:        product.VendorCode,
+		Barcode:           product.Barcode,
+		UnitName:          product.UnitName,
+		CategoryID:        product.CategoryID,
+		CategoryName:      product.CategoryName,
+		CreatedAt:         product.CreatedAt,
+		UpdatedAt:         product.UpdatedAt,
+		AdditionalPercent: product.AdditionalPercent,
+		DescriptionRU:     product.DescriptionRU,
+		DescriptionKZ:     product.DescriptionKZ,
+		Count:             product.Count,
+		Images: type_list.NewWithList[entities.ProductImageGet, string](images...).
+			Select(func(item entities.ProductImageGet) string {
+				return item.Path
+			}).Slice(),
+	}, nil
+}

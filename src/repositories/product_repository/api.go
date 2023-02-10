@@ -55,6 +55,29 @@ func (repo *Repository) GetAdminByQuery(from, to int, searchQuery string) ([]ent
 	return list, nil
 }
 
+func (repo *Repository) GetAdminByID(productID int) (*entities.AdminProductGet, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "get_admin_by_id")
+
+	rows, err := repo.connection.QueryxContext(ctx, query, productID)
+	if err != nil {
+		return nil, err
+	}
+	defer repo.CloseRows(rows)
+
+	if rows.Next() {
+		item := entities.AdminProductGet{}
+		if err = rows.StructScan(&item); err != nil {
+			return nil, err
+		}
+		return &item, nil
+	}
+
+	return nil, nil
+}
+
 func (repo *Repository) GetImages(productIDs []int) ([]entities.ProductImageGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()

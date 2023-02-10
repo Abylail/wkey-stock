@@ -3,6 +3,11 @@ package errors
 import "wkey-stock/src/data/models"
 
 var (
+	AdminProductNotFound = &models.Error{
+		TechMessage:     "Product not found",
+		BusinessMessage: defaultMessage,
+	}
+
 	AdminProductGet = &models.Error{
 		TechMessage:     "Get products list error",
 		BusinessMessage: defaultMessage,
