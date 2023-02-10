@@ -14,9 +14,15 @@ func (controller *Controller) _getAdmin(from, to int, searchQuery, categoryKey s
 
 	// todo: что то придумать с этим
 	_ = categoryKey
-	_ = searchQuery
 
-	products, err := controller.productRepo.GetAdmin(from, to)
+	var products []entities.AdminProductGet
+	var err error
+
+	if len(searchQuery) == 0 {
+		products, err = controller.productRepo.GetAdmin(from, to)
+	} else {
+		products, err = controller.productRepo.GetAdminByQuery(from, to, searchQuery)
+	}
 	if err != nil {
 		logger.Error(err, "Get products list error", layers.Database)
 		return nil, errors.AdminProductGet.With(err)
