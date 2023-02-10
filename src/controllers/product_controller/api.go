@@ -4,13 +4,14 @@ import (
 	"github.com/lowl11/lazy-collection/array"
 	"github.com/lowl11/lazy-collection/type_list"
 	"github.com/lowl11/lazylog/layers"
+	"math"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/errors"
 	"wkey-stock/src/data/models"
 	"wkey-stock/src/definition"
 )
 
-func (controller *Controller) _getAdmin(from, to int, searchQuery, categoryKey string) ([]models.AdminProductGet, *models.Error) {
+func (controller *Controller) _getAdmin(from, to int, searchQuery, categoryKey string) (*models.AdminProductGet, *models.Error) {
 	logger := definition.Logger
 
 	// todo: что то придумать с этим
@@ -45,9 +46,24 @@ func (controller *Controller) _getAdmin(from, to int, searchQuery, categoryKey s
 
 	imagesList := array.NewWithList[entities.ProductImageGet](images...)
 
-	productList := type_list.NewWithList[entities.AdminProductGet, models.AdminProductGet](products...).
-		Select(func(item entities.AdminProductGet) models.AdminProductGet {
-			return models.AdminProductGet{
+	// получаем кол-во продуктов
+	var productCount int
+	if len(searchQuery) == 0 {
+		productCount, err = controller.productRepo.Count()
+	} else {
+		productCount, err = controller.productRepo.CountQuery(searchQuery)
+	}
+	if err != nil {
+		logger.Error(err, "Get products count error", layers.Database)
+		return nil, errors.AdminProductCountGet.With(err)
+	}
+
+	// считаем кол-во страниц
+	pageCount := int(math.Ceil(float64(productCount / 20)))
+
+	productList := type_list.NewWithList[entities.AdminProductGet, models.AdminProductItem](products...).
+		Select(func(item entities.AdminProductGet) models.AdminProductItem {
+			return models.AdminProductItem{
 				ID:                item.ID,
 				Title:             item.Title,
 				Price:             item.Price,
@@ -78,5 +94,8 @@ func (controller *Controller) _getAdmin(from, to int, searchQuery, categoryKey s
 		})
 	}
 
-	return productList, nil
+	return &models.AdminProductGet{
+		PageCount: pageCount,
+		List:      productList,
+	}, nil
 }

@@ -78,3 +78,31 @@ func (repo *Repository) GetImages(productIDs []int) ([]entities.ProductImageGet,
 
 	return list, nil
 }
+
+func (repo *Repository) Count() (int, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "count")
+
+	var count int
+	if err := repo.connection.QueryRowxContext(ctx, query).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (repo *Repository) CountQuery(searchQuery string) (int, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "count_query")
+
+	var count int
+	if err := repo.connection.QueryRowxContext(ctx, query, searchQuery).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}

@@ -3,6 +3,11 @@ package models
 import "time"
 
 type AdminProductGet struct {
+	PageCount int                `json:"page_count"`
+	List      []AdminProductItem `json:"list"`
+}
+
+type AdminProductItem struct {
 	ID                int       `json:"id"`
 	Title             string    `json:"title"`
 	Price             int       `json:"price"`
