@@ -17,4 +17,5 @@ type AdminProductGet struct {
 	DescriptionRU     *string   `json:"description_ru"`
 	DescriptionKZ     *string   `json:"description_kz"`
 	Count             int       `json:"count"`
+	Images            []string  `json:"images"`
 }

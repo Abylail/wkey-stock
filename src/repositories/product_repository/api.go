@@ -1,6 +1,9 @@
 package product_repository
 
-import "wkey-stock/src/data/entities"
+import (
+	"github.com/lib/pq"
+	"wkey-stock/src/data/entities"
+)
 
 func (repo *Repository) GetAdmin(from, to int) ([]entities.AdminProductGet, error) {
 	ctx, cancel := repo.Ctx()
@@ -43,6 +46,30 @@ func (repo *Repository) GetAdminByQuery(from, to int, searchQuery string) ([]ent
 	list := make([]entities.AdminProductGet, 0)
 	for rows.Next() {
 		item := entities.AdminProductGet{}
+		if err = rows.StructScan(&item); err != nil {
+			return nil, err
+		}
+		list = append(list, item)
+	}
+
+	return list, nil
+}
+
+func (repo *Repository) GetImages(productIDs []int) ([]entities.ProductImageGet, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "get_images")
+
+	rows, err := repo.connection.QueryxContext(ctx, query, pq.Array(productIDs))
+	if err != nil {
+		return nil, err
+	}
+	defer repo.CloseRows(rows)
+
+	list := make([]entities.ProductImageGet, 0)
+	for rows.Next() {
+		item := entities.ProductImageGet{}
 		if err = rows.StructScan(&item); err != nil {
 			return nil, err
 		}

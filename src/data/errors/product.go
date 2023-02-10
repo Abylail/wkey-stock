@@ -7,4 +7,8 @@ var (
 		TechMessage:     "Get products list error",
 		BusinessMessage: defaultMessage,
 	}
+	ProductImagesGet = &models.Error{
+		TechMessage:     "Get product images list error",
+		BusinessMessage: defaultMessage,
+	}
 )

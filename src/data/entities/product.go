@@ -18,3 +18,8 @@ type AdminProductGet struct {
 	DescriptionKZ     *string   `db:"description_kz"`
 	Count             int       `db:"count"`
 }
+
+type ProductImageGet struct {
+	ProductID int    `db:"product_id"`
+	Path      string `db:"path"`
+}
