@@ -4,6 +4,7 @@ import (
 	"github.com/lowl11/lazylog/layers"
 	"wkey-stock/src/definition"
 	"wkey-stock/src/events"
+	"wkey-stock/src/repositories/brand_repository"
 	"wkey-stock/src/repositories/category_repository"
 	"wkey-stock/src/repositories/product_repository"
 	"wkey-stock/src/services/postgres_helper"
@@ -12,6 +13,7 @@ import (
 type ApiRepositories struct {
 	Category *category_repository.Repository
 	Product  *product_repository.Repository
+	Brand    *brand_repository.Repository
 }
 
 func Get(apiEvents *events.ApiEvents) (*ApiRepositories, error) {
@@ -26,5 +28,6 @@ func Get(apiEvents *events.ApiEvents) (*ApiRepositories, error) {
 	return &ApiRepositories{
 		Category: category_repository.Create(connectionPostgres, apiEvents),
 		Product:  product_repository.Create(connectionPostgres, apiEvents),
+		Brand:    brand_repository.Create(connectionPostgres, apiEvents),
 	}, nil
 }
