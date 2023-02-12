@@ -16,6 +16,7 @@ func setRoutes(server *echo.Echo, apiControllers *controllers.ApiControllers, _ 
 	// эндпоинты
 	setProduct(server, apiControllers.Product)
 	setCategory(server, apiControllers.Category)
+	setBrand(server, apiControllers.Product)
 }
 
 func setProduct(server *echo.Echo, controller *product_controller.Controller) {
@@ -37,4 +38,13 @@ func setCategory(server *echo.Echo, controller *category_controller.Controller) 
 	clientGroup := server.Group("/api/v1/stock/category")
 
 	clientGroup.GET("/get", controller.GetClientREST)
+}
+
+func setBrand(server *echo.Echo, controller *product_controller.Controller) {
+	adminGroup := server.Group("/admin/api/v1/stock/brand")
+
+	adminGroup.GET("/get", controller.GetBrandREST)
+	adminGroup.POST("/add", controller.AddBrandREST)
+	adminGroup.PUT("/update/:id", controller.UpdateBrandREST)
+	adminGroup.DELETE("/delete/:id", controller.DeleteBrandREST)
 }

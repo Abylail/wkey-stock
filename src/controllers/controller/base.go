@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"strings"
 	"wkey-stock/src/data/models"
 )
 
@@ -75,4 +76,12 @@ func (controller *Base) RequiredField(value interface{}, name string) error {
 	}
 
 	return nil
+}
+
+func (controller *Base) FilterString(value string) string {
+	return strings.TrimSpace(strings.ToLower(value))
+}
+
+func (controller *Base) FilterStringSimple(value string) string {
+	return strings.TrimSpace(value)
 }

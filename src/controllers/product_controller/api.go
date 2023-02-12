@@ -140,3 +140,71 @@ func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProdu
 			}).Slice(),
 	}, nil
 }
+
+func (controller *Controller) _getBrand(searchQuery string) ([]models.BrandGet, *models.Error) {
+	logger := definition.Logger
+
+	var brands []entities.BrandGet
+	var err error
+
+	if len(searchQuery) == 0 {
+		brands, err = controller.brandRepo.GetAll()
+	} else {
+		brands, err = controller.brandRepo.GetByQuery(searchQuery)
+	}
+	if err != nil {
+		logger.Error(err, "Get list of brands error", layers.Database)
+		return nil, errors.BrandGetList.With(err)
+	}
+
+	return type_list.NewWithList[entities.BrandGet, models.BrandGet](brands...).
+		Select(func(item entities.BrandGet) models.BrandGet {
+			return models.BrandGet{
+				ID:    item.ID,
+				Title: item.Title,
+				Image: item.Image,
+			}
+		}).Slice(), nil
+}
+
+func (controller *Controller) _addBrand(model *models.BrandAdd) *models.Error {
+	logger := definition.Logger
+
+	brand, err := controller.brandRepo.GetByTitle(model.Title)
+	if err != nil {
+		logger.Error(err, "Get brand by title error", layers.Database)
+		return errors.BrandGetByTitle.With(err)
+	}
+
+	if brand != nil {
+		return errors.BrandAlreadyExist
+	}
+
+	if err = controller.brandRepo.Create(model); err != nil {
+		logger.Error(err, "Create brand error", layers.Database)
+		return errors.BrandAdd.With(err)
+	}
+
+	return nil
+}
+
+func (controller *Controller) _updateBrand(id int, model *models.BrandUpdate) *models.Error {
+	logger := definition.Logger
+
+	if err := controller.brandRepo.Update(id, model); err != nil {
+		logger.Error(err, "Update brand error", layers.Database)
+		return errors.BrandUpdate.With(err)
+	}
+
+	return nil
+}
+
+func (controller *Controller) _deleteBrand(id int) *models.Error {
+	logger := definition.Logger
+
+	if err := controller.brandRepo.Delete(id); err != nil {
+		logger.Error(err, "Delete brand error", layers.Database)
+		return errors.BrandDelete.With(err)
+	}
+	return nil
+}
