@@ -5,4 +5,5 @@ select
     title_kz,
     icon
 from categories
-order by title_ru;
+where code = $1
+limit 1;

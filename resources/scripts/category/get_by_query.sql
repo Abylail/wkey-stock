@@ -1,10 +1,9 @@
 select
     id,
-    key,
-    title,
-    parent_id,
-    position,
-    items_count
+    code,
+    title_ru,
+    title_kz,
+    icon
 from categories
-where title ilike $1
-order by title;
+where title_ru ilike $1 or title_kz ilike $1 or code ilike $1
+order by title_ru;

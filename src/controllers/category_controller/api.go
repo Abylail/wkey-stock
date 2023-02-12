@@ -18,7 +18,7 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 	if searchQuery == "" {
 		list, err = controller.categoryRepo.GetAll()
 	} else {
-		list, err = controller.categoryRepo.ByQuery(searchQuery)
+		list, err = controller.categoryRepo.GetByQuery(searchQuery)
 	}
 	if err != nil {
 		return nil, errors.CategoryGetList.With(err)
@@ -31,12 +31,11 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 	categories := type_list.NewWithList[entities.CategoryGet, models.CategoryAdminGet](list...).
 		Select(func(item entities.CategoryGet) models.CategoryAdminGet {
 			return models.CategoryAdminGet{
-				ID:         item.ID,
-				Key:        item.Key,
-				Title:      item.Title,
-				ParentID:   item.ParentID,
-				Position:   item.Position,
-				ItemsCount: item.ItemsCount,
+				ID:      item.ID,
+				Code:    item.Code,
+				TitleRU: item.TitleRU,
+				TitleKZ: item.TitleKZ,
+				Icon:    item.Icon,
 			}
 		}).
 		Slice()
