@@ -1,5 +1,6 @@
 select
     id,
     title,
-    image
+    image,
+    prosklad_id
 from brands;

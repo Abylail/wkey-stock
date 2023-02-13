@@ -16,7 +16,8 @@ type BrandUpload struct {
 }
 
 type BrandGet struct {
-	ID    int    `db:"id"`
-	Title string `db:"title"`
-	Image string `db:"image"`
+	ID         int     `db:"id"`
+	Title      string  `db:"title"`
+	Image      *string `db:"image"`
+	ProskladID int     `db:"prosklad_id"`
 }

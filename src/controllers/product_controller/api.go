@@ -160,7 +160,7 @@ func (controller *Controller) _getBrand(searchQuery string) ([]models.BrandGet, 
 	return type_list.NewWithList[entities.BrandGet, models.BrandGet](brands...).
 		Select(func(item entities.BrandGet) models.BrandGet {
 			return models.BrandGet{
-				ID:    item.ID,
+				ID:    item.ProskladID,
 				Title: item.Title,
 				Image: item.Image,
 			}
