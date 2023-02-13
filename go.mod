@@ -10,6 +10,7 @@ require (
 	github.com/lowl11/lazyconfig v1.0.6
 	github.com/lowl11/lazyfile v0.1.0
 	github.com/lowl11/lazylog v1.1.1
+	github.com/mehanizm/iuliia-go v1.0.2
 	github.com/streadway/amqp v1.0.0
 )
 

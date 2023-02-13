@@ -2,6 +2,8 @@ package category_repository
 
 import (
 	"github.com/jmoiron/sqlx"
+	"github.com/mehanizm/iuliia-go"
+	"strings"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/models"
 )
@@ -84,7 +86,7 @@ func (repo *Repository) Create(model *models.CategoryAdd) error {
 	defer cancel()
 
 	entity := &entities.CategoryCreate{
-		Code:    "",
+		Code:    strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU))),
 		TitleRU: model.TitleRU,
 		TitleKZ: model.TitleKZ,
 		Icon:    model.Icon,
@@ -105,12 +107,12 @@ func (repo *Repository) Create(model *models.CategoryAdd) error {
 	return nil
 }
 
-func (repo *Repository) Update(model *models.CategoryUpdate) error {
+func (repo *Repository) Update(code string, model *models.CategoryUpdate) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	entity := &entities.CategoryUpdate{
-		Code:    "",
+		Code:    code,
 		TitleRU: model.TitleRU,
 		TitleKZ: model.TitleKZ,
 		Icon:    model.Icon,
@@ -131,14 +133,14 @@ func (repo *Repository) Update(model *models.CategoryUpdate) error {
 	return nil
 }
 
-func (repo *Repository) Delete(id int) error {
+func (repo *Repository) Delete(code string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	query := repo.Script("category", "delete")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.ExecContext(ctx, query, id); err != nil {
+		if _, err := tx.ExecContext(ctx, query, code); err != nil {
 			return err
 		}
 

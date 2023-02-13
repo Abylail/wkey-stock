@@ -34,6 +34,9 @@ func setCategory(server *echo.Echo, controller *category_controller.Controller) 
 	adminGroup := server.Group("/admin/api/v1/stock/category")
 
 	adminGroup.GET("/get", controller.GetAdminREST)
+	adminGroup.POST("/add", controller.AddREST)
+	adminGroup.PUT("/update/:code", controller.UpdateREST)
+	adminGroup.DELETE("/delete/:code", controller.DeleteREST)
 
 	clientGroup := server.Group("/api/v1/stock/category")
 
