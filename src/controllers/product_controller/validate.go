@@ -15,6 +15,14 @@ func (controller *Controller) validateBrandUpload(model *models.BrandUpload) err
 		return err
 	}
 
+	if err := controller.RequiredField(model.Image.Name, "image_name"); err != nil {
+		return err
+	}
+
+	if err := controller.RequiredField(model.Image.Buffer, "image_buffer"); err != nil {
+		return err
+	}
+
 	return nil
 }
 
