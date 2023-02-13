@@ -48,6 +48,7 @@ func setBrand(server *echo.Echo, controller *product_controller.Controller) {
 	adminGroup := server.Group("/admin/api/v1/stock/brand")
 
 	adminGroup.GET("/get", controller.GetBrandREST)
+	adminGroup.GET("/get/:id", controller.GetBrandSingleREST)
 	adminGroup.POST("/add", controller.AddBrandREST)
 	adminGroup.PUT("/update/:id", controller.UpdateBrandREST)
 	adminGroup.PUT("/upload/:id", controller.UploadBrandREST)

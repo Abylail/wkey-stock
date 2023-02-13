@@ -169,6 +169,22 @@ func (controller *Controller) _getBrand(searchQuery string) ([]models.BrandGet, 
 		}).Slice(), nil
 }
 
+func (controller *Controller) _getBrandSingle(id int) (*models.BrandGet, *models.Error) {
+	logger := definition.Logger
+
+	brand, err := controller.brandRepo.GetByID(id)
+	if err != nil {
+		logger.Error(err, "Get brand by ID error", layers.Database)
+		return nil, errors.BrandGetByID.With(err)
+	}
+
+	return &models.BrandGet{
+		ID:    brand.ProskladID,
+		Title: brand.Title,
+		Image: brand.Image,
+	}, nil
+}
+
 func (controller *Controller) _addBrand(model *models.BrandAdd) *models.Error {
 	logger := definition.Logger
 

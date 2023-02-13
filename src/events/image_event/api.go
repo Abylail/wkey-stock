@@ -24,6 +24,14 @@ func (event *Event) UploadCategoryIcon(categoryCode, name, buffer string) (strin
 		}
 	}
 
+	// проверяем существует ли уже файл
+	if fileapi.Exist(fullPath) {
+		// удаляем его если существует
+		if err := fileapi.Delete(fullPath); err != nil {
+			return "", err
+		}
+	}
+
 	// проверить существует ли папка категории
 	if err := folderapi.Create(categoryIconPath, categoryCode); err != nil {
 		return "", err
@@ -69,6 +77,14 @@ func (event *Event) UploadBrandIcon(brandID int, name, buffer string) (string, e
 	// создаем папку под конкретный бренд
 	if err := folderapi.Create(brandIconPath, brandText); err != nil {
 		return "", err
+	}
+
+	// проверяем существует ли уже файл
+	if fileapi.Exist(fullPath) {
+		// удаляем его если существует
+		if err := fileapi.Delete(fullPath); err != nil {
+			return "", err
+		}
 	}
 
 	// декодируем из base64 в байты

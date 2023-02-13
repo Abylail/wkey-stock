@@ -12,6 +12,10 @@ var (
 		BusinessMessage: defaultMessage,
 	}
 
+	BrandGetParam = &models.Error{
+		TechMessage:     "Brand ID required",
+		BusinessMessage: defaultMessage,
+	}
 	BrandUpdateParam = &models.Error{
 		TechMessage:     "Brand ID required",
 		BusinessMessage: defaultMessage,

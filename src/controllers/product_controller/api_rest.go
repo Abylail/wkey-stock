@@ -55,6 +55,20 @@ func (controller *Controller) GetBrandREST(ctx echo.Context) error {
 	return controller.Ok(ctx, brands)
 }
 
+func (controller *Controller) GetBrandSingleREST(ctx echo.Context) error {
+	brandID, _ := strconv.Atoi(ctx.Param("id"))
+	if brandID == 0 {
+		return errors.BrandGetParam
+	}
+
+	brands, err := controller._getBrandSingle(brandID)
+	if err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, brands)
+}
+
 func (controller *Controller) AddBrandREST(ctx echo.Context) error {
 	model := models.BrandAdd{}
 	if err := ctx.Bind(&model); err != nil {
