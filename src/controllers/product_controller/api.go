@@ -143,6 +143,17 @@ func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProdu
 	}, nil
 }
 
+func (controller *Controller) _update(productID int, model *models.ProductUpdate) *models.Error {
+	logger := definition.Logger
+
+	if err := controller.productRepo.Update(productID, model); err != nil {
+		logger.Error(err, "Update product error", layers.Database)
+		return errors.ProductUpdate.With(err)
+	}
+
+	return nil
+}
+
 func (controller *Controller) _getBrand(searchQuery string) ([]models.BrandGet, *models.Error) {
 	logger := definition.Logger
 

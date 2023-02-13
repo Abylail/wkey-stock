@@ -1,8 +1,10 @@
 package product_repository
 
 import (
+	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"wkey-stock/src/data/entities"
+	"wkey-stock/src/data/models"
 )
 
 func (repo *Repository) GetAdmin(from, to int) ([]entities.AdminProductGet, error) {
@@ -128,4 +130,29 @@ func (repo *Repository) CountQuery(searchQuery string) (int, error) {
 	}
 
 	return count, nil
+}
+
+func (repo *Repository) Update(id int, model *models.ProductUpdate) error {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	entity := &entities.ProductUpdate{
+		ID:            id,
+		DescriptionRU: model.DescriptionRU,
+		DescriptionKZ: model.DescriptionKZ,
+	}
+
+	query := repo.Script("product", "update")
+
+	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -44,6 +44,28 @@ func (controller *Controller) GetClientREST(ctx echo.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
+func (controller *Controller) UpdateProductREST(ctx echo.Context) error {
+	productID, _ := strconv.Atoi(ctx.Param("id"))
+	if productID == 0 {
+		return controller.Error(ctx, errors.ProductUpdateParam)
+	}
+
+	model := models.ProductUpdate{}
+	if err := ctx.Bind(&model); err != nil {
+		return controller.Error(ctx, errors.ProductUpdateBind.With(err))
+	}
+
+	if err := controller.validateProductUpdate(&model); err != nil {
+		return controller.Error(ctx, errors.ProductUpdateValidate.With(err))
+	}
+
+	if err := controller._update(productID, &model); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, "OK")
+}
+
 func (controller *Controller) GetBrandREST(ctx echo.Context) error {
 	searchQuery := ctx.QueryParam("query")
 

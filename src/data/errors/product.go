@@ -8,6 +8,21 @@ var (
 		BusinessMessage: defaultMessage,
 	}
 
+	ProductUpdateParam = &models.Error{
+		TechMessage:     "Product ID required",
+		BusinessMessage: defaultMessage,
+	}
+
+	ProductUpdateBind = &models.Error{
+		TechMessage:     "Update product model bind error",
+		BusinessMessage: defaultMessage,
+	}
+
+	ProductUpdateValidate = &models.Error{
+		TechMessage:     "Update product model validate error",
+		BusinessMessage: defaultMessage,
+	}
+
 	AdminProductGet = &models.Error{
 		TechMessage:     "Get products list error",
 		BusinessMessage: defaultMessage,
@@ -18,6 +33,10 @@ var (
 	}
 	ProductImagesGet = &models.Error{
 		TechMessage:     "Get product images list error",
+		BusinessMessage: defaultMessage,
+	}
+	ProductUpdate = &models.Error{
+		TechMessage:     "Update product error",
 		BusinessMessage: defaultMessage,
 	}
 )

@@ -25,3 +25,8 @@ type AdminProductItem struct {
 	Images            []string  `json:"images"`
 	BrandTitle        string    `json:"brand_title"`
 }
+
+type ProductUpdate struct {
+	DescriptionRU string `json:"description_ru"`
+	DescriptionKZ string `json:"description_kz"`
+}

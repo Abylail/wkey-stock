@@ -24,6 +24,7 @@ func setProduct(server *echo.Echo, controller *product_controller.Controller) {
 
 	adminGroup.GET("/get", controller.GetAdminREST)
 	adminGroup.GET("/get/:id", controller.GetAdminSingleREST)
+	adminGroup.PUT("/update/:id", controller.UpdateProductREST)
 
 	clientGroup := server.Group("/api/v1/stock/product")
 

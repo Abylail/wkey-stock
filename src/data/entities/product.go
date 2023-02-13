@@ -24,3 +24,9 @@ type ProductImageGet struct {
 	ProductID int    `db:"product_id"`
 	Path      string `db:"path"`
 }
+
+type ProductUpdate struct {
+	ID            int    `db:"id"`
+	DescriptionRU string `db:"description_ru"`
+	DescriptionKZ string `db:"description_kz"`
+}
