@@ -12,9 +12,11 @@ select
     product.price,
     productExt.description_ru,
     productExt.description_kz,
-    productExt.count
+    productExt.count,
+    brand.title brand_title
 from products as product
     inner join products_ext as productExt on (productExt.product_id = product.id)
-order by title
+    inner join brands as brand on (product.brand_id = brand.prosklad_id)
+order by product.title
 offset $1
 limit $2;

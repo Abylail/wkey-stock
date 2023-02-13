@@ -23,4 +23,5 @@ type AdminProductItem struct {
 	DescriptionKZ     *string   `json:"description_kz"`
 	Count             int       `json:"count"`
 	Images            []string  `json:"images"`
+	BrandTitle        string    `json:"brand_title"`
 }

@@ -78,6 +78,7 @@ func (controller *Controller) _getAdmin(from, to int, searchQuery, categoryKey s
 				DescriptionRU:     item.DescriptionRU,
 				DescriptionKZ:     item.DescriptionKZ,
 				Count:             item.Count,
+				BrandTitle:        item.BrandTitle,
 			}
 		}).Slice()
 
@@ -134,6 +135,7 @@ func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProdu
 		DescriptionRU:     product.DescriptionRU,
 		DescriptionKZ:     product.DescriptionKZ,
 		Count:             product.Count,
+		BrandTitle:        product.BrandTitle,
 		Images: type_list.NewWithList[entities.ProductImageGet, string](images...).
 			Select(func(item entities.ProductImageGet) string {
 				return item.Path

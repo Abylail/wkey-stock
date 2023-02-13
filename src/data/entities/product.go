@@ -17,6 +17,7 @@ type AdminProductGet struct {
 	DescriptionRU     *string   `db:"description_ru"`
 	DescriptionKZ     *string   `db:"description_kz"`
 	Count             int       `db:"count"`
+	BrandTitle        string    `db:"brand_title"`
 }
 
 type ProductImageGet struct {
