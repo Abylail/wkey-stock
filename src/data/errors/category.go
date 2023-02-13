@@ -43,6 +43,10 @@ var (
 		TechMessage:     "Get categories list error",
 		BusinessMessage: defaultMessage,
 	}
+	CategoryGetByCode = &models.Error{
+		TechMessage:     "Get category by code error",
+		BusinessMessage: defaultMessage,
+	}
 	CategoryAdd = &models.Error{
 		TechMessage:     "Add category error",
 		BusinessMessage: defaultMessage,

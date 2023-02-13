@@ -2,8 +2,6 @@ package category_repository
 
 import (
 	"github.com/jmoiron/sqlx"
-	"github.com/mehanizm/iuliia-go"
-	"strings"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/models"
 )
@@ -58,7 +56,7 @@ func (repo *Repository) GetByQuery(searchQuery string) ([]entities.CategoryGet, 
 	return list, nil
 }
 
-func (repo *Repository) GetByID(code string) (*entities.CategoryGet, error) {
+func (repo *Repository) GetByCode(code string) (*entities.CategoryGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
@@ -81,15 +79,15 @@ func (repo *Repository) GetByID(code string) (*entities.CategoryGet, error) {
 	return nil, nil
 }
 
-func (repo *Repository) Create(model *models.CategoryAdd) error {
+func (repo *Repository) Create(model *models.CategoryAdd, categoryCode, iconPath string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	entity := &entities.CategoryCreate{
-		Code:    strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU))),
-		TitleRU: model.TitleRU,
-		TitleKZ: model.TitleKZ,
-		Icon:    model.Icon,
+		Code:     categoryCode,
+		TitleRU:  model.TitleRU,
+		TitleKZ:  model.TitleKZ,
+		IconPath: iconPath,
 	}
 
 	query := repo.Script("category", "create")
@@ -115,7 +113,6 @@ func (repo *Repository) Update(code string, model *models.CategoryUpdate) error 
 		Code:    code,
 		TitleRU: model.TitleRU,
 		TitleKZ: model.TitleKZ,
-		Icon:    model.Icon,
 	}
 
 	query := repo.Script("category", "update")

@@ -16,11 +16,10 @@ type CategoryClientGet struct {
 type CategoryAdd struct {
 	TitleRU string `json:"title_ru"`
 	TitleKZ string `json:"title_kz"`
-	Icon    string `json:"icon"`
+	Icon    *File  `json:"icon"`
 }
 
 type CategoryUpdate struct {
 	TitleRU string `json:"title_ru"`
 	TitleKZ string `json:"title_kz"`
-	Icon    string `json:"icon"`
 }

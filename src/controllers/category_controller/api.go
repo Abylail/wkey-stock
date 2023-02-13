@@ -3,6 +3,8 @@ package category_controller
 import (
 	"github.com/lowl11/lazy-collection/type_list"
 	"github.com/lowl11/lazylog/layers"
+	"github.com/mehanizm/iuliia-go"
+	"strings"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/errors"
 	"wkey-stock/src/data/models"
@@ -48,9 +50,32 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 func (controller *Controller) _create(model *models.CategoryAdd) *models.Error {
 	logger := definition.Logger
 
-	if err := controller.categoryRepo.Create(model); err != nil {
+	// генерируем код категории
+	categoryCode := strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU)))
+
+	// ищем категорию с таким же кодом
+	category, err := controller.categoryRepo.GetByCode(categoryCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	// выдаем ошибку если нашли категорию с таким же кодом
+	if category != nil {
+		return errors.CategoryAlreadyExist
+	}
+
+	// загружаем иконку
+	fullPath, err := controller.image.UploadCategoryIcon(categoryCode, model.Icon.Name, model.Icon.Buffer)
+	if err != nil {
+		logger.Error(err, "Upload category icon error", layers.File)
+		return errors.ImageUploadCategoryIcon.With(err)
+	}
+
+	// создаем запись в БД
+	if err = controller.categoryRepo.Create(model, categoryCode, fullPath); err != nil {
 		logger.Error(err, "Update category error", layers.Database)
-		return errors.CategoryUpdate.With(err)
+		return errors.CategoryAdd.With(err)
 	}
 
 	return nil
