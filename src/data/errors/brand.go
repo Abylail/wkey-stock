@@ -75,4 +75,8 @@ var (
 		TechMessage:     "Get brand by title error",
 		BusinessMessage: defaultMessage,
 	}
+	BrandGetByID = &models.Error{
+		TechMessage:     "Get brand by ID error",
+		BusinessMessage: defaultMessage,
+	}
 )

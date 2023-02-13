@@ -144,6 +144,29 @@ func (repo *Repository) GetByTitle(title string) (*entities.BrandGet, error) {
 	return nil, nil
 }
 
+func (repo *Repository) GetByID(id int) (*entities.BrandGet, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("brand", "get_by_id")
+
+	rows, err := repo.connection.QueryxContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer repo.CloseRows(rows)
+
+	if rows.Next() {
+		item := entities.BrandGet{}
+		if err = rows.StructScan(&item); err != nil {
+			return nil, err
+		}
+		return &item, nil
+	}
+
+	return nil, nil
+}
+
 func (repo *Repository) GetByQuery(searchQuery string) ([]entities.BrandGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()

@@ -4,4 +4,5 @@ select
     image,
     prosklad_id
 from brands
-where title ilike $1;
+where prosklad_id = $1
+limit 1;

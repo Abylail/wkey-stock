@@ -1,3 +1,3 @@
 update brands
 set title = :title
-where id = :id;
+where prosklad_id = :id;

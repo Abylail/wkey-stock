@@ -1,2 +1,2 @@
 delete from brands
-where id = $1;
+where prosklad_id = $1;

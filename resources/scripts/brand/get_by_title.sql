@@ -1,7 +1,8 @@
 select
     id,
     title,
-    image
+    image,
+    prosklad_id
 from brands
 where title = $1
 limit 1;
