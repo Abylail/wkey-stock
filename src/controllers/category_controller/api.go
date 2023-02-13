@@ -15,6 +15,10 @@ func (controller *Controller) _getClient() ([]models.CategoryClientGet, *models.
 	return nil, nil
 }
 
+func (controller *Controller) _getClientSub() ([]models.SubCategoryClientGet, *models.Error) {
+	return nil, nil
+}
+
 func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAdminGet, *models.Error) {
 	var list []entities.CategoryGet
 	var err error
@@ -45,6 +49,32 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 		Slice()
 
 	return categories, nil
+}
+
+func (controller *Controller) _getAdminSub(parentID int) ([]models.SubCategoryAdminGet, *models.Error) {
+	logger := definition.Logger
+
+	list, err := controller.subCategoryRepo.GetByParent(parentID)
+	if err != nil {
+		logger.Error(err, "Get sub categories list error", layers.Database)
+		return nil, errors.CategoryGetList.With(err)
+	}
+
+	if len(list) == 0 {
+		return []models.SubCategoryAdminGet{}, nil
+	}
+
+	return type_list.NewWithList[entities.SubCategoryGet, models.SubCategoryAdminGet](list...).
+		Select(func(item entities.SubCategoryGet) models.SubCategoryAdminGet {
+			return models.SubCategoryAdminGet{
+				ID:      item.ID,
+				Code:    item.Code,
+				TitleRU: item.TitleRU,
+				TitleKZ: item.TitleKZ,
+				Image:   item.Icon,
+			}
+		}).
+		Slice(), nil
 }
 
 func (controller *Controller) _create(model *models.CategoryAdd) *models.Error {

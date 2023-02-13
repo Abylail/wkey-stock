@@ -16,7 +16,7 @@ func (controller *Controller) GetClientREST(ctx echo.Context) error {
 }
 
 func (controller *Controller) GetClientSubREST(ctx echo.Context) error {
-	list, err := controller._getClient()
+	list, err := controller._getClientSub()
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
