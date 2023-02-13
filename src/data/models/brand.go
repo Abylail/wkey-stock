@@ -10,7 +10,7 @@ type BrandUpdate struct {
 }
 
 type BrandUpload struct {
-	Image *File `json:"image"`
+	Image File `json:"image"`
 }
 
 type BrandGet struct {

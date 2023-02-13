@@ -1,3 +1,3 @@
 update brands
 set image = :image
-where id = :id;
+where prosklad_id = :id;
