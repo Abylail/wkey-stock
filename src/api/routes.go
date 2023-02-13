@@ -16,6 +16,7 @@ func setRoutes(server *echo.Echo, apiControllers *controllers.ApiControllers, _ 
 	// эндпоинты
 	setProduct(server, apiControllers.Product)
 	setCategory(server, apiControllers.Category)
+	setSubCategory(server, apiControllers.Category)
 	setBrand(server, apiControllers.Product)
 }
 
@@ -37,12 +38,26 @@ func setCategory(server *echo.Echo, controller *category_controller.Controller) 
 	adminGroup.GET("/get", controller.GetAdminREST)
 	adminGroup.POST("/add", controller.AddREST)
 	adminGroup.PUT("/update/:code", controller.UpdateREST)
-	adminGroup.PUT("/upload/:code", controller.UpdateREST)
+	adminGroup.PUT("/upload/:code", controller.UploadREST)
 	adminGroup.DELETE("/delete/:code", controller.DeleteREST)
 
 	clientGroup := server.Group("/api/v1/stock/category")
 
 	clientGroup.GET("/get", controller.GetClientREST)
+}
+
+func setSubCategory(server *echo.Echo, controller *category_controller.Controller) {
+	adminGroup := server.Group("/admin/api/v1/stock/category/:par_code/sub")
+
+	adminGroup.GET("/get", controller.GetAdminSubREST)
+	adminGroup.POST("/add", controller.AddSubREST)
+	adminGroup.PUT("/update/:code", controller.UpdateSubREST)
+	adminGroup.PUT("/upload/:code", controller.UploadSubREST)
+	adminGroup.DELETE("/delete/:code", controller.DeleteSubREST)
+
+	clientGroup := server.Group("/api/v1/stock/category/:par_code/sub")
+
+	clientGroup.GET("/get", controller.GetClientSubREST)
 }
 
 func setBrand(server *echo.Echo, controller *product_controller.Controller) {
