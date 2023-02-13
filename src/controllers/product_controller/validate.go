@@ -7,6 +7,10 @@ func (controller *Controller) validateBrandUpdate(model *models.BrandUpdate) err
 		return err
 	}
 
+	return nil
+}
+
+func (controller *Controller) validateBrandUpload(model *models.BrandUpload) error {
 	if err := controller.RequiredField(model.Image, "image"); err != nil {
 		return err
 	}

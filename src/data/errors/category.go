@@ -20,6 +20,10 @@ var (
 		TechMessage:     "Category code required",
 		BusinessMessage: defaultMessage,
 	}
+	CategoryUploadParam = &models.Error{
+		TechMessage:     "Category code required",
+		BusinessMessage: defaultMessage,
+	}
 
 	CategoryAddBind = &models.Error{
 		TechMessage:     "Add category model bind error",
@@ -29,6 +33,10 @@ var (
 		TechMessage:     "Update category model bind error",
 		BusinessMessage: defaultMessage,
 	}
+	CategoryUploadBind = &models.Error{
+		TechMessage:     "Upload category icon model bind error",
+		BusinessMessage: defaultMessage,
+	}
 
 	CategoryAddValidate = &models.Error{
 		TechMessage:     "Add category model validate error",
@@ -36,6 +44,10 @@ var (
 	}
 	CategoryUpdateValidate = &models.Error{
 		TechMessage:     "Update category model validate error",
+		BusinessMessage: defaultMessage,
+	}
+	CategoryUploadValidate = &models.Error{
+		TechMessage:     "Upload category icon model validate error",
 		BusinessMessage: defaultMessage,
 	}
 

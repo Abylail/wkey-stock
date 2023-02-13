@@ -19,7 +19,7 @@ func Get(apiEvents *events.ApiEvents, apiRepositories *repositories.ApiRepositor
 	return &ApiControllers{
 		Static: static_controller.Create(),
 
-		Product:  product_controller.Create(apiRepositories),
+		Product:  product_controller.Create(apiRepositories, apiEvents),
 		Category: category_controller.Create(apiRepositories, apiEvents),
 	}
 }

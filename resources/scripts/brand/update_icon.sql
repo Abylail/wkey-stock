@@ -1,3 +1,3 @@
 update brands
-set title = :title
+set image = :image
 where id = :id;

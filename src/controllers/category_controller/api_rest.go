@@ -65,6 +65,29 @@ func (controller *Controller) UpdateREST(ctx echo.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
+func (controller *Controller) UploadREST(ctx echo.Context) error {
+	code := ctx.Param("code")
+	if code == "" {
+		return errors.CategoryUploadParam
+	}
+
+	model := models.CategoryUpload{}
+	if err := ctx.Bind(&model); err != nil {
+		return errors.CategoryUploadBind.With(err)
+	}
+
+	if err := controller.validateCategoryUpload(&model); err != nil {
+		return errors.CategoryUploadValidate.With(err)
+	}
+
+	imagePath, err := controller._upload(code, &model)
+	if err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, imagePath)
+}
+
 func (controller *Controller) DeleteREST(ctx echo.Context) error {
 	categoryCode := ctx.Param("code")
 	if categoryCode == "" {

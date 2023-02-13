@@ -5,7 +5,7 @@ type CategoryAdminGet struct {
 	Code    string `json:"code"`
 	TitleRU string `json:"title_ru"`
 	TitleKZ string `json:"title_kz"`
-	Icon    string `json:"icon"`
+	Image   string `json:"image"`
 }
 
 type CategoryClientGet struct {
@@ -16,10 +16,14 @@ type CategoryClientGet struct {
 type CategoryAdd struct {
 	TitleRU string `json:"title_ru"`
 	TitleKZ string `json:"title_kz"`
-	Icon    *File  `json:"icon"`
+	Image   *File  `json:"Image"`
 }
 
 type CategoryUpdate struct {
 	TitleRU string `json:"title_ru"`
 	TitleKZ string `json:"title_kz"`
+}
+
+type CategoryUpload struct {
+	Image *File `json:"image"`
 }

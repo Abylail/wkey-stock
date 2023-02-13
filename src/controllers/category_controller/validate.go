@@ -25,3 +25,19 @@ func (controller *Controller) validateCategoryUpdate(model *models.CategoryUpdat
 
 	return nil
 }
+
+func (controller *Controller) validateCategoryUpload(model *models.CategoryUpload) error {
+	if err := controller.RequiredField(model.Image, "image"); err != nil {
+		return err
+	}
+
+	if err := controller.RequiredField(model.Image.Name, "image_name"); err != nil {
+		return err
+	}
+
+	if err := controller.RequiredField(model.Image.Buffer, "image_buffer"); err != nil {
+		return err
+	}
+
+	return nil
+}

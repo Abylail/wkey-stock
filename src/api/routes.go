@@ -36,6 +36,7 @@ func setCategory(server *echo.Echo, controller *category_controller.Controller) 
 	adminGroup.GET("/get", controller.GetAdminREST)
 	adminGroup.POST("/add", controller.AddREST)
 	adminGroup.PUT("/update/:code", controller.UpdateREST)
+	adminGroup.PUT("/upload/:code", controller.UpdateREST)
 	adminGroup.DELETE("/delete/:code", controller.DeleteREST)
 
 	clientGroup := server.Group("/api/v1/stock/category")
@@ -49,5 +50,6 @@ func setBrand(server *echo.Echo, controller *product_controller.Controller) {
 	adminGroup.GET("/get", controller.GetBrandREST)
 	adminGroup.POST("/add", controller.AddBrandREST)
 	adminGroup.PUT("/update/:id", controller.UpdateBrandREST)
+	adminGroup.PUT("/upload/:id", controller.UploadBrandREST)
 	adminGroup.DELETE("/delete/:id", controller.DeleteBrandREST)
 }

@@ -96,6 +96,29 @@ func (controller *Controller) UpdateBrandREST(ctx echo.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
+func (controller *Controller) UploadBrandREST(ctx echo.Context) error {
+	brandID, _ := strconv.Atoi(ctx.Param("id"))
+	if brandID == 0 {
+		return controller.Error(ctx, errors.BrandUploadParam)
+	}
+
+	model := models.BrandUpload{}
+	if err := ctx.Bind(&model); err != nil {
+		return controller.Error(ctx, errors.BrandUploadBind.With(err))
+	}
+
+	if err := controller.validateBrandUpload(&model); err != nil {
+		return controller.Error(ctx, errors.BrandUploadValidate.With(err))
+	}
+
+	imagePath, err := controller._uploadBrand(brandID, &model)
+	if err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, imagePath)
+}
+
 func (controller *Controller) DeleteBrandREST(ctx echo.Context) error {
 	brandID, _ := strconv.Atoi(ctx.Param("id"))
 	if brandID == 0 {

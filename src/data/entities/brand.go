@@ -8,6 +8,10 @@ type BrandCreate struct {
 type BrandUpdate struct {
 	ID    int    `db:"id"`
 	Title string `db:"title"`
+}
+
+type BrandUpload struct {
+	ID    int    `db:"id"`
 	Image string `db:"image"`
 }
 

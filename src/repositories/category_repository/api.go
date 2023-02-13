@@ -130,6 +130,30 @@ func (repo *Repository) Update(code string, model *models.CategoryUpdate) error 
 	return nil
 }
 
+func (repo *Repository) UpdateImage(code string, imagePath string) error {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	entity := &entities.CategoryUpdateImage{
+		Code:  code,
+		Image: imagePath,
+	}
+
+	query := repo.Script("category", "update_image")
+
+	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (repo *Repository) Delete(code string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()

@@ -7,4 +7,8 @@ var (
 		TechMessage:     "Upload category icon error",
 		BusinessMessage: defaultMessage,
 	}
+	ImageUploadBrandIcon = &models.Error{
+		TechMessage:     "Upload brand icon error",
+		BusinessMessage: defaultMessage,
+	}
 )

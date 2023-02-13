@@ -16,6 +16,10 @@ var (
 		TechMessage:     "Brand ID required",
 		BusinessMessage: defaultMessage,
 	}
+	BrandUploadParam = &models.Error{
+		TechMessage:     "Brand ID required",
+		BusinessMessage: defaultMessage,
+	}
 	BrandDeleteParam = &models.Error{
 		TechMessage:     "Brand ID required",
 		BusinessMessage: defaultMessage,
@@ -29,6 +33,10 @@ var (
 		TechMessage:     "Update brand model bind error",
 		BusinessMessage: defaultMessage,
 	}
+	BrandUploadBind = &models.Error{
+		TechMessage:     "Upload brand model bind error",
+		BusinessMessage: defaultMessage,
+	}
 
 	BrandAddValidate = &models.Error{
 		TechMessage:     "Add new brand model validate error",
@@ -38,6 +46,10 @@ var (
 		TechMessage:     "Update brand model validate error",
 		BusinessMessage: defaultMessage,
 	}
+	BrandUploadValidate = &models.Error{
+		TechMessage:     "Upload brand model validate error",
+		BusinessMessage: defaultMessage,
+	}
 
 	BrandAdd = &models.Error{
 		TechMessage:     "Add new brand error",
@@ -45,6 +57,10 @@ var (
 	}
 	BrandUpdate = &models.Error{
 		TechMessage:     "Update brand error",
+		BusinessMessage: defaultMessage,
+	}
+	BrandUpdateIcon = &models.Error{
+		TechMessage:     "Update brand icon error",
 		BusinessMessage: defaultMessage,
 	}
 	BrandDelete = &models.Error{

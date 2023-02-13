@@ -199,6 +199,23 @@ func (controller *Controller) _updateBrand(id int, model *models.BrandUpdate) *m
 	return nil
 }
 
+func (controller *Controller) _uploadBrand(brandID int, model *models.BrandUpload) (string, *models.Error) {
+	logger := definition.Logger
+
+	imagePath, err := controller.image.UploadBrandIcon(brandID, model.Image.Name, model.Image.Buffer)
+	if err != nil {
+		logger.Error(err, "Upload brand icon error", layers.File)
+		return "", errors.ImageUploadBrandIcon.With(err)
+	}
+
+	if err = controller.brandRepo.UpdateIcon(brandID, imagePath); err != nil {
+		logger.Error(err, "Update brand icon error", layers.Database)
+		return "", errors.BrandUpdateIcon.With(err)
+	}
+
+	return imagePath, nil
+}
+
 func (controller *Controller) _deleteBrand(id int) *models.Error {
 	logger := definition.Logger
 

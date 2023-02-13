@@ -39,7 +39,7 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 				Code:    item.Code,
 				TitleRU: item.TitleRU,
 				TitleKZ: item.TitleKZ,
-				Icon:    item.Icon,
+				Image:   item.Icon,
 			}
 		}).
 		Slice()
@@ -66,7 +66,7 @@ func (controller *Controller) _create(model *models.CategoryAdd) *models.Error {
 	}
 
 	// загружаем иконку
-	fullPath, err := controller.image.UploadCategoryIcon(categoryCode, model.Icon.Name, model.Icon.Buffer)
+	fullPath, err := controller.image.UploadCategoryIcon(categoryCode, model.Image.Name, model.Image.Buffer)
 	if err != nil {
 		logger.Error(err, "Upload category icon error", layers.File)
 		return errors.ImageUploadCategoryIcon.With(err)
@@ -90,6 +90,23 @@ func (controller *Controller) _update(code string, model *models.CategoryUpdate)
 	}
 
 	return nil
+}
+
+func (controller *Controller) _upload(code string, model *models.CategoryUpload) (string, *models.Error) {
+	logger := definition.Logger
+
+	imagePath, err := controller.image.UploadCategoryIcon(code, model.Image.Name, model.Image.Buffer)
+	if err != nil {
+		logger.Error(err, "Upload category icon error", layers.File)
+		return "", errors.ImageUploadCategoryIcon.With(err)
+	}
+
+	if err = controller.categoryRepo.UpdateImage(code, imagePath); err != nil {
+		logger.Error(err, "Update category image error", layers.Database)
+		return "", errors.CategoryUpdate.With(err)
+	}
+
+	return imagePath, nil
 }
 
 func (controller *Controller) _delete(categoryCode string) *models.Error {

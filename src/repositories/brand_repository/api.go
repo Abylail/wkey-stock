@@ -37,10 +37,33 @@ func (repo *Repository) Update(id int, model *models.BrandUpdate) error {
 	entity := &entities.BrandUpdate{
 		ID:    id,
 		Title: model.Title,
-		Image: model.Image,
 	}
 
 	query := repo.Script("brand", "update")
+
+	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo *Repository) UpdateIcon(id int, filePath string) error {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	entity := &entities.BrandUpload{
+		ID:    id,
+		Image: filePath,
+	}
+
+	query := repo.Script("brand", "update_icon")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
