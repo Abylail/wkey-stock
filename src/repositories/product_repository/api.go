@@ -122,6 +122,8 @@ func (repo *Repository) CountQuery(searchQuery string) (int, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
+	searchQuery = "%" + searchQuery + "%"
+
 	query := repo.Script("product", "count_query")
 
 	var count int
