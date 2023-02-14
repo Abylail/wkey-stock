@@ -64,16 +64,16 @@ func (controller *Controller) AddREST(ctx echo.Context) error {
 }
 
 func (controller *Controller) AddSubREST(ctx echo.Context) error {
-	model := models.CategoryAdd{}
+	model := models.SubCategoryAdd{}
 	if err := ctx.Bind(&model); err != nil {
 		return errors.CategoryAddBind.With(err)
 	}
 
-	if err := controller.validateCategoryAdd(&model); err != nil {
+	if err := controller.validateCategoryAddSub(&model); err != nil {
 		return errors.CategoryAddValidate.With(err)
 	}
 
-	if err := controller._create(&model); err != nil {
+	if err := controller._createSub(&model); err != nil {
 		return controller.Error(ctx, err)
 	}
 
@@ -108,16 +108,16 @@ func (controller *Controller) UpdateSubREST(ctx echo.Context) error {
 		return errors.CategoryUpdateParam
 	}
 
-	model := models.CategoryUpdate{}
+	model := models.SubCategoryUpdate{}
 	if err := ctx.Bind(&model); err != nil {
 		return errors.CategoryUpdateBind.With(err)
 	}
 
-	if err := controller.validateCategoryUpdate(&model); err != nil {
+	if err := controller.validateCategoryUpdateSub(&model); err != nil {
 		return errors.CategoryUpdateValidate.With(err)
 	}
 
-	if err := controller._update(code, &model); err != nil {
+	if err := controller._updateSub(code, &model); err != nil {
 		return controller.Error(ctx, err)
 	}
 
@@ -153,16 +153,16 @@ func (controller *Controller) UploadSubREST(ctx echo.Context) error {
 		return errors.CategoryUploadParam
 	}
 
-	model := models.CategoryUpload{}
+	model := models.SubCategoryUpload{}
 	if err := ctx.Bind(&model); err != nil {
 		return errors.CategoryUploadBind.With(err)
 	}
 
-	if err := controller.validateCategoryUpload(&model); err != nil {
+	if err := controller.validateCategoryUploadSub(&model); err != nil {
 		return errors.CategoryUploadValidate.With(err)
 	}
 
-	imagePath, err := controller._upload(code, &model)
+	imagePath, err := controller._uploadSub(code, &model)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -189,7 +189,7 @@ func (controller *Controller) DeleteSubREST(ctx echo.Context) error {
 		return errors.CategoryDeleteParam
 	}
 
-	if err := controller._delete(categoryCode); err != nil {
+	if err := controller._deleteSub(categoryCode); err != nil {
 		return controller.Error(ctx, err)
 	}
 

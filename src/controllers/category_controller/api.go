@@ -104,7 +104,41 @@ func (controller *Controller) _create(model *models.CategoryAdd) *models.Error {
 
 	// создаем запись в БД
 	if err = controller.categoryRepo.Create(model, categoryCode, fullPath); err != nil {
-		logger.Error(err, "Update category error", layers.Database)
+		logger.Error(err, "Create category error", layers.Database)
+		return errors.CategoryAdd.With(err)
+	}
+
+	return nil
+}
+
+func (controller *Controller) _createSub(model *models.SubCategoryAdd) *models.Error {
+	logger := definition.Logger
+
+	// генерируем код категории
+	categoryCode := strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU)))
+
+	// ищем категорию с таким же кодом
+	subCategory, err := controller.subCategoryRepo.GetByCode(categoryCode)
+	if err != nil {
+		logger.Error(err, "Get sub category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	// выдаем ошибку если нашли категорию с таким же кодом
+	if subCategory != nil {
+		return errors.CategoryAlreadyExist
+	}
+
+	// загружаем иконку
+	fullPath, err := controller.image.UploadSubCategoryIcon(categoryCode, model.Image.Name, model.Image.Buffer)
+	if err != nil {
+		logger.Error(err, "Upload sub category icon error", layers.File)
+		return errors.ImageUploadCategoryIcon.With(err)
+	}
+
+	// создаем запись в БД
+	if err = controller.subCategoryRepo.Create(model, categoryCode, fullPath); err != nil {
+		logger.Error(err, "Create sub category error", layers.Database)
 		return errors.CategoryAdd.With(err)
 	}
 
@@ -116,6 +150,17 @@ func (controller *Controller) _update(code string, model *models.CategoryUpdate)
 
 	if err := controller.categoryRepo.Update(code, model); err != nil {
 		logger.Error(err, "Update category error", layers.Database)
+		return errors.CategoryUpdate.With(err)
+	}
+
+	return nil
+}
+
+func (controller *Controller) _updateSub(code string, model *models.SubCategoryUpdate) *models.Error {
+	logger := definition.Logger
+
+	if err := controller.subCategoryRepo.Update(code, model); err != nil {
+		logger.Error(err, "Update sub category error", layers.Database)
 		return errors.CategoryUpdate.With(err)
 	}
 
@@ -139,11 +184,39 @@ func (controller *Controller) _upload(code string, model *models.CategoryUpload)
 	return imagePath, nil
 }
 
+func (controller *Controller) _uploadSub(code string, model *models.SubCategoryUpload) (string, *models.Error) {
+	logger := definition.Logger
+
+	imagePath, err := controller.image.UploadSubCategoryIcon(code, model.Image.Name, model.Image.Buffer)
+	if err != nil {
+		logger.Error(err, "Upload sub category icon error", layers.File)
+		return "", errors.ImageUploadCategoryIcon.With(err)
+	}
+
+	if err = controller.subCategoryRepo.UpdateImage(code, imagePath); err != nil {
+		logger.Error(err, "Update sub category image error", layers.Database)
+		return "", errors.CategoryUpdate.With(err)
+	}
+
+	return imagePath, nil
+}
+
 func (controller *Controller) _delete(categoryCode string) *models.Error {
 	logger := definition.Logger
 
 	if err := controller.categoryRepo.Delete(categoryCode); err != nil {
 		logger.Error(err, "Delete category error", layers.Database)
+		return errors.CategoryDelete.With(err)
+	}
+
+	return nil
+}
+
+func (controller *Controller) _deleteSub(categoryCode string) *models.Error {
+	logger := definition.Logger
+
+	if err := controller.subCategoryRepo.Delete(categoryCode); err != nil {
+		logger.Error(err, "Delete sub category error", layers.Database)
 		return errors.CategoryDelete.With(err)
 	}
 

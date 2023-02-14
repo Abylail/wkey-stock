@@ -51,6 +51,49 @@ func (event *Event) UploadCategoryIcon(categoryCode, name, buffer string) (strin
 	return fullPath, nil
 }
 
+func (event *Event) UploadSubCategoryIcon(categoryCode, name, buffer string) (string, error) {
+	event.mutex.Lock()
+	defer event.mutex.Unlock()
+
+	imageExtension := filepath.Ext(name)
+
+	fullPath := subCategoryIconPath + "/" + categoryCode + "/icon" + imageExtension
+
+	// проверить существует ли папка подкатегории
+	if !folderapi.Exist(subCategoryIconPath) {
+		// если нет создаем ее
+		if err := folderapi.Create("/cdn", "subcategory"); err != nil {
+			return "", err
+		}
+	}
+
+	// проверяем существует ли уже файл
+	if fileapi.Exist(fullPath) {
+		// удаляем его если существует
+		if err := fileapi.Delete(fullPath); err != nil {
+			return "", err
+		}
+	}
+
+	// проверить существует ли папка подкатегории
+	if err := folderapi.Create(subCategoryIconPath, categoryCode); err != nil {
+		return "", err
+	}
+
+	// декодируем из base64 в байты
+	fileContent, err := base64.StdEncoding.DecodeString(buffer)
+	if err != nil {
+		return "", err
+	}
+
+	// создаем файл
+	if err = fileapi.Create(fullPath, fileContent); err != nil {
+		return "", err
+	}
+
+	return fullPath, nil
+}
+
 func (event *Event) GetCategoryIcon(categoryCode string) (string, error) {
 	event.mutex.Lock()
 	defer event.mutex.Unlock()

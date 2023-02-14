@@ -1,6 +1,7 @@
 package image_event
 
 const (
-	categoryIconPath = "/cdn/category"
-	brandIconPath    = "/cdn/brand"
+	categoryIconPath    = "/cdn/category"
+	subCategoryIconPath = "/cdn/subcategory"
+	brandIconPath       = "/cdn/brand"
 )
