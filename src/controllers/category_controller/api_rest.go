@@ -176,6 +176,8 @@ func (controller *Controller) UploadREST(ctx echo.Context) error {
 }
 
 func (controller *Controller) UploadSubREST(ctx echo.Context) error {
+	parentCode := ctx.Param("parent_code")
+
 	code := ctx.Param("code")
 	if code == "" {
 		return controller.Error(ctx, errors.CategoryUploadParam)
@@ -190,7 +192,7 @@ func (controller *Controller) UploadSubREST(ctx echo.Context) error {
 		return controller.Error(ctx, errors.CategoryUploadValidate.With(err))
 	}
 
-	imagePath, err := controller._uploadSub(code, &model)
+	imagePath, err := controller._uploadSub(parentCode, code, &model)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}

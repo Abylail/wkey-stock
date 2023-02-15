@@ -51,13 +51,13 @@ func (event *Event) UploadCategoryIcon(categoryCode, name, buffer string) (strin
 	return fullPath, nil
 }
 
-func (event *Event) UploadSubCategoryIcon(categoryCode, name, buffer string) (string, error) {
+func (event *Event) UploadSubCategoryIcon(parentCode, categoryCode, name, buffer string) (string, error) {
 	event.mutex.Lock()
 	defer event.mutex.Unlock()
 
 	imageExtension := filepath.Ext(name)
 
-	fullPath := subCategoryIconPath + "/" + categoryCode + "/icon" + imageExtension
+	fullPath := subCategoryIconPath + "/" + parentCode + "_" + categoryCode + "/icon" + imageExtension
 
 	// проверить существует ли папка подкатегории
 	if !folderapi.Exist(subCategoryIconPath) {

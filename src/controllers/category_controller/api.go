@@ -276,10 +276,20 @@ func (controller *Controller) _upload(code string, model *models.CategoryUpload)
 	return imagePath, nil
 }
 
-func (controller *Controller) _uploadSub(code string, model *models.SubCategoryUpload) (string, *models.Error) {
+func (controller *Controller) _uploadSub(parentCode, code string, model *models.SubCategoryUpload) (string, *models.Error) {
 	logger := definition.Logger
 
-	imagePath, err := controller.image.UploadSubCategoryIcon(code, model.Image.Name, model.Image.Buffer)
+	category, err := controller.categoryRepo.GetByCode(parentCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return "", errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return "", errors.CategoryNotFound
+	}
+
+	imagePath, err := controller.image.UploadSubCategoryIcon(parentCode, code, model.Image.Name, model.Image.Buffer)
 	if err != nil {
 		logger.Error(err, "Upload sub category icon error", layers.File)
 		return "", errors.ImageUploadCategoryIcon.With(err)
