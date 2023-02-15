@@ -9,10 +9,10 @@ type CategoryGet struct {
 }
 
 type CategoryCreate struct {
-	Code     string `db:"code"`
-	TitleRU  string `db:"title_ru"`
-	TitleKZ  string `db:"title_kz"`
-	IconPath string `db:"icon"`
+	Code     string  `db:"code"`
+	TitleRU  string  `db:"title_ru"`
+	TitleKZ  string  `db:"title_kz"`
+	IconPath *string `db:"icon"`
 }
 
 type CategoryUpdate struct {

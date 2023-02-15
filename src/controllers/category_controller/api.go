@@ -82,6 +82,7 @@ func (controller *Controller) _create(model *models.CategoryAdd) *models.Error {
 
 	// генерируем код категории
 	categoryCode := strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU)))
+	categoryCode = strings.ReplaceAll(categoryCode, " ", "_")
 
 	// ищем категорию с таким же кодом
 	category, err := controller.categoryRepo.GetByCode(categoryCode)
@@ -96,10 +97,15 @@ func (controller *Controller) _create(model *models.CategoryAdd) *models.Error {
 	}
 
 	// загружаем иконку
-	fullPath, err := controller.image.UploadCategoryIcon(categoryCode, model.Image.Name, model.Image.Buffer)
-	if err != nil {
-		logger.Error(err, "Upload category icon error", layers.File)
-		return errors.ImageUploadCategoryIcon.With(err)
+	var fullPath *string
+	if model.Image != nil {
+		uploadedPath, err := controller.image.UploadCategoryIcon(categoryCode, model.Image.Name, model.Image.Buffer)
+		if err != nil {
+			logger.Error(err, "Upload category icon error", layers.File)
+			return errors.ImageUploadCategoryIcon.With(err)
+		}
+
+		fullPath = &uploadedPath
 	}
 
 	// создаем запись в БД

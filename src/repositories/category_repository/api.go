@@ -79,7 +79,7 @@ func (repo *Repository) GetByCode(code string) (*entities.CategoryGet, error) {
 	return nil, nil
 }
 
-func (repo *Repository) Create(model *models.CategoryAdd, categoryCode, iconPath string) error {
+func (repo *Repository) Create(model *models.CategoryAdd, categoryCode string, iconPath *string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
