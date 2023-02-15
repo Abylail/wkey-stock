@@ -76,7 +76,7 @@ func (event *Event) UploadSubCategoryIcon(parentCode, categoryCode, name, buffer
 	}
 
 	// проверить существует ли папка подкатегории
-	if err := folderapi.Create(subCategoryIconPath, categoryCode); err != nil {
+	if err := folderapi.Create(subCategoryIconPath, parentCode+"_"+categoryCode); err != nil {
 		return "", err
 	}
 
