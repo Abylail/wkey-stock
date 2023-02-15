@@ -131,13 +131,14 @@ func (repo *Repository) Update(parentID int, code string, model *models.SubCateg
 	return nil
 }
 
-func (repo *Repository) UpdateImage(code string, imagePath string) error {
+func (repo *Repository) UpdateImage(parentID int, code, imagePath string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	entity := &entities.SubCategoryUpdateImage{
-		Code:  code,
-		Image: imagePath,
+		Code:     code,
+		Image:    imagePath,
+		ParentID: parentID,
 	}
 
 	query := repo.Script("sub_category", "update_image")

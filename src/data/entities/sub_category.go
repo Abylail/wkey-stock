@@ -24,8 +24,9 @@ type SubCategoryUpdate struct {
 }
 
 type SubCategoryUpdateImage struct {
-	Code  string `db:"code"`
-	Image string `db:"icon"`
+	Code     string `db:"code"`
+	Image    string `db:"icon"`
+	ParentID int    `db:"parent_id"`
 }
 
 type SubCategoryUpdateActive struct {
