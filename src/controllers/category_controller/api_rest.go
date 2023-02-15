@@ -60,9 +60,9 @@ func (controller *Controller) GetAdminSubREST(ctx echo.Context) error {
 
 func (controller *Controller) GetAdminSingleSubREST(ctx echo.Context) error {
 	parentCode := ctx.Param("parent_code")
-	searchQuery := ctx.QueryParam("query")
+	code := ctx.Param("code")
 
-	list, err := controller._getAdminSubSingle(parentCode, searchQuery)
+	list, err := controller._getAdminSubSingle(parentCode, code)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
