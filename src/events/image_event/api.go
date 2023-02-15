@@ -2,6 +2,7 @@ package image_event
 
 import (
 	"encoding/base64"
+	"github.com/google/uuid"
 	"github.com/lowl11/lazyfile/fileapi"
 	"github.com/lowl11/lazyfile/folderapi"
 	"path/filepath"
@@ -14,7 +15,8 @@ func (event *Event) UploadCategoryIcon(categoryCode, name, buffer string) (strin
 
 	imageExtension := filepath.Ext(name)
 
-	fullPath := categoryIconPath + "/" + categoryCode + "/icon" + imageExtension
+	fileName := uuid.New().String()
+	fullPath := categoryIconPath + "/" + categoryCode + "/" + fileName + imageExtension
 
 	// проверить существует ли папка категории
 	if !folderapi.Exist(categoryIconPath) {
@@ -57,7 +59,8 @@ func (event *Event) UploadSubCategoryIcon(parentCode, categoryCode, name, buffer
 
 	imageExtension := filepath.Ext(name)
 
-	fullPath := subCategoryIconPath + "/" + parentCode + "_" + categoryCode + "/icon" + imageExtension
+	fileName := uuid.New().String()
+	fullPath := subCategoryIconPath + "/" + parentCode + "_" + categoryCode + "/" + fileName + imageExtension
 
 	// проверить существует ли папка подкатегории
 	if !folderapi.Exist(subCategoryIconPath) {
@@ -107,7 +110,8 @@ func (event *Event) UploadBrandIcon(brandID int, name, buffer string) (string, e
 	imageExtension := filepath.Ext(name)
 	brandText := strconv.Itoa(brandID)
 
-	fullPath := brandIconPath + "/" + brandText + "/icon" + imageExtension
+	fileName := uuid.New().String()
+	fullPath := brandIconPath + "/" + brandText + "/" + fileName + imageExtension
 
 	// проверить существует ли папка бренда
 	if !folderapi.Exist(brandIconPath) {
