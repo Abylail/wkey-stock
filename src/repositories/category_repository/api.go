@@ -153,6 +153,14 @@ func (repo *Repository) UpdateImage(code string, imagePath string) error {
 	return nil
 }
 
+func (repo *Repository) Activate(code string) error {
+	return repo.setActive(code, statusActive)
+}
+
+func (repo *Repository) Deactivate(code string) error {
+	return repo.setActive(code, statusInactive)
+}
+
 func (repo *Repository) Delete(code string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()

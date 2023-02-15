@@ -226,3 +226,49 @@ func (controller *Controller) DeleteSubREST(ctx echo.Context) error {
 
 	return controller.Ok(ctx, "OK")
 }
+
+func (controller *Controller) ActivateREST(ctx echo.Context) error {
+	code := ctx.Param("code")
+
+	if err := controller._activate(code); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, "OK")
+}
+
+func (controller *Controller) DeactivateREST(ctx echo.Context) error {
+	code := ctx.Param("code")
+
+	if err := controller._deactivate(code); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, "OK")
+}
+
+func (controller *Controller) ActivateSubREST(ctx echo.Context) error {
+	parentCode := ctx.Param("parent_code")
+	code := ctx.Param("code")
+
+	if err := controller._activateSub(parentCode, code); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, "OK")
+}
+
+func (controller *Controller) DeactivateSubREST(ctx echo.Context) error {
+	parentCode := ctx.Param("parent_code")
+	code := ctx.Param("code")
+
+	if err := controller._deactivateSub(parentCode, code); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, "OK")
+}
+
+func (controller *Controller) BindProductListREST(ctx echo.Context) error {
+	return controller.Ok(ctx, "OK")
+}

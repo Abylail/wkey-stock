@@ -26,3 +26,8 @@ type CategoryUpdateImage struct {
 	Code  string `db:"code"`
 	Image string `db:"image"`
 }
+
+type CategoryUpdateActive struct {
+	Code   string `db:"code"`
+	Status string `db:"status"`
+}

@@ -42,6 +42,9 @@ func setCategory(server *echo.Echo, controller *category_controller.Controller) 
 	adminGroup.PUT("/upload/:code", controller.UploadREST)
 	adminGroup.DELETE("/delete/:code", controller.DeleteREST)
 
+	adminGroup.POST("/activate/:code", controller.ActivateREST)
+	adminGroup.POST("/deactivate/:code", controller.DeactivateREST)
+
 	clientGroup := server.Group("/api/v1/stock/category")
 
 	clientGroup.GET("/get", controller.GetClientREST)
@@ -56,6 +59,11 @@ func setSubCategory(server *echo.Echo, controller *category_controller.Controlle
 	adminGroup.PUT("/update/:code", controller.UpdateSubREST)
 	adminGroup.PUT("/upload/:code", controller.UploadSubREST)
 	adminGroup.DELETE("/delete/:code", controller.DeleteSubREST)
+
+	adminGroup.POST("/activate/:code", controller.ActivateSubREST)
+	adminGroup.POST("/deactivate/:code", controller.DeactivateSubREST)
+
+	adminGroup.POST("/bind", controller.BindProductListREST)
 
 	clientGroup := server.Group("/api/v1/stock/category/:par_code/sub")
 

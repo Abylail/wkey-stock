@@ -80,6 +80,14 @@ var (
 		TechMessage:     "Update category error",
 		BusinessMessage: defaultMessage,
 	}
+	CategoryUpdateStatus = &models.Error{
+		TechMessage:     "Update category status error",
+		BusinessMessage: defaultMessage,
+	}
+	SubCategoryUpdateStatus = &models.Error{
+		TechMessage:     "Update sub category status error",
+		BusinessMessage: defaultMessage,
+	}
 	CategoryDelete = &models.Error{
 		TechMessage:     "Delete category error",
 		BusinessMessage: defaultMessage,

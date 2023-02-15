@@ -373,3 +373,67 @@ func (controller *Controller) _deleteSub(parentCode, categoryCode string) *model
 
 	return nil
 }
+
+func (controller *Controller) _activate(code string) *models.Error {
+	logger := definition.Logger
+
+	if err := controller.categoryRepo.Activate(code); err != nil {
+		logger.Error(err, "Update category status 'active' error", layers.Database)
+		return errors.CategoryUpdateStatus.With(err)
+	}
+
+	return nil
+}
+
+func (controller *Controller) _deactivate(code string) *models.Error {
+	logger := definition.Logger
+
+	if err := controller.categoryRepo.Deactivate(code); err != nil {
+		logger.Error(err, "Update category status 'inactive' error", layers.Database)
+		return errors.CategoryUpdateStatus.With(err)
+	}
+
+	return nil
+}
+
+func (controller *Controller) _activateSub(parentCode, code string) *models.Error {
+	logger := definition.Logger
+
+	category, err := controller.categoryRepo.GetByCode(parentCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return errors.CategoryNotFound
+	}
+
+	if err = controller.subCategoryRepo.Activate(category.ID, code); err != nil {
+		logger.Error(err, "Update sub category status 'active' error", layers.Database)
+		return errors.SubCategoryUpdateStatus.With(err)
+	}
+
+	return nil
+}
+
+func (controller *Controller) _deactivateSub(parentCode, code string) *models.Error {
+	logger := definition.Logger
+
+	category, err := controller.categoryRepo.GetByCode(parentCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return errors.CategoryNotFound
+	}
+
+	if err = controller.subCategoryRepo.Deactivate(category.ID, code); err != nil {
+		logger.Error(err, "Update sub category status 'inactive' error", layers.Database)
+		return errors.SubCategoryUpdateStatus.With(err)
+	}
+
+	return nil
+}

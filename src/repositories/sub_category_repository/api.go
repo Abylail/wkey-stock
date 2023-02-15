@@ -187,3 +187,11 @@ func (repo *Repository) Count(parentID int) (int, error) {
 
 	return count, nil
 }
+
+func (repo *Repository) Activate(parentID int, code string) error {
+	return repo.setActive(parentID, code, statusActive)
+}
+
+func (repo *Repository) Deactivate(parentID int, code string) error {
+	return repo.setActive(parentID, code, statusInactive)
+}

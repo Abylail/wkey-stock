@@ -27,3 +27,9 @@ type SubCategoryUpdateImage struct {
 	Code  string `db:"code"`
 	Image string `db:"image"`
 }
+
+type SubCategoryUpdateActive struct {
+	Code     string `db:"code"`
+	ParentID int    `db:"parent_id"`
+	Status   string `db:"status"`
+}
