@@ -314,7 +314,7 @@ func (controller *Controller) _uploadSub(parentCode, code string, model *models.
 		return "", errors.ImageUploadCategoryIcon.With(err)
 	}
 
-	if err = controller.subCategoryRepo.UpdateImage(code, imagePath); err != nil {
+	if err = controller.subCategoryRepo.UpdateImage(category.ID, code, imagePath); err != nil {
 		logger.Error(err, "Update sub category image error", layers.Database)
 		return "", errors.CategoryUpdate.With(err)
 	}
