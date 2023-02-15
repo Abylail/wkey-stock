@@ -7,6 +7,10 @@ var (
 		TechMessage:     "Category not found",
 		BusinessMessage: defaultMessage,
 	}
+	SubCategoryNotFound = &models.Error{
+		TechMessage:     "Sub category not found",
+		BusinessMessage: defaultMessage,
+	}
 	CategoryAlreadyExist = &models.Error{
 		TechMessage:     "Category already exist",
 		BusinessMessage: defaultMessage,

@@ -6,6 +6,7 @@ type SubCategoryAdminGet struct {
 	TitleRU string  `json:"title_ru"`
 	TitleKZ string  `json:"title_kz"`
 	Image   *string `json:"image"`
+	Status  string  `json:"status"`
 }
 
 type SubCategoryClientGet struct {

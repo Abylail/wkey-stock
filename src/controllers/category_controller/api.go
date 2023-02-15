@@ -44,6 +44,7 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 				TitleRU: item.TitleRU,
 				TitleKZ: item.TitleKZ,
 				Image:   item.Icon,
+				Status:  item.Status,
 			}
 		}).
 		Slice()
@@ -60,12 +61,17 @@ func (controller *Controller) _getAdminSingle(code string) (*models.CategoryAdmi
 		return nil, errors.CategoryGetByCode.With(err)
 	}
 
+	if category == nil {
+		return nil, errors.CategoryNotFound
+	}
+
 	return &models.CategoryAdminGet{
 		ID:      category.ID,
 		Code:    category.Code,
 		TitleRU: category.TitleRU,
 		TitleKZ: category.TitleKZ,
 		Image:   category.Icon,
+		Status:  category.Status,
 	}, nil
 }
 
@@ -106,9 +112,43 @@ func (controller *Controller) _getAdminSub(parentCode string, searchQuery string
 				TitleRU: item.TitleRU,
 				TitleKZ: item.TitleKZ,
 				Image:   item.Icon,
+				Status:  item.Status,
 			}
 		}).
 		Slice(), nil
+}
+
+func (controller *Controller) _getAdminSubSingle(parentCode, code string) (*models.SubCategoryAdminGet, *models.Error) {
+	logger := definition.Logger
+
+	category, err := controller.categoryRepo.GetByCode(parentCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return nil, errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return nil, errors.CategoryNotFound
+	}
+
+	subCategory, err := controller.subCategoryRepo.GetByCode(parentCode, code)
+	if err != nil {
+		logger.Error(err, "Get sub category by code error", layers.Database)
+		return nil, errors.CategoryGetByCode.With(err)
+	}
+
+	if subCategory == nil {
+		return nil, errors.SubCategoryNotFound
+	}
+
+	return &models.SubCategoryAdminGet{
+		ID:      subCategory.ID,
+		Code:    subCategory.Code,
+		TitleRU: subCategory.TitleRU,
+		TitleKZ: subCategory.TitleKZ,
+		Image:   subCategory.Icon,
+		Status:  subCategory.Status,
+	}, nil
 }
 
 func (controller *Controller) _create(model *models.CategoryAdd) *models.Error {
@@ -156,7 +196,7 @@ func (controller *Controller) _createSub(parentCode string, model *models.SubCat
 	categoryCode := strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU)))
 
 	// ищем категорию с таким же кодом
-	subCategory, err := controller.subCategoryRepo.GetByCode(categoryCode)
+	subCategory, err := controller.subCategoryRepo.GetByCode(parentCode, categoryCode)
 	if err != nil {
 		logger.Error(err, "Get sub category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
