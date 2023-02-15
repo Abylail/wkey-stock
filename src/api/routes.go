@@ -51,6 +51,7 @@ func setSubCategory(server *echo.Echo, controller *category_controller.Controlle
 	adminGroup := server.Group("/admin/api/v1/stock/category/:parent_code/sub")
 
 	adminGroup.GET("/get", controller.GetAdminSubREST)
+	adminGroup.GET("/get/:code", controller.GetAdminSingleSubREST)
 	adminGroup.POST("/add", controller.AddSubREST)
 	adminGroup.PUT("/update/:code", controller.UpdateSubREST)
 	adminGroup.PUT("/upload/:code", controller.UploadSubREST)

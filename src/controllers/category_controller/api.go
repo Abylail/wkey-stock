@@ -131,7 +131,7 @@ func (controller *Controller) _getAdminSubSingle(parentCode, code string) (*mode
 		return nil, errors.CategoryNotFound
 	}
 
-	subCategory, err := controller.subCategoryRepo.GetByCode(parentCode, code)
+	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, code)
 	if err != nil {
 		logger.Error(err, "Get sub category by code error", layers.Database)
 		return nil, errors.CategoryGetByCode.With(err)
@@ -151,7 +151,7 @@ func (controller *Controller) _getAdminSubSingle(parentCode, code string) (*mode
 	}, nil
 }
 
-func (controller *Controller) _create(model *models.CategoryAdd) *models.Error {
+func (controller *Controller) _create(model *models.CategoryAdd) (string, *models.Error) {
 	logger := definition.Logger
 
 	// генерируем код категории
@@ -162,21 +162,21 @@ func (controller *Controller) _create(model *models.CategoryAdd) *models.Error {
 	category, err := controller.categoryRepo.GetByCode(categoryCode)
 	if err != nil {
 		logger.Error(err, "Get category by code error", layers.Database)
-		return errors.CategoryGetByCode.With(err)
+		return "", errors.CategoryGetByCode.With(err)
 	}
 
 	// выдаем ошибку если нашли категорию с таким же кодом
 	if category != nil {
-		return errors.CategoryAlreadyExist
+		return "", errors.CategoryAlreadyExist
 	}
 
 	// создаем запись в БД
 	if err = controller.categoryRepo.Create(model, categoryCode); err != nil {
 		logger.Error(err, "Create category error", layers.Database)
-		return errors.CategoryAdd.With(err)
+		return "", errors.CategoryAdd.With(err)
 	}
 
-	return nil
+	return categoryCode, nil
 }
 
 func (controller *Controller) _createSub(parentCode string, model *models.SubCategoryAdd) *models.Error {
@@ -196,7 +196,7 @@ func (controller *Controller) _createSub(parentCode string, model *models.SubCat
 	categoryCode := strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU)))
 
 	// ищем категорию с таким же кодом
-	subCategory, err := controller.subCategoryRepo.GetByCode(parentCode, categoryCode)
+	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, categoryCode)
 	if err != nil {
 		logger.Error(err, "Get sub category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
