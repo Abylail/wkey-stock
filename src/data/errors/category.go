@@ -11,6 +11,11 @@ var (
 		TechMessage:     "Sub category not found",
 		BusinessMessage: defaultMessage,
 	}
+	CategoryHasSubCategories = &models.Error{
+		TechMessage:     "Category is not empty",
+		BusinessMessage: defaultMessage,
+	}
+
 	CategoryAlreadyExist = &models.Error{
 		TechMessage:     "Category already exist",
 		BusinessMessage: defaultMessage,
@@ -60,6 +65,10 @@ var (
 		BusinessMessage: defaultMessage,
 	}
 	CategoryGetByCode = &models.Error{
+		TechMessage:     "Get category by code error",
+		BusinessMessage: defaultMessage,
+	}
+	CategoryGetCount = &models.Error{
 		TechMessage:     "Get category by code error",
 		BusinessMessage: defaultMessage,
 	}

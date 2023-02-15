@@ -173,3 +173,17 @@ func (repo *Repository) Delete(parentID int, code string) error {
 
 	return nil
 }
+
+func (repo *Repository) Count(parentID int) (int, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("sub_category", "count")
+
+	var count int
+	if err := repo.connection.QueryRowxContext(ctx, query, parentID).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}

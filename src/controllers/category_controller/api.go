@@ -306,7 +306,27 @@ func (controller *Controller) _uploadSub(parentCode, code string, model *models.
 func (controller *Controller) _delete(categoryCode string) *models.Error {
 	logger := definition.Logger
 
-	if err := controller.categoryRepo.Delete(categoryCode); err != nil {
+	category, err := controller.categoryRepo.GetByCode(categoryCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return errors.CategoryNotFound
+	}
+
+	count, err := controller.subCategoryRepo.Count(category.ID)
+	if err != nil {
+		logger.Error(err, "Get count sub categories by parent id error", layers.Database)
+		return errors.CategoryGetCount.With(err)
+	}
+
+	if count > 0 {
+		return errors.CategoryHasSubCategories
+	}
+
+	if err = controller.categoryRepo.Delete(categoryCode); err != nil {
 		logger.Error(err, "Delete category error", layers.Database)
 		return errors.CategoryDelete.With(err)
 	}
