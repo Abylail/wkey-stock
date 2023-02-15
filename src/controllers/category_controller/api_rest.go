@@ -100,11 +100,12 @@ func (controller *Controller) AddSubREST(ctx echo.Context) error {
 		return controller.Error(ctx, errors.CategoryAddValidate.With(err))
 	}
 
-	if err := controller._createSub(parentCode, &model); err != nil {
+	subCategoryCode, err := controller._createSub(parentCode, &model)
+	if err != nil {
 		return controller.Error(ctx, err)
 	}
 
-	return controller.Ok(ctx, "OK")
+	return controller.Ok(ctx, subCategoryCode)
 }
 
 func (controller *Controller) UpdateREST(ctx echo.Context) error {
