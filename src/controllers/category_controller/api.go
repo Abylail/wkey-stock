@@ -164,6 +164,16 @@ func (controller *Controller) _updateSub(code string, model *models.SubCategoryU
 func (controller *Controller) _upload(code string, model *models.CategoryUpload) (string, *models.Error) {
 	logger := definition.Logger
 
+	category, err := controller.categoryRepo.GetByCode(code)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return "", errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return "", errors.CategoryNotFound
+	}
+
 	imagePath, err := controller.image.UploadCategoryIcon(code, model.Image.Name, model.Image.Buffer)
 	if err != nil {
 		logger.Error(err, "Upload category icon error", layers.File)

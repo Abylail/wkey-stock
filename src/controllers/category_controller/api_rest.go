@@ -49,11 +49,11 @@ func (controller *Controller) GetAdminSubREST(ctx echo.Context) error {
 func (controller *Controller) AddREST(ctx echo.Context) error {
 	model := models.CategoryAdd{}
 	if err := ctx.Bind(&model); err != nil {
-		return errors.CategoryAddBind.With(err)
+		return controller.Error(ctx, errors.CategoryAddBind.With(err))
 	}
 
 	if err := controller.validateCategoryAdd(&model); err != nil {
-		return errors.CategoryAddValidate.With(err)
+		return controller.Error(ctx, errors.CategoryAddValidate.With(err))
 	}
 
 	if err := controller._create(&model); err != nil {
@@ -66,11 +66,11 @@ func (controller *Controller) AddREST(ctx echo.Context) error {
 func (controller *Controller) AddSubREST(ctx echo.Context) error {
 	model := models.SubCategoryAdd{}
 	if err := ctx.Bind(&model); err != nil {
-		return errors.CategoryAddBind.With(err)
+		return controller.Error(ctx, errors.CategoryAddBind.With(err))
 	}
 
 	if err := controller.validateCategoryAddSub(&model); err != nil {
-		return errors.CategoryAddValidate.With(err)
+		return controller.Error(ctx, errors.CategoryAddValidate.With(err))
 	}
 
 	if err := controller._createSub(&model); err != nil {
@@ -83,16 +83,16 @@ func (controller *Controller) AddSubREST(ctx echo.Context) error {
 func (controller *Controller) UpdateREST(ctx echo.Context) error {
 	code := ctx.Param("code")
 	if code == "" {
-		return errors.CategoryUpdateParam
+		return controller.Error(ctx, errors.CategoryUpdateParam)
 	}
 
 	model := models.CategoryUpdate{}
 	if err := ctx.Bind(&model); err != nil {
-		return errors.CategoryUpdateBind.With(err)
+		return controller.Error(ctx, errors.CategoryUpdateBind.With(err))
 	}
 
 	if err := controller.validateCategoryUpdate(&model); err != nil {
-		return errors.CategoryUpdateValidate.With(err)
+		return controller.Error(ctx, errors.CategoryUpdateValidate.With(err))
 	}
 
 	if err := controller._update(code, &model); err != nil {
@@ -105,16 +105,16 @@ func (controller *Controller) UpdateREST(ctx echo.Context) error {
 func (controller *Controller) UpdateSubREST(ctx echo.Context) error {
 	code := ctx.Param("code")
 	if code == "" {
-		return errors.CategoryUpdateParam
+		return controller.Error(ctx, errors.CategoryUpdateParam)
 	}
 
 	model := models.SubCategoryUpdate{}
 	if err := ctx.Bind(&model); err != nil {
-		return errors.CategoryUpdateBind.With(err)
+		return controller.Error(ctx, errors.CategoryUpdateBind.With(err))
 	}
 
 	if err := controller.validateCategoryUpdateSub(&model); err != nil {
-		return errors.CategoryUpdateValidate.With(err)
+		return controller.Error(ctx, errors.CategoryUpdateValidate.With(err))
 	}
 
 	if err := controller._updateSub(code, &model); err != nil {
@@ -127,16 +127,16 @@ func (controller *Controller) UpdateSubREST(ctx echo.Context) error {
 func (controller *Controller) UploadREST(ctx echo.Context) error {
 	code := ctx.Param("code")
 	if code == "" {
-		return errors.CategoryUploadParam
+		return controller.Error(ctx, errors.CategoryUploadParam)
 	}
 
 	model := models.CategoryUpload{}
 	if err := ctx.Bind(&model); err != nil {
-		return errors.CategoryUploadBind.With(err)
+		return controller.Error(ctx, errors.CategoryUploadBind.With(err))
 	}
 
 	if err := controller.validateCategoryUpload(&model); err != nil {
-		return errors.CategoryUploadValidate.With(err)
+		return controller.Error(ctx, errors.CategoryUploadValidate.With(err))
 	}
 
 	imagePath, err := controller._upload(code, &model)
@@ -150,16 +150,16 @@ func (controller *Controller) UploadREST(ctx echo.Context) error {
 func (controller *Controller) UploadSubREST(ctx echo.Context) error {
 	code := ctx.Param("code")
 	if code == "" {
-		return errors.CategoryUploadParam
+		return controller.Error(ctx, errors.CategoryUploadParam)
 	}
 
 	model := models.SubCategoryUpload{}
 	if err := ctx.Bind(&model); err != nil {
-		return errors.CategoryUploadBind.With(err)
+		return controller.Error(ctx, errors.CategoryUploadBind.With(err))
 	}
 
 	if err := controller.validateCategoryUploadSub(&model); err != nil {
-		return errors.CategoryUploadValidate.With(err)
+		return controller.Error(ctx, errors.CategoryUploadValidate.With(err))
 	}
 
 	imagePath, err := controller._uploadSub(code, &model)
@@ -173,7 +173,7 @@ func (controller *Controller) UploadSubREST(ctx echo.Context) error {
 func (controller *Controller) DeleteREST(ctx echo.Context) error {
 	categoryCode := ctx.Param("code")
 	if categoryCode == "" {
-		return errors.CategoryDeleteParam
+		return controller.Error(ctx, errors.CategoryDeleteParam)
 	}
 
 	if err := controller._delete(categoryCode); err != nil {
@@ -186,7 +186,7 @@ func (controller *Controller) DeleteREST(ctx echo.Context) error {
 func (controller *Controller) DeleteSubREST(ctx echo.Context) error {
 	categoryCode := ctx.Param("code")
 	if categoryCode == "" {
-		return errors.CategoryDeleteParam
+		return controller.Error(ctx, errors.CategoryDeleteParam)
 	}
 
 	if err := controller._deleteSub(categoryCode); err != nil {
