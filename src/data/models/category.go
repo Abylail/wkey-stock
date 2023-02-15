@@ -1,11 +1,11 @@
 package models
 
 type CategoryAdminGet struct {
-	ID      int    `json:"id"`
-	Code    string `json:"code"`
-	TitleRU string `json:"title_ru"`
-	TitleKZ string `json:"title_kz"`
-	Image   string `json:"image"`
+	ID      int     `json:"id"`
+	Code    string  `json:"code"`
+	TitleRU string  `json:"title_ru"`
+	TitleKZ string  `json:"title_kz"`
+	Image   *string `json:"image"`
 }
 
 type CategoryClientGet struct {
@@ -16,7 +16,6 @@ type CategoryClientGet struct {
 type CategoryAdd struct {
 	TitleRU string `json:"title_ru"`
 	TitleKZ string `json:"title_kz"`
-	Image   *File  `json:"image"`
 }
 
 type CategoryUpdate struct {

@@ -79,15 +79,14 @@ func (repo *Repository) GetByCode(code string) (*entities.CategoryGet, error) {
 	return nil, nil
 }
 
-func (repo *Repository) Create(model *models.CategoryAdd, categoryCode string, iconPath *string) error {
+func (repo *Repository) Create(model *models.CategoryAdd, categoryCode string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	entity := &entities.CategoryCreate{
-		Code:     categoryCode,
-		TitleRU:  model.TitleRU,
-		TitleKZ:  model.TitleKZ,
-		IconPath: iconPath,
+		Code:    categoryCode,
+		TitleRU: model.TitleRU,
+		TitleKZ: model.TitleKZ,
 	}
 
 	query := repo.Script("category", "create")

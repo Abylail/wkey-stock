@@ -96,20 +96,8 @@ func (controller *Controller) _create(model *models.CategoryAdd) *models.Error {
 		return errors.CategoryAlreadyExist
 	}
 
-	// загружаем иконку
-	var fullPath *string
-	if model.Image != nil {
-		uploadedPath, err := controller.image.UploadCategoryIcon(categoryCode, model.Image.Name, model.Image.Buffer)
-		if err != nil {
-			logger.Error(err, "Upload category icon error", layers.File)
-			return errors.ImageUploadCategoryIcon.With(err)
-		}
-
-		fullPath = &uploadedPath
-	}
-
 	// создаем запись в БД
-	if err = controller.categoryRepo.Create(model, categoryCode, fullPath); err != nil {
+	if err = controller.categoryRepo.Create(model, categoryCode); err != nil {
 		logger.Error(err, "Create category error", layers.Database)
 		return errors.CategoryAdd.With(err)
 	}

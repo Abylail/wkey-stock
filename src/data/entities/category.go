@@ -1,11 +1,11 @@
 package entities
 
 type CategoryGet struct {
-	ID      int    `db:"id"`
-	Code    string `db:"code"`
-	TitleRU string `db:"title_ru"`
-	TitleKZ string `db:"title_kz"`
-	Icon    string `db:"icon"`
+	ID      int     `db:"id"`
+	Code    string  `db:"code"`
+	TitleRU string  `db:"title_ru"`
+	TitleKZ string  `db:"title_kz"`
+	Icon    *string `db:"icon"`
 }
 
 type CategoryCreate struct {
