@@ -51,6 +51,24 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 	return categories, nil
 }
 
+func (controller *Controller) _getAdminSingle(code string) (*models.CategoryAdminGet, *models.Error) {
+	logger := definition.Logger
+
+	category, err := controller.categoryRepo.GetByCode(code)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return nil, errors.CategoryGetByCode.With(err)
+	}
+
+	return &models.CategoryAdminGet{
+		ID:      category.ID,
+		Code:    category.Code,
+		TitleRU: category.TitleRU,
+		TitleKZ: category.TitleKZ,
+		Image:   category.Icon,
+	}, nil
+}
+
 func (controller *Controller) _getAdminSub(parentCode string, searchQuery string) ([]models.SubCategoryAdminGet, *models.Error) {
 	logger := definition.Logger
 
@@ -121,8 +139,18 @@ func (controller *Controller) _create(model *models.CategoryAdd) *models.Error {
 	return nil
 }
 
-func (controller *Controller) _createSub(model *models.SubCategoryAdd) *models.Error {
+func (controller *Controller) _createSub(parentCode string, model *models.SubCategoryAdd) *models.Error {
 	logger := definition.Logger
+
+	category, err := controller.categoryRepo.GetByCode(parentCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return errors.CategoryNotFound
+	}
 
 	// генерируем код категории
 	categoryCode := strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU)))

@@ -35,6 +35,17 @@ func (controller *Controller) GetAdminREST(ctx echo.Context) error {
 	return controller.Ok(ctx, list)
 }
 
+func (controller *Controller) GetAdminSingleREST(ctx echo.Context) error {
+	code := ctx.Param("code")
+
+	category, err := controller._getAdminSingle(code)
+	if err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, category)
+}
+
 func (controller *Controller) GetAdminSubREST(ctx echo.Context) error {
 	parentCode := ctx.Param("parent_code")
 	searchQuery := ctx.QueryParam("query")
@@ -65,6 +76,8 @@ func (controller *Controller) AddREST(ctx echo.Context) error {
 }
 
 func (controller *Controller) AddSubREST(ctx echo.Context) error {
+	parentCode := ctx.Param("parent_code")
+
 	model := models.SubCategoryAdd{}
 	if err := ctx.Bind(&model); err != nil {
 		return controller.Error(ctx, errors.CategoryAddBind.With(err))
@@ -74,7 +87,7 @@ func (controller *Controller) AddSubREST(ctx echo.Context) error {
 		return controller.Error(ctx, errors.CategoryAddValidate.With(err))
 	}
 
-	if err := controller._createSub(&model); err != nil {
+	if err := controller._createSub(parentCode, &model); err != nil {
 		return controller.Error(ctx, err)
 	}
 

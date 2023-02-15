@@ -36,6 +36,7 @@ func setCategory(server *echo.Echo, controller *category_controller.Controller) 
 	adminGroup := server.Group("/admin/api/v1/stock/category")
 
 	adminGroup.GET("/get", controller.GetAdminREST)
+	adminGroup.GET("/get/:code", controller.GetAdminSingleREST)
 	adminGroup.POST("/add", controller.AddREST)
 	adminGroup.PUT("/update/:code", controller.UpdateREST)
 	adminGroup.PUT("/upload/:code", controller.UploadREST)

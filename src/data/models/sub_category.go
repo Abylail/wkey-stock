@@ -16,7 +16,6 @@ type SubCategoryClientGet struct {
 type SubCategoryAdd struct {
 	TitleRU string `json:"title_ru"`
 	TitleKZ string `json:"title_kz"`
-	Image   *File  `json:"Image"`
 }
 
 type SubCategoryUpdate struct {
