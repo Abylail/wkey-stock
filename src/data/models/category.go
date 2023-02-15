@@ -1,6 +1,17 @@
 package models
 
-type CategoryAdminGet struct {
+type CategoryAdminGetSingle struct {
+	ID      int     `json:"id"`
+	Code    string  `json:"code"`
+	TitleRU string  `json:"title_ru"`
+	TitleKZ string  `json:"title_kz"`
+	Image   *string `json:"image"`
+	Status  string  `json:"status"`
+
+	SubCategories []SubCategoryAdminGet `json:"sub_categories"`
+}
+
+type CategoryAdminItem struct {
 	ID      int     `json:"id"`
 	Code    string  `json:"code"`
 	TitleRU string  `json:"title_ru"`

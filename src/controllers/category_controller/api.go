@@ -19,7 +19,7 @@ func (controller *Controller) _getClientSub() ([]models.SubCategoryClientGet, *m
 	return nil, nil
 }
 
-func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAdminGet, *models.Error) {
+func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAdminItem, *models.Error) {
 	var list []entities.CategoryGet
 	var err error
 
@@ -33,12 +33,12 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 	}
 
 	if len(list) == 0 {
-		return []models.CategoryAdminGet{}, nil
+		return []models.CategoryAdminItem{}, nil
 	}
 
-	categories := type_list.NewWithList[entities.CategoryGet, models.CategoryAdminGet](list...).
-		Select(func(item entities.CategoryGet) models.CategoryAdminGet {
-			return models.CategoryAdminGet{
+	categories := type_list.NewWithList[entities.CategoryGet, models.CategoryAdminItem](list...).
+		Select(func(item entities.CategoryGet) models.CategoryAdminItem {
+			return models.CategoryAdminItem{
 				ID:      item.ID,
 				Code:    item.Code,
 				TitleRU: item.TitleRU,
@@ -52,7 +52,7 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 	return categories, nil
 }
 
-func (controller *Controller) _getAdminSingle(code string) (*models.CategoryAdminGet, *models.Error) {
+func (controller *Controller) _getAdminSingle(code string) (*models.CategoryAdminGetSingle, *models.Error) {
 	logger := definition.Logger
 
 	category, err := controller.categoryRepo.GetByCode(code)
@@ -65,13 +65,32 @@ func (controller *Controller) _getAdminSingle(code string) (*models.CategoryAdmi
 		return nil, errors.CategoryNotFound
 	}
 
-	return &models.CategoryAdminGet{
+	subCategories, err := controller.subCategoryRepo.GetByParent(category.ID)
+	if err != nil {
+		logger.Error(err, "Get sub categories list error", layers.Database)
+		return nil, errors.CategoryGetList.With(err)
+	}
+
+	return &models.CategoryAdminGetSingle{
 		ID:      category.ID,
 		Code:    category.Code,
 		TitleRU: category.TitleRU,
 		TitleKZ: category.TitleKZ,
 		Image:   category.Icon,
 		Status:  category.Status,
+
+		SubCategories: type_list.NewWithList[entities.SubCategoryGet, models.SubCategoryAdminGet](subCategories...).
+			Select(func(item entities.SubCategoryGet) models.SubCategoryAdminGet {
+				return models.SubCategoryAdminGet{
+					ID:      item.ID,
+					Code:    item.Code,
+					TitleRU: item.TitleRU,
+					TitleKZ: item.TitleKZ,
+					Image:   item.Icon,
+					Status:  item.Status,
+				}
+			}).
+			Slice(),
 	}, nil
 }
 
@@ -89,12 +108,12 @@ func (controller *Controller) _getAdminSub(parentCode string, searchQuery string
 	}
 
 	var list []entities.SubCategoryGet
+
 	if len(searchQuery) == 0 {
 		list, err = controller.subCategoryRepo.GetByParent(category.ID)
 	} else {
 		list, err = controller.subCategoryRepo.GetByQuery(category.ID, searchQuery)
 	}
-
 	if err != nil {
 		logger.Error(err, "Get sub categories list error", layers.Database)
 		return nil, errors.CategoryGetList.With(err)
