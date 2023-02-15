@@ -17,9 +17,10 @@ type SubCategoryCreate struct {
 }
 
 type SubCategoryUpdate struct {
-	Code    string `db:"code"`
-	TitleRU string `db:"title_ru"`
-	TitleKZ string `db:"title_kz"`
+	Code     string `db:"code"`
+	TitleRU  string `db:"title_ru"`
+	TitleKZ  string `db:"title_kz"`
+	ParentID int    `db:"parent_id"`
 }
 
 type SubCategoryUpdateImage struct {

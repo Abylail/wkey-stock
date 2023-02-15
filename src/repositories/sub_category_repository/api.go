@@ -79,14 +79,15 @@ func (repo *Repository) GetByCode(parentID int, code string) (*entities.SubCateg
 	return nil, nil
 }
 
-func (repo *Repository) Create(model *models.SubCategoryAdd, categoryCode string) error {
+func (repo *Repository) Create(parentID int, model *models.SubCategoryAdd, categoryCode string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	entity := &entities.SubCategoryCreate{
-		Code:    categoryCode,
-		TitleRU: model.TitleRU,
-		TitleKZ: model.TitleKZ,
+		Code:     categoryCode,
+		TitleRU:  model.TitleRU,
+		TitleKZ:  model.TitleKZ,
+		ParentID: parentID,
 	}
 
 	query := repo.Script("sub_category", "create")
@@ -104,14 +105,15 @@ func (repo *Repository) Create(model *models.SubCategoryAdd, categoryCode string
 	return nil
 }
 
-func (repo *Repository) Update(code string, model *models.SubCategoryUpdate) error {
+func (repo *Repository) Update(parentID int, code string, model *models.SubCategoryUpdate) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	entity := &entities.SubCategoryUpdate{
-		Code:    code,
-		TitleRU: model.TitleRU,
-		TitleKZ: model.TitleKZ,
+		Code:     code,
+		TitleRU:  model.TitleRU,
+		TitleKZ:  model.TitleKZ,
+		ParentID: parentID,
 	}
 
 	query := repo.Script("sub_category", "update")

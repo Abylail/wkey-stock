@@ -194,6 +194,7 @@ func (controller *Controller) _createSub(parentCode string, model *models.SubCat
 
 	// генерируем код категории
 	categoryCode := strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU)))
+	categoryCode = strings.ReplaceAll(categoryCode, " ", "_")
 
 	// ищем категорию с таким же кодом
 	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, categoryCode)
@@ -208,7 +209,7 @@ func (controller *Controller) _createSub(parentCode string, model *models.SubCat
 	}
 
 	// создаем запись в БД
-	if err = controller.subCategoryRepo.Create(model, categoryCode); err != nil {
+	if err = controller.subCategoryRepo.Create(category.ID, model, categoryCode); err != nil {
 		logger.Error(err, "Create sub category error", layers.Database)
 		return errors.CategoryAdd.With(err)
 	}
@@ -227,10 +228,20 @@ func (controller *Controller) _update(code string, model *models.CategoryUpdate)
 	return nil
 }
 
-func (controller *Controller) _updateSub(code string, model *models.SubCategoryUpdate) *models.Error {
+func (controller *Controller) _updateSub(parentCode, code string, model *models.SubCategoryUpdate) *models.Error {
 	logger := definition.Logger
 
-	if err := controller.subCategoryRepo.Update(code, model); err != nil {
+	category, err := controller.categoryRepo.GetByCode(parentCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return errors.CategoryNotFound
+	}
+
+	if err = controller.subCategoryRepo.Update(category.ID, code, model); err != nil {
 		logger.Error(err, "Update sub category error", layers.Database)
 		return errors.CategoryUpdate.With(err)
 	}

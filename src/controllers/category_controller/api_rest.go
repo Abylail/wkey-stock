@@ -130,6 +130,7 @@ func (controller *Controller) UpdateREST(ctx echo.Context) error {
 }
 
 func (controller *Controller) UpdateSubREST(ctx echo.Context) error {
+	parentCode := ctx.Param("parent_code")
 	code := ctx.Param("code")
 	if code == "" {
 		return controller.Error(ctx, errors.CategoryUpdateParam)
@@ -144,7 +145,7 @@ func (controller *Controller) UpdateSubREST(ctx echo.Context) error {
 		return controller.Error(ctx, errors.CategoryUpdateValidate.With(err))
 	}
 
-	if err := controller._updateSub(code, &model); err != nil {
+	if err := controller._updateSub(parentCode, code, &model); err != nil {
 		return controller.Error(ctx, err)
 	}
 

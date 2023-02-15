@@ -1,4 +1,3 @@
 update sub_categories
-set title_ru = :title_ru,
-    title_kz = :title_kz
+set icon = :icon
 where parent_id = :parent_id and code = :code;
