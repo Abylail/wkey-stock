@@ -24,5 +24,5 @@ type CategoryUpdate struct {
 }
 
 type CategoryUpload struct {
-	Image *File `json:"image"`
+	Image File `json:"image"`
 }
