@@ -304,10 +304,20 @@ func (controller *Controller) _delete(categoryCode string) *models.Error {
 	return nil
 }
 
-func (controller *Controller) _deleteSub(categoryCode string) *models.Error {
+func (controller *Controller) _deleteSub(parentCode, categoryCode string) *models.Error {
 	logger := definition.Logger
 
-	if err := controller.subCategoryRepo.Delete(categoryCode); err != nil {
+	category, err := controller.categoryRepo.GetByCode(parentCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return errors.CategoryNotFound
+	}
+
+	if err = controller.subCategoryRepo.Delete(category.ID, categoryCode); err != nil {
 		logger.Error(err, "Delete sub category error", layers.Database)
 		return errors.CategoryDelete.With(err)
 	}

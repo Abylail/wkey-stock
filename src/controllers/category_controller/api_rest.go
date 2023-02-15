@@ -212,12 +212,13 @@ func (controller *Controller) DeleteREST(ctx echo.Context) error {
 }
 
 func (controller *Controller) DeleteSubREST(ctx echo.Context) error {
+	parentCode := ctx.Param("parent_code")
 	categoryCode := ctx.Param("code")
 	if categoryCode == "" {
 		return controller.Error(ctx, errors.CategoryDeleteParam)
 	}
 
-	if err := controller._deleteSub(categoryCode); err != nil {
+	if err := controller._deleteSub(parentCode, categoryCode); err != nil {
 		return controller.Error(ctx, err)
 	}
 

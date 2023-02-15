@@ -155,14 +155,14 @@ func (repo *Repository) UpdateImage(code string, imagePath string) error {
 	return nil
 }
 
-func (repo *Repository) Delete(code string) error {
+func (repo *Repository) Delete(parentID int, code string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	query := repo.Script("sub_category", "delete")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.ExecContext(ctx, query, code); err != nil {
+		if _, err := tx.ExecContext(ctx, query, parentID, code); err != nil {
 			return err
 		}
 
