@@ -25,7 +25,7 @@ type SubCategoryUpdate struct {
 
 type SubCategoryUpdateImage struct {
 	Code  string `db:"code"`
-	Image string `db:"image"`
+	Image string `db:"icon"`
 }
 
 type SubCategoryUpdateActive struct {
