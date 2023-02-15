@@ -5,5 +5,5 @@ select
     title_kz,
     icon,
     status
-from categories
-order by title_ru;
+from sub_categories
+where parent_id = $1;

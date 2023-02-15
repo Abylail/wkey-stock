@@ -6,6 +6,7 @@ type CategoryGet struct {
 	TitleRU string  `db:"title_ru"`
 	TitleKZ string  `db:"title_kz"`
 	Icon    *string `db:"icon"`
+	Status  string  `db:"status"`
 }
 
 type CategoryCreate struct {

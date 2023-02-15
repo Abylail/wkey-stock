@@ -51,10 +51,26 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 	return categories, nil
 }
 
-func (controller *Controller) _getAdminSub(parentID int) ([]models.SubCategoryAdminGet, *models.Error) {
+func (controller *Controller) _getAdminSub(parentCode string, searchQuery string) ([]models.SubCategoryAdminGet, *models.Error) {
 	logger := definition.Logger
 
-	list, err := controller.subCategoryRepo.GetByParent(parentID)
+	category, err := controller.categoryRepo.GetByCode(parentCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return nil, errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return nil, errors.CategoryNotFound
+	}
+
+	var list []entities.SubCategoryGet
+	if len(searchQuery) == 0 {
+		list, err = controller.subCategoryRepo.GetByParent(category.ID)
+	} else {
+		list, err = controller.subCategoryRepo.GetByQuery(category.ID, searchQuery)
+	}
+
 	if err != nil {
 		logger.Error(err, "Get sub categories list error", layers.Database)
 		return nil, errors.CategoryGetList.With(err)
@@ -123,15 +139,8 @@ func (controller *Controller) _createSub(model *models.SubCategoryAdd) *models.E
 		return errors.CategoryAlreadyExist
 	}
 
-	// загружаем иконку
-	fullPath, err := controller.image.UploadSubCategoryIcon(categoryCode, model.Image.Name, model.Image.Buffer)
-	if err != nil {
-		logger.Error(err, "Upload sub category icon error", layers.File)
-		return errors.ImageUploadCategoryIcon.With(err)
-	}
-
 	// создаем запись в БД
-	if err = controller.subCategoryRepo.Create(model, categoryCode, fullPath); err != nil {
+	if err = controller.subCategoryRepo.Create(model, categoryCode); err != nil {
 		logger.Error(err, "Create sub category error", layers.Database)
 		return errors.CategoryAdd.With(err)
 	}

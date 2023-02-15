@@ -3,7 +3,8 @@ select
     code,
     title_ru,
     title_kz,
-    icon
+    icon,
+    status
 from categories
 where code = $1
 limit 1;

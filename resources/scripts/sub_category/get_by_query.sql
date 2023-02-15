@@ -1,0 +1,9 @@
+select
+    id,
+    code,
+    title_ru,
+    title_kz,
+    icon,
+    status
+from sub_categories
+where parent_id = $1 and (title_ru ilike $2 or title_kz ilike $2 or code ilike $2);

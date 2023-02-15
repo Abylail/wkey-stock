@@ -30,7 +30,7 @@ func (repo *Repository) GetByParent(parentID int) ([]entities.SubCategoryGet, er
 	return list, nil
 }
 
-func (repo *Repository) GetByQuery(searchQuery string) ([]entities.SubCategoryGet, error) {
+func (repo *Repository) GetByQuery(parentID int, searchQuery string) ([]entities.SubCategoryGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
@@ -38,7 +38,7 @@ func (repo *Repository) GetByQuery(searchQuery string) ([]entities.SubCategoryGe
 
 	query := repo.Script("sub_category", "get_by_query")
 
-	rows, err := repo.connection.QueryxContext(ctx, query, searchQuery)
+	rows, err := repo.connection.QueryxContext(ctx, query, parentID, searchQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -79,15 +79,14 @@ func (repo *Repository) GetByCode(code string) (*entities.SubCategoryGet, error)
 	return nil, nil
 }
 
-func (repo *Repository) Create(model *models.SubCategoryAdd, categoryCode, iconPath string) error {
+func (repo *Repository) Create(model *models.SubCategoryAdd, categoryCode string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	entity := &entities.SubCategoryCreate{
-		Code:     categoryCode,
-		TitleRU:  model.TitleRU,
-		TitleKZ:  model.TitleKZ,
-		IconPath: iconPath,
+		Code:    categoryCode,
+		TitleRU: model.TitleRU,
+		TitleKZ: model.TitleKZ,
 	}
 
 	query := repo.Script("sub_category", "create")

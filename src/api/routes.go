@@ -47,7 +47,7 @@ func setCategory(server *echo.Echo, controller *category_controller.Controller) 
 }
 
 func setSubCategory(server *echo.Echo, controller *category_controller.Controller) {
-	adminGroup := server.Group("/admin/api/v1/stock/category/:par_code/sub")
+	adminGroup := server.Group("/admin/api/v1/stock/category/:parent_code/sub")
 
 	adminGroup.GET("/get", controller.GetAdminSubREST)
 	adminGroup.POST("/add", controller.AddSubREST)

@@ -36,9 +36,10 @@ func (controller *Controller) GetAdminREST(ctx echo.Context) error {
 }
 
 func (controller *Controller) GetAdminSubREST(ctx echo.Context) error {
+	parentCode := ctx.Param("parent_code")
 	searchQuery := ctx.QueryParam("query")
 
-	list, err := controller._getAdmin(searchQuery)
+	list, err := controller._getAdminSub(parentCode, searchQuery)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
