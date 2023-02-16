@@ -26,24 +26,6 @@ func (controller *Controller) GetAdminREST(ctx echo.Context) error {
 	return controller.Ok(ctx, products)
 }
 
-func (controller *Controller) GetAdminNoCategoryREST(ctx echo.Context) error {
-	searchQuery := ctx.QueryParam("query")
-	page, _ := strconv.Atoi(ctx.QueryParam("page"))
-	if page == 0 {
-		page = 1
-	}
-
-	from := (page - 1) * 20
-	to := from + 20
-
-	products, err := controller._getAdminNoCategory(from, to, searchQuery)
-	if err != nil {
-		return controller.Error(ctx, err)
-	}
-
-	return controller.Ok(ctx, products)
-}
-
 func (controller *Controller) GetAdminSingleREST(ctx echo.Context) error {
 	productID, _ := strconv.Atoi(ctx.Param("id"))
 	if productID == 0 {

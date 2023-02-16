@@ -23,9 +23,8 @@ func setRoutes(server *echo.Echo, apiControllers *controllers.ApiControllers, _ 
 func setProduct(server *echo.Echo, controller *product_controller.Controller) {
 	adminGroup := server.Group("/admin/api/v1/stock/product")
 
-	adminGroup.GET("/get/no-category", controller.GetAdminNoCategoryREST)
-	adminGroup.GET("/get/:id", controller.GetAdminSingleREST)
 	adminGroup.GET("/get", controller.GetAdminREST)
+	adminGroup.GET("/get/:id", controller.GetAdminSingleREST)
 	adminGroup.PUT("/update/:id", controller.UpdateProductREST)
 	adminGroup.PUT("/upload/:id", controller.UploadProductREST)
 
