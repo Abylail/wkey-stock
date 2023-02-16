@@ -246,7 +246,7 @@ func (repo *Repository) BindSubCategory(subCategoryID int, productIDs []int) err
 	query := repo.Script("product", "bind")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.ExecContext(ctx, query, subCategoryID, productIDs); err != nil {
+		if _, err := tx.ExecContext(ctx, query, subCategoryID, pq.Array(productIDs)); err != nil {
 			return err
 		}
 
