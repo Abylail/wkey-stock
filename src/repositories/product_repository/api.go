@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
+	"strconv"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/models"
 )
@@ -254,6 +255,30 @@ func (repo *Repository) Update(id int, model *models.ProductUpdate) error {
 	return nil
 }
 
+func (repo *Repository) GetImagePositions(productID int, positions []int) ([]entities.ProductImageGet, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "get_image_positions")
+
+	rows, err := repo.connection.QueryxContext(ctx, query, productID, pq.Array(positions))
+	if err != nil {
+		return nil, err
+	}
+	defer repo.CloseRows(rows)
+
+	list := make([]entities.ProductImageGet, 0)
+	for rows.Next() {
+		item := entities.ProductImageGet{}
+		if err = rows.StructScan(&item); err != nil {
+			return nil, err
+		}
+		list = append(list, item)
+	}
+
+	return list, nil
+}
+
 func (repo *Repository) UpdateImages(id int, model *models.ProductUpload, pathList []string) error {
 	if len(model.Images) != len(pathList) {
 		return errors.New("images and theirs paths count does not match")
@@ -269,6 +294,7 @@ func (repo *Repository) UpdateImages(id int, model *models.ProductUpload, pathLi
 			ProductID: id,
 			Path:      pathList[index],
 			Position:  item.Position,
+			Key:       strconv.Itoa(id) + "_" + strconv.Itoa(item.Position),
 		})
 	}
 
