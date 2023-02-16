@@ -274,3 +274,27 @@ func (repo *Repository) UnbindSubCategory(productID, subCategoryID int) error {
 
 	return nil
 }
+
+func (repo *Repository) GetSubCategoryPairs(productIDs []int) ([]entities.ProductCategoryPair, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "get_pairs")
+
+	rows, err := repo.connection.QueryxContext(ctx, query, pq.Array(productIDs))
+	if err != nil {
+		return nil, err
+	}
+	defer repo.CloseRows(rows)
+
+	list := make([]entities.ProductCategoryPair, 0)
+	for rows.Next() {
+		item := entities.ProductCategoryPair{}
+		if err = rows.StructScan(&item); err != nil {
+			return nil, err
+		}
+		list = append(list, item)
+	}
+
+	return list, nil
+}

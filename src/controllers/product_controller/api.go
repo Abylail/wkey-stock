@@ -61,16 +61,34 @@ func (controller *Controller) _getAdmin(from, to int, searchQuery, categoryKey s
 	// считаем кол-во страниц
 	pageCount := int(math.Ceil(float64(productCount / 20)))
 
+	// получаем список категорий
+	categoryPairs, err := controller.productRepo.GetSubCategoryPairs(
+		type_list.NewWithList[entities.AdminProductGet, int](products...).
+			Select(func(item entities.AdminProductGet) int {
+				return item.ID
+			}).Slice(),
+	)
+	if err != nil {
+		logger.Error(err, "Get product category pairs error", layers.Database)
+		return nil, errors.ProductGetPairs.With(err)
+	}
+
 	productList := type_list.NewWithList[entities.AdminProductGet, models.AdminProductItem](products...).
 		Select(func(item entities.AdminProductGet) models.AdminProductItem {
 			return models.AdminProductItem{
-				ID:                item.ID,
-				Title:             item.Title,
-				Price:             item.Price,
-				VendorCode:        item.VendorCode,
-				Barcode:           item.Barcode,
-				UnitName:          item.UnitName,
-				CategoryName:      item.CategoryName,
+				ID:         item.ID,
+				Title:      item.Title,
+				Price:      item.Price,
+				VendorCode: item.VendorCode,
+				Barcode:    item.Barcode,
+				UnitName:   item.UnitName,
+				Categories: type_list.NewWithList[entities.ProductCategoryPair, models.ProductCategoryPair](categoryPairs...).
+					Select(func(pair entities.ProductCategoryPair) models.ProductCategoryPair {
+						return models.ProductCategoryPair{
+							CategoryCode: pair.CategoryCode,
+							CategoryName: pair.CategoryName,
+						}
+					}).Slice(),
 				CreatedAt:         item.CreatedAt,
 				UpdatedAt:         item.UpdatedAt,
 				AdditionalPercent: item.AdditionalPercent,
@@ -119,14 +137,27 @@ func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProdu
 		return nil, errors.ProductImagesGet.With(err)
 	}
 
+	// получаем список категорий
+	categoryPairs, err := controller.productRepo.GetSubCategoryPairs([]int{productID})
+	if err != nil {
+		logger.Error(err, "Get product category pairs error", layers.Database)
+		return nil, errors.ProductGetPairs.With(err)
+	}
+
 	return &models.AdminProductItem{
-		ID:                product.ID,
-		Title:             product.Title,
-		Price:             product.Price,
-		VendorCode:        product.VendorCode,
-		Barcode:           product.Barcode,
-		UnitName:          product.UnitName,
-		CategoryName:      product.CategoryName,
+		ID:         product.ID,
+		Title:      product.Title,
+		Price:      product.Price,
+		VendorCode: product.VendorCode,
+		Barcode:    product.Barcode,
+		UnitName:   product.UnitName,
+		Categories: type_list.NewWithList[entities.ProductCategoryPair, models.ProductCategoryPair](categoryPairs...).
+			Select(func(pair entities.ProductCategoryPair) models.ProductCategoryPair {
+				return models.ProductCategoryPair{
+					CategoryCode: pair.CategoryCode,
+					CategoryName: pair.CategoryName,
+				}
+			}).Slice(),
 		CreatedAt:         product.CreatedAt,
 		UpdatedAt:         product.UpdatedAt,
 		AdditionalPercent: product.AdditionalPercent,

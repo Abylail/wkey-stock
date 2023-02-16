@@ -55,4 +55,8 @@ var (
 		TechMessage:     "Upload product images error",
 		BusinessMessage: defaultMessage,
 	}
+	ProductGetPairs = &models.Error{
+		TechMessage:     "Get category product pairs error",
+		BusinessMessage: defaultMessage,
+	}
 )
