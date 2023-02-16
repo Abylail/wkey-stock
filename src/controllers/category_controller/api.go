@@ -409,6 +409,26 @@ func (controller *Controller) _activateSub(parentCode, code string) *models.Erro
 		return errors.CategoryNotFound
 	}
 
+	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, code)
+	if err != nil {
+		logger.Error(err, "Get sub category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	if subCategory == nil {
+		return errors.CategoryNotFound
+	}
+
+	count, err := controller.productRepo.CountBySubCategory(subCategory.ID)
+	if err != nil {
+		logger.Error(err, "Get count of products by sub category error", layers.Database)
+		return errors.AdminProductCountGet.With(err)
+	}
+
+	if count == 0 {
+		return errors.SubCategoryActivateEmpty
+	}
+
 	if err = controller.subCategoryRepo.Activate(category.ID, code); err != nil {
 		logger.Error(err, "Update sub category status 'active' error", layers.Database)
 		return errors.SubCategoryUpdateStatus.With(err)

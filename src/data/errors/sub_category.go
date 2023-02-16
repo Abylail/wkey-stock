@@ -3,6 +3,11 @@ package errors
 import "wkey-stock/src/data/models"
 
 var (
+	SubCategoryActivateEmpty = &models.Error{
+		TechMessage:     "Sub category has no binded products",
+		BusinessMessage: defaultMessage,
+	}
+
 	SubCategoryBindProductListBind = &models.Error{
 		TechMessage:     "Bind product list to sub category model bind error",
 		BusinessMessage: defaultMessage,

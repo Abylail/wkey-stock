@@ -214,6 +214,20 @@ func (repo *Repository) CountNoCategoryQuery(searchQuery string) (int, error) {
 	return count, nil
 }
 
+func (repo *Repository) CountBySubCategory(subCategoryID int) (int, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "count_by_sub_category")
+
+	var count int
+	if err := repo.connection.QueryRowxContext(ctx, query, subCategoryID).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 func (repo *Repository) Update(id int, model *models.ProductUpdate) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
