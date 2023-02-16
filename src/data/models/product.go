@@ -26,8 +26,10 @@ type AdminProductItem struct {
 }
 
 type ProductCategoryPair struct {
-	CategoryCode string `json:"category_code"`
-	CategoryName string `json:"category_name"`
+	SubCategoryCode string `json:"sub_category_code"`
+	SubCategoryName string `json:"sub_category_name"`
+	CategoryCode    string `json:"category_code"`
+	CategoryName    string `json:"category_name"`
 }
 
 type ProductUpdate struct {

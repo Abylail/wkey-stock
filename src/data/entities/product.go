@@ -39,8 +39,10 @@ type ProductUpdateImage struct {
 }
 
 type ProductCategoryPair struct {
-	ProductID     int    `db:"product_id"`
-	SubCategoryID int    `db:"sub_category_id"`
-	CategoryName  string `db:"category_name"`
-	CategoryCode  string `db:"category_code"`
+	ProductID       int    `db:"product_id"`
+	SubCategoryID   int    `db:"sub_category_id"`
+	SubCategoryName string `db:"sub_category_name"`
+	SubCategoryCode string `db:"sub_category_code"`
+	CategoryName    string `db:"category_name"`
+	CategoryCode    string `db:"category_code"`
 }

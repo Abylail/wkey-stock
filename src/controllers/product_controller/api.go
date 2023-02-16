@@ -85,8 +85,10 @@ func (controller *Controller) _getAdmin(from, to int, searchQuery, categoryKey s
 				Categories: type_list.NewWithList[entities.ProductCategoryPair, models.ProductCategoryPair](categoryPairs...).
 					Select(func(pair entities.ProductCategoryPair) models.ProductCategoryPair {
 						return models.ProductCategoryPair{
-							CategoryCode: pair.CategoryCode,
-							CategoryName: pair.CategoryName,
+							SubCategoryCode: pair.SubCategoryCode,
+							SubCategoryName: pair.SubCategoryName,
+							CategoryCode:    pair.CategoryCode,
+							CategoryName:    pair.CategoryName,
 						}
 					}).Slice(),
 				CreatedAt:         item.CreatedAt,
@@ -154,8 +156,10 @@ func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProdu
 		Categories: type_list.NewWithList[entities.ProductCategoryPair, models.ProductCategoryPair](categoryPairs...).
 			Select(func(pair entities.ProductCategoryPair) models.ProductCategoryPair {
 				return models.ProductCategoryPair{
-					CategoryCode: pair.CategoryCode,
-					CategoryName: pair.CategoryName,
+					SubCategoryCode: pair.SubCategoryCode,
+					SubCategoryName: pair.SubCategoryName,
+					CategoryCode:    pair.CategoryCode,
+					CategoryName:    pair.CategoryName,
 				}
 			}).Slice(),
 		CreatedAt:         product.CreatedAt,
