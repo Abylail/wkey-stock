@@ -488,3 +488,34 @@ func (controller *Controller) _bindProductList(parentCode, code string, model *m
 
 	return nil
 }
+
+func (controller *Controller) _unbindProductItem(parentCode, code string, productID int) *models.Error {
+	logger := definition.Logger
+
+	category, err := controller.categoryRepo.GetByCode(parentCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return errors.CategoryNotFound
+	}
+
+	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, code)
+	if err != nil {
+		logger.Error(err, "Get sub category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	if subCategory == nil {
+		return errors.CategoryNotFound
+	}
+
+	if err = controller.productRepo.UnbindSubCategory(productID, subCategory.ID); err != nil {
+		logger.Error(err, "Unbind sub category to products list error", layers.Database)
+		return errors.SubCategoryUnbindProductItem.With(err)
+	}
+
+	return nil
+}

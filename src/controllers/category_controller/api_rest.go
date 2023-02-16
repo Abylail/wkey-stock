@@ -2,6 +2,7 @@ package category_controller
 
 import (
 	"github.com/labstack/echo/v4"
+	"strconv"
 	"wkey-stock/src/data/errors"
 	"wkey-stock/src/data/models"
 )
@@ -284,6 +285,21 @@ func (controller *Controller) BindProductListREST(ctx echo.Context) error {
 	}
 
 	if err := controller._bindProductList(parentCode, code, &model); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, "OK")
+}
+
+func (controller *Controller) UnbindProductItemREST(ctx echo.Context) error {
+	parentCode := ctx.Param("parent_code")
+	code := ctx.Param("code")
+	productID, _ := strconv.Atoi(ctx.Param("product_id"))
+	if productID == 0 {
+		return errors.UnbindProductFromSubCategory
+	}
+
+	if err := controller._unbindProductItem(parentCode, code, productID); err != nil {
 		return controller.Error(ctx, err)
 	}
 

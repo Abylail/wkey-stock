@@ -322,8 +322,10 @@ func (repo *Repository) BindSubCategory(subCategoryID int, productIDs []int) err
 	query := repo.Script("product", "bind")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.ExecContext(ctx, query, subCategoryID, pq.Array(productIDs)); err != nil {
-			return err
+		for _, productID := range productIDs {
+			if _, err := tx.ExecContext(ctx, query, productID, subCategoryID); err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -334,14 +336,14 @@ func (repo *Repository) BindSubCategory(subCategoryID int, productIDs []int) err
 	return nil
 }
 
-func (repo *Repository) UnbindSubCategory(productID int) error {
+func (repo *Repository) UnbindSubCategory(productID, subCategoryID int) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	query := repo.Script("product", "unbind")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.ExecContext(ctx, query, productID); err != nil {
+		if _, err := tx.ExecContext(ctx, query, productID, subCategoryID); err != nil {
 			return err
 		}
 

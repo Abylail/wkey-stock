@@ -1,3 +1,2 @@
-update products_ext
-set category_id = null
-where product_id = $1;
+delete from category_products
+where product_id = $1 and sub_category_id = $2;

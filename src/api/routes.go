@@ -28,7 +28,6 @@ func setProduct(server *echo.Echo, controller *product_controller.Controller) {
 	adminGroup.GET("/get", controller.GetAdminREST)
 	adminGroup.PUT("/update/:id", controller.UpdateProductREST)
 	adminGroup.PUT("/upload/:id", controller.UploadProductREST)
-	adminGroup.POST("/unbind/:product_id", controller.UnbindProductListREST)
 
 	clientGroup := server.Group("/api/v1/stock/product")
 
@@ -67,6 +66,7 @@ func setSubCategory(server *echo.Echo, controller *category_controller.Controlle
 	adminGroup.POST("/deactivate/:code", controller.DeactivateSubREST)
 
 	adminGroup.POST("/bind/:code", controller.BindProductListREST)
+	adminGroup.POST("/unbind/:code/product/:product_id", controller.UnbindProductItemREST)
 
 	clientGroup := server.Group("/api/v1/stock/category/:par_code/sub")
 
