@@ -21,9 +21,9 @@ func (event *Event) uploadProductImage(productID int, name, buffer string, posit
 	defer event.mutex.Unlock()
 
 	imageExtension := filepath.Ext(name)
-	productText := strconv.Itoa(position) + "_" + strconv.Itoa(productID)
+	productText := strconv.Itoa(productID)
 
-	fileName := uuid.New().String()
+	fileName := strconv.Itoa(position) + "_" + uuid.New().String()
 	fullPath := productImagePath + "/" + productText + "/" + fileName + imageExtension
 
 	// проверить существует ли папка бренда
