@@ -17,8 +17,16 @@ var (
 		TechMessage:     "Update product model bind error",
 		BusinessMessage: defaultMessage,
 	}
+	ProductUploadBind = &models.Error{
+		TechMessage:     "Update product model bind error",
+		BusinessMessage: defaultMessage,
+	}
 
 	ProductUpdateValidate = &models.Error{
+		TechMessage:     "Update product model validate error",
+		BusinessMessage: defaultMessage,
+	}
+	ProductUploadValidate = &models.Error{
 		TechMessage:     "Update product model validate error",
 		BusinessMessage: defaultMessage,
 	}
@@ -37,6 +45,10 @@ var (
 	}
 	ProductUpdate = &models.Error{
 		TechMessage:     "Update product error",
+		BusinessMessage: defaultMessage,
+	}
+	ProductUpload = &models.Error{
+		TechMessage:     "Upload product images error",
 		BusinessMessage: defaultMessage,
 	}
 )

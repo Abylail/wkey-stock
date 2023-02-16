@@ -14,6 +14,12 @@ func (controller *Controller) validateProductUpdate(model *models.ProductUpdate)
 	return nil
 }
 
+func (controller *Controller) validateProductUpload(_ *models.ProductUpload) error {
+	//
+
+	return nil
+}
+
 func (controller *Controller) validateBrandUpdate(model *models.BrandUpdate) error {
 	if err := controller.RequiredField(model.Title, "title"); err != nil {
 		return err

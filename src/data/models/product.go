@@ -30,3 +30,12 @@ type ProductUpdate struct {
 	DescriptionRU string `json:"description_ru"`
 	DescriptionKZ string `json:"description_kz"`
 }
+
+type ProductUpload struct {
+	Images []productImage `json:"images"`
+}
+
+type productImage struct {
+	Position int  `json:"position"`
+	Image    File `json:"image"`
+}

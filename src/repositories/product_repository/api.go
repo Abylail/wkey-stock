@@ -1,6 +1,7 @@
 package product_repository
 
 import (
+	"errors"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"wkey-stock/src/data/entities"
@@ -243,6 +244,41 @@ func (repo *Repository) Update(id int, model *models.ProductUpdate) error {
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
 			return err
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo *Repository) UpdateImages(id int, model *models.ProductUpload, pathList []string) error {
+	if len(model.Images) != len(pathList) {
+		return errors.New("images and theirs paths count does not match")
+	}
+
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	uploadEntities := make([]entities.ProductUpdateImage, 0, len(model.Images))
+
+	for index, item := range model.Images {
+		uploadEntities = append(uploadEntities, entities.ProductUpdateImage{
+			ProductID: id,
+			Path:      pathList[index],
+			Position:  item.Position,
+		})
+	}
+
+	query := repo.Script("product", "update_image")
+
+	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+		for _, entity := range uploadEntities {
+			if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
+				return err
+			}
 		}
 
 		return nil

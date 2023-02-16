@@ -24,10 +24,17 @@ type AdminProductGet struct {
 type ProductImageGet struct {
 	ProductID int    `db:"product_id"`
 	Path      string `db:"path"`
+	Position  int    `db:"position"`
 }
 
 type ProductUpdate struct {
 	ID            int    `db:"id"`
 	DescriptionRU string `db:"description_ru"`
 	DescriptionKZ string `db:"description_kz"`
+}
+
+type ProductUpdateImage struct {
+	ProductID int    `db:"product_id"`
+	Path      string `db:"path"`
+	Position  int    `db:"position"`
 }

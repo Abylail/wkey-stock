@@ -7,6 +7,7 @@ import (
 	"github.com/lowl11/lazyfile/folderapi"
 	"path/filepath"
 	"strconv"
+	"wkey-stock/src/data/models"
 )
 
 func (event *Event) UploadCategoryIcon(categoryCode, name, buffer string) (string, error) {
@@ -97,12 +98,6 @@ func (event *Event) UploadSubCategoryIcon(parentCode, categoryCode, name, buffer
 	return fullPath, nil
 }
 
-func (event *Event) GetCategoryIcon(categoryCode string) (string, error) {
-	event.mutex.Lock()
-	defer event.mutex.Unlock()
-	return "", nil
-}
-
 func (event *Event) UploadBrandIcon(brandID int, name, buffer string) (string, error) {
 	event.mutex.Lock()
 	defer event.mutex.Unlock()
@@ -146,4 +141,19 @@ func (event *Event) UploadBrandIcon(brandID int, name, buffer string) (string, e
 	}
 
 	return fullPath, nil
+}
+
+func (event *Event) UploadProductImages(productID int, model *models.ProductUpload) ([]string, error) {
+	pathList := make([]string, 0, len(model.Images))
+
+	for _, item := range model.Images {
+		path, err := event.uploadProductImage(productID, item.Image.Name, item.Image.Buffer, item.Position)
+		if err != nil {
+			return nil, err
+		}
+
+		pathList = append(pathList, path)
+	}
+
+	return pathList, nil
 }

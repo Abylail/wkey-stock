@@ -239,6 +239,27 @@ func (controller *Controller) _update(productID int, model *models.ProductUpdate
 	return nil
 }
 
+func (controller *Controller) _upload(productID int, model *models.ProductUpload) *models.Error {
+	logger := definition.Logger
+
+	if len(model.Images) == 0 {
+		return nil
+	}
+
+	pathList, err := controller.image.UploadProductImages(productID, model)
+	if err != nil {
+		logger.Error(err, "Upload product images error", layers.File)
+		return errors.ProductUpload.With(err)
+	}
+
+	if err = controller.productRepo.UpdateImages(productID, model, pathList); err != nil {
+		logger.Error(err, "Upload product images error", layers.Database)
+		return errors.ProductUpload.With(err)
+	}
+
+	return nil
+}
+
 func (controller *Controller) _getBrand(searchQuery string) ([]models.BrandGet, *models.Error) {
 	logger := definition.Logger
 
