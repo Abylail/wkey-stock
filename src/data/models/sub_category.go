@@ -27,3 +27,7 @@ type SubCategoryUpdate struct {
 type SubCategoryUpload struct {
 	Image *File `json:"image"`
 }
+
+type SubCategoryBindProductList struct {
+	List []int `json:"list"`
+}

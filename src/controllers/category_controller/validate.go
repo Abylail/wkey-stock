@@ -81,3 +81,9 @@ func (controller *Controller) validateCategoryUploadSub(model *models.SubCategor
 
 	return nil
 }
+
+func (controller *Controller) validateSubCategoryProductList(_ *models.SubCategoryBindProductList) error {
+	//
+
+	return nil
+}

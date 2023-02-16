@@ -31,6 +31,30 @@ func (repo *Repository) GetAdmin(from, to int) ([]entities.AdminProductGet, erro
 	return list, nil
 }
 
+func (repo *Repository) GetAdminNoCategory(from, to int) ([]entities.AdminProductGet, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "get_admin_no_category")
+
+	rows, err := repo.connection.QueryxContext(ctx, query, from, to)
+	if err != nil {
+		return nil, err
+	}
+	defer repo.CloseRows(rows)
+
+	list := make([]entities.AdminProductGet, 0)
+	for rows.Next() {
+		item := entities.AdminProductGet{}
+		if err = rows.StructScan(&item); err != nil {
+			return nil, err
+		}
+		list = append(list, item)
+	}
+
+	return list, nil
+}
+
 func (repo *Repository) GetAdminByQuery(from, to int, searchQuery string) ([]entities.AdminProductGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
@@ -38,6 +62,32 @@ func (repo *Repository) GetAdminByQuery(from, to int, searchQuery string) ([]ent
 	searchQuery = "%" + searchQuery + "%"
 
 	query := repo.Script("product", "get_admin_by_query")
+
+	rows, err := repo.connection.QueryxContext(ctx, query, from, to, searchQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer repo.CloseRows(rows)
+
+	list := make([]entities.AdminProductGet, 0)
+	for rows.Next() {
+		item := entities.AdminProductGet{}
+		if err = rows.StructScan(&item); err != nil {
+			return nil, err
+		}
+		list = append(list, item)
+	}
+
+	return list, nil
+}
+
+func (repo *Repository) GetAdminNoCategoryByQuery(from, to int, searchQuery string) ([]entities.AdminProductGet, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	searchQuery = "%" + searchQuery + "%"
+
+	query := repo.Script("product", "get_admin_no_category_by_query")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, from, to, searchQuery)
 	if err != nil {
@@ -134,6 +184,36 @@ func (repo *Repository) CountQuery(searchQuery string) (int, error) {
 	return count, nil
 }
 
+func (repo *Repository) CountNoCategory() (int, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "count_no_category")
+
+	var count int
+	if err := repo.connection.QueryRowxContext(ctx, query).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (repo *Repository) CountNoCategoryQuery(searchQuery string) (int, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	searchQuery = "%" + searchQuery + "%"
+
+	query := repo.Script("product", "count_no_category_query")
+
+	var count int
+	if err := repo.connection.QueryRowxContext(ctx, query, searchQuery).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 func (repo *Repository) Update(id int, model *models.ProductUpdate) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
@@ -148,6 +228,25 @@ func (repo *Repository) Update(id int, model *models.ProductUpdate) error {
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo *Repository) BindSubCategory(subCategoryID int, productIDs []int) error {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "bind")
+
+	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+		if _, err := tx.ExecContext(ctx, query, subCategoryID, productIDs); err != nil {
 			return err
 		}
 

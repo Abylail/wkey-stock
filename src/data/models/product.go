@@ -14,8 +14,8 @@ type AdminProductItem struct {
 	VendorCode        string    `json:"vendor_code"`
 	Barcode           string    `json:"barcode"`
 	UnitName          string    `json:"unit_name"`
-	CategoryID        int       `json:"category_id"`
-	CategoryName      string    `json:"category_name"`
+	CategoryCode      *string   `json:"category_code"`
+	CategoryName      *string   `json:"category_name"`
 	CreatedAt         time.Time `json:"created_at"`
 	UpdatedAt         time.Time `json:"updated_at"`
 	AdditionalPercent any       `json:"additional_percent"`

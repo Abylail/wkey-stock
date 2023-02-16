@@ -271,5 +271,21 @@ func (controller *Controller) DeactivateSubREST(ctx echo.Context) error {
 }
 
 func (controller *Controller) BindProductListREST(ctx echo.Context) error {
+	parentCode := ctx.Param("parent_code")
+	code := ctx.Param("code")
+
+	model := models.SubCategoryBindProductList{}
+	if err := ctx.Bind(&model); err != nil {
+		return controller.Error(ctx, errors.SubCategoryBindProductListBind.With(err))
+	}
+
+	if err := controller.validateSubCategoryProductList(&model); err != nil {
+		return controller.Error(ctx, errors.SubCategoryBindProductListValidate.With(err))
+	}
+
+	if err := controller._bindProductList(parentCode, code, &model); err != nil {
+		return controller.Error(ctx, err)
+	}
+
 	return controller.Ok(ctx, "OK")
 }

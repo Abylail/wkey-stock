@@ -9,8 +9,9 @@ type AdminProductGet struct {
 	VendorCode        string    `db:"vendor_code"`
 	Barcode           string    `db:"barcode"`
 	UnitName          string    `db:"unit_name"`
-	CategoryID        int       `db:"category_id"`
-	CategoryName      string    `db:"category_name"`
+	CategoryID        *int      `db:"category_id"`
+	CategoryCode      *string   `db:"category_code"`
+	CategoryName      *string   `db:"category_name"`
 	CreatedAt         time.Time `db:"created_at"`
 	UpdatedAt         time.Time `db:"updated_at"`
 	AdditionalPercent any       `db:"additional_percent"`

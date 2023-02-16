@@ -437,3 +437,34 @@ func (controller *Controller) _deactivateSub(parentCode, code string) *models.Er
 
 	return nil
 }
+
+func (controller *Controller) _bindProductList(parentCode, code string, model *models.SubCategoryBindProductList) *models.Error {
+	logger := definition.Logger
+
+	category, err := controller.categoryRepo.GetByCode(parentCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return errors.CategoryNotFound
+	}
+
+	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, code)
+	if err != nil {
+		logger.Error(err, "Get sub category by code error", layers.Database)
+		return errors.CategoryGetByCode.With(err)
+	}
+
+	if subCategory == nil {
+		return errors.CategoryNotFound
+	}
+
+	if err = controller.productRepo.BindSubCategory(subCategory.ID, model.List); err != nil {
+		logger.Error(err, "Bind sub category to products list error", layers.Database)
+		return errors.SubCategoryBindProductList.With(err)
+	}
+
+	return nil
+}
