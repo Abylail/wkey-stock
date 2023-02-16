@@ -333,3 +333,22 @@ func (repo *Repository) BindSubCategory(subCategoryID int, productIDs []int) err
 
 	return nil
 }
+
+func (repo *Repository) UnbindSubCategory(productID int) error {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "unbind")
+
+	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+		if _, err := tx.ExecContext(ctx, query, productID); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -207,3 +207,16 @@ func (controller *Controller) DeleteBrandREST(ctx echo.Context) error {
 
 	return controller.Ok(ctx, "OK")
 }
+
+func (controller *Controller) UnbindProductListREST(ctx echo.Context) error {
+	productID, _ := strconv.Atoi(ctx.Param("product_id"))
+	if productID == 0 {
+		return errors.UnbindProductFromSubCategory
+	}
+
+	if err := controller._unbindProductItem(productID); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, "OK")
+}

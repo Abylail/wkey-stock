@@ -12,6 +12,10 @@ var (
 		TechMessage:     "Product ID required",
 		BusinessMessage: defaultMessage,
 	}
+	UnbindProductFromSubCategory = &models.Error{
+		TechMessage:     "Product ID required",
+		BusinessMessage: defaultMessage,
+	}
 
 	ProductUpdateBind = &models.Error{
 		TechMessage:     "Update product model bind error",

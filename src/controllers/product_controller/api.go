@@ -370,3 +370,14 @@ func (controller *Controller) _deleteBrand(id int) *models.Error {
 	}
 	return nil
 }
+
+func (controller *Controller) _unbindProductItem(productID int) *models.Error {
+	logger := definition.Logger
+
+	if err := controller.productRepo.UnbindSubCategory(productID); err != nil {
+		logger.Error(err, "Unbind sub category to products list error", layers.Database)
+		return errors.SubCategoryUnbindProductItem.With(err)
+	}
+
+	return nil
+}

@@ -22,6 +22,10 @@ var (
 		TechMessage:     "Bind product item to sub category error",
 		BusinessMessage: defaultMessage,
 	}
+	SubCategoryUnbindProductItem = &models.Error{
+		TechMessage:     "Unbind product item to sub category error",
+		BusinessMessage: defaultMessage,
+	}
 	SubCategoryBindProductList = &models.Error{
 		TechMessage:     "Bind product list to sub category error",
 		BusinessMessage: defaultMessage,
