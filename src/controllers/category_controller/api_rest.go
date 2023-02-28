@@ -8,7 +8,8 @@ import (
 )
 
 func (controller *Controller) GetClientREST(ctx echo.Context) error {
-	list, err := controller._getClient()
+	searchQuery := ctx.QueryParam("query")
+	list, err := controller._getClient(searchQuery)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -17,7 +18,9 @@ func (controller *Controller) GetClientREST(ctx echo.Context) error {
 }
 
 func (controller *Controller) GetClientSubREST(ctx echo.Context) error {
-	list, err := controller._getClientSub()
+	parentCode := ctx.Param("par_code")
+	searchQuery := ctx.QueryParam("query")
+	list, err := controller._getClientSub(parentCode, searchQuery)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}

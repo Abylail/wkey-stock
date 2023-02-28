@@ -11,12 +11,66 @@ import (
 	"wkey-stock/src/definition"
 )
 
-func (controller *Controller) _getClient() ([]models.CategoryClientGet, *models.Error) {
-	return nil, nil
+// _getClient список
+func (controller *Controller) _getClient(searchQuery string) ([]models.CategoryClientGet, *models.Error) {
+	var list []entities.CategoryGet
+	var err error
+
+	if len(searchQuery) == 0 {
+		list, err = controller.categoryRepo.GetAll()
+	} else {
+		list, err = controller.categoryRepo.GetByQuery(searchQuery)
+	}
+
+	if err != nil {
+		return nil, errors.CategoryGetList.With(err)
+	}
+
+	categories := type_list.NewWithList[entities.CategoryGet, models.CategoryClientGet](list...).
+		Select(func(item entities.CategoryGet) models.CategoryClientGet {
+			return models.CategoryClientGet{
+				Code:  item.Code,
+				Title: item.TitleRU,
+				Image: item.Icon,
+			}
+		}).
+		Slice()
+
+	return categories, nil
 }
 
-func (controller *Controller) _getClientSub() ([]models.SubCategoryClientGet, *models.Error) {
-	return nil, nil
+func (controller *Controller) _getClientSub(parentCode string, searchQuery string) ([]models.SubCategoryClientGet, *models.Error) {
+	logger := definition.Logger
+
+	// Беру категорию по которой идет поиск
+	category, err := controller.categoryRepo.GetByCode(parentCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return nil, errors.CategoryGetByCode.With(err)
+	}
+	if category == nil {
+		return nil, errors.CategoryNotFound
+	}
+
+	// Беру список по id категории
+	var list []entities.SubCategoryGet
+	if len(searchQuery) == 0 {
+		list, err = controller.subCategoryRepo.GetByParent(category.ID)
+	} else {
+		list, err = controller.subCategoryRepo.GetByQuery(category.ID, searchQuery)
+	}
+
+	subcategories := type_list.NewWithList[entities.SubCategoryGet, models.SubCategoryClientGet](list...).
+		Select(func(item entities.SubCategoryGet) models.SubCategoryClientGet {
+			return models.SubCategoryClientGet{
+				Code:  item.Code,
+				Title: item.TitleRU,
+				Image: item.Icon,
+			}
+		}).
+		Slice()
+
+	return subcategories, nil
 }
 
 func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAdminItem, *models.Error) {
