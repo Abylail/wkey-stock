@@ -25,6 +25,20 @@ type AdminProductItem struct {
 	BrandTitle        string                `json:"brand_title"`
 }
 
+type ClientProductList struct {
+	PageCount int                      `json:"page_count"`
+	List      []ClientProductItemShort `json:"list"`
+}
+
+type ClientProductItemShort struct {
+	ID         int      `json:"id"`
+	Title      string   `json:"title"`
+	Price      int      `json:"price"`
+	VendorCode string   `json:"vendor_code"`
+	Count      int      `json:"count"`
+	Images     []string `json:"images"`
+}
+
 type ProductCategoryPair struct {
 	SubCategoryCode string `json:"sub_category_code"`
 	SubCategoryName string `json:"sub_category_name"`

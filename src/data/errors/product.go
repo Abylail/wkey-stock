@@ -43,6 +43,15 @@ var (
 		TechMessage:     "Get products count error",
 		BusinessMessage: defaultMessage,
 	}
+
+	ClientProductGet = &models.Error{
+		TechMessage:     "Get products list error",
+		BusinessMessage: defaultMessage,
+	}
+	ClientProductCountGet = &models.Error{
+		TechMessage:     "Get products count error",
+		BusinessMessage: defaultMessage,
+	}
 	ProductImagesGet = &models.Error{
 		TechMessage:     "Get product images list error",
 		BusinessMessage: defaultMessage,

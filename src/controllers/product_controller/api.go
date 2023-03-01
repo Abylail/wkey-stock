@@ -318,3 +318,59 @@ func (controller *Controller) _deleteBrand(id int) *models.Error {
 	}
 	return nil
 }
+
+func (controller *Controller) _getClient(from, to int, searchQuery string) (*models.ClientProductList, *models.Error) {
+	var products []entities.ClientProductShort
+	var err error
+
+	if len(searchQuery) == 0 {
+		products, err = controller.productRepo.GetClient(from, to)
+	}
+
+	if err != nil {
+		return nil, errors.ClientProductGet.With(err)
+	}
+
+	productList := type_list.NewWithList[entities.ClientProductShort, models.ClientProductItemShort](products...).
+		Select(func(item entities.ClientProductShort) models.ClientProductItemShort {
+			return models.ClientProductItemShort{
+				ID:         item.ID,
+				Title:      item.Title,
+				Price:      item.Price,
+				VendorCode: item.VendorCode,
+				Count:      item.Count,
+			}
+		}).Slice()
+
+	// получаем массив с ID продуктов
+	productIDs := make([]int, 0, len(products))
+	array.NewWithList[entities.ClientProductShort](products...).Each(func(item entities.ClientProductShort) {
+		productIDs = append(productIDs, item.ID)
+	})
+
+	// получаем картинки продуктов
+	images, err := controller.productRepo.GetImages(productIDs)
+	if err != nil {
+		return nil, errors.ProductImagesGet.With(err)
+	}
+
+	imagesList := array.NewWithList[entities.ProductImageGet](images...)
+
+	for i := 0; i < len(productList); i++ {
+		productID := productList[i].ID
+		productImages := imagesList.Where(func(image entities.ProductImageGet) bool {
+			return image.ProductID == productID
+		})
+
+		productList[i].Images = make([]string, 0, productImages.Size())
+
+		productImages.Each(func(image entities.ProductImageGet) {
+			productList[i].Images = append(productList[i].Images, image.Path)
+		})
+	}
+
+	return &models.ClientProductList{
+		List:      productList,
+		PageCount: 10,
+	}, nil
+}

@@ -298,3 +298,28 @@ func (repo *Repository) GetSubCategoryPairs(productIDs []int) ([]entities.Produc
 
 	return list, nil
 }
+
+// GetClient список продуктов для клиента (без поискового текста)
+func (repo *Repository) GetClient(from, to int) ([]entities.ClientProductShort, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "get_client")
+
+	rows, err := repo.connection.QueryxContext(ctx, query, from, to)
+	if err != nil {
+		return nil, err
+	}
+	defer repo.CloseRows(rows)
+
+	list := make([]entities.ClientProductShort, 0)
+	for rows.Next() {
+		item := entities.ClientProductShort{}
+		if err = rows.StructScan(&item); err != nil {
+			return nil, err
+		}
+		list = append(list, item)
+	}
+
+	return list, nil
+}

@@ -41,7 +41,21 @@ func (controller *Controller) GetAdminSingleREST(ctx echo.Context) error {
 }
 
 func (controller *Controller) GetClientREST(ctx echo.Context) error {
-	return controller.Ok(ctx, "OK")
+	searchQuery := ctx.QueryParam("query")
+	page, _ := strconv.Atoi(ctx.QueryParam("page"))
+	if page == 0 {
+		page = 1
+	}
+
+	from := (page - 1) * 20
+	to := from + 20
+
+	products, err := controller._getClient(from, to, searchQuery)
+	if err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, products)
 }
 
 func (controller *Controller) UpdateProductREST(ctx echo.Context) error {

@@ -18,6 +18,14 @@ type AdminProductGet struct {
 	BrandTitle        string    `db:"brand_title"`
 }
 
+type ClientProductShort struct {
+	ID         int    `db:"id"`
+	Title      string `db:"title"`
+	Price      int    `db:"price"`
+	VendorCode string `db:"vendor_code"`
+	Count      int    `db:"count"`
+}
+
 type ProductImageGet struct {
 	ProductID int    `db:"product_id"`
 	Path      string `db:"path"`
