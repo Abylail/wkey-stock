@@ -59,7 +59,7 @@ func (controller *Controller) _getAdmin(from, to int, searchQuery, categoryKey s
 	}
 
 	// считаем кол-во страниц
-	pageCount := int(math.Ceil(float64(productCount / 20)))
+	pageCount := int(math.Ceil(float64(productCount) / float64(20)))
 
 	// получаем список категорий
 	categoryPairs, err := controller.productRepo.GetSubCategoryPairs(
@@ -325,6 +325,8 @@ func (controller *Controller) _getClient(from, to int, searchQuery string) (*mod
 
 	if len(searchQuery) == 0 {
 		products, err = controller.productRepo.GetClient(from, to)
+	} else {
+		products, err = controller.productRepo.GetClientQuery(from, to, searchQuery)
 	}
 
 	if err != nil {
@@ -369,8 +371,22 @@ func (controller *Controller) _getClient(from, to int, searchQuery string) (*mod
 		})
 	}
 
+	// получаем кол-во продуктов
+	var productCount int
+	if len(searchQuery) == 0 {
+		productCount, err = controller.productRepo.GetClientCount()
+	} else {
+		productCount, err = controller.productRepo.GetClientCountQuery(searchQuery)
+	}
+	if err != nil {
+		return nil, errors.ClientProductCountGet.With(err)
+	}
+
+	// считаем кол-во страниц
+	pageCount := int(math.Ceil(float64(productCount) / float64(20)))
+
 	return &models.ClientProductList{
 		List:      productList,
-		PageCount: 10,
+		PageCount: pageCount,
 	}, nil
 }

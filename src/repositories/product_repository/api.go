@@ -323,3 +323,62 @@ func (repo *Repository) GetClient(from, to int) ([]entities.ClientProductShort, 
 
 	return list, nil
 }
+
+// GetClientCount колличество товаров
+func (repo *Repository) GetClientCount() (int, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("product", "client_count")
+
+	var count int
+	if err := repo.connection.QueryRowxContext(ctx, query).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+// GetClientQuery список продуктов для клиента по поиску
+func (repo *Repository) GetClientQuery(from, to int, searchQuery string) ([]entities.ClientProductShort, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	searchQuery = "%" + searchQuery + "%"
+
+	query := repo.Script("product", "get_client_by_query")
+
+	rows, err := repo.connection.QueryxContext(ctx, query, from, to, searchQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer repo.CloseRows(rows)
+
+	list := make([]entities.ClientProductShort, 0)
+	for rows.Next() {
+		item := entities.ClientProductShort{}
+		if err = rows.StructScan(&item); err != nil {
+			return nil, err
+		}
+		list = append(list, item)
+	}
+
+	return list, nil
+}
+
+// GetClientCountQuery колличество товаров
+func (repo *Repository) GetClientCountQuery(searchQuery string) (int, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	searchQuery = "%" + searchQuery + "%"
+
+	query := repo.Script("product", "get_client_count_by_query")
+
+	var count int
+	if err := repo.connection.QueryRowxContext(ctx, query, searchQuery).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
