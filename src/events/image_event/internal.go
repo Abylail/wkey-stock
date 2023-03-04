@@ -14,6 +14,7 @@ const (
 	subCategoryIconPath = "/cdn/subcategory"
 	brandIconPath       = "/cdn/brand"
 	productImagePath    = "/cdn/product"
+	promotionImagePath  = "/cdn/promotion"
 )
 
 func (event *Event) uploadProductImage(productID int, name, buffer string, position int) (string, error) {

@@ -5,6 +5,7 @@ import (
 	"wkey-stock/src/controllers"
 	"wkey-stock/src/controllers/category_controller"
 	"wkey-stock/src/controllers/product_controller"
+	"wkey-stock/src/controllers/promotion_controller"
 	"wkey-stock/src/events"
 )
 
@@ -18,6 +19,7 @@ func setRoutes(server *echo.Echo, apiControllers *controllers.ApiControllers, _ 
 	setCategory(server, apiControllers.Category)
 	setSubCategory(server, apiControllers.Category)
 	setBrand(server, apiControllers.Product)
+	setPromotion(server, apiControllers.Promotion)
 }
 
 func setProduct(server *echo.Echo, controller *product_controller.Controller) {
@@ -81,4 +83,17 @@ func setBrand(server *echo.Echo, controller *product_controller.Controller) {
 	adminGroup.PUT("/update/:id", controller.UpdateBrandREST)
 	adminGroup.PUT("/upload/:id", controller.UploadBrandREST)
 	adminGroup.DELETE("/delete/:id", controller.DeleteBrandREST)
+}
+
+// Промоакции
+func setPromotion(server *echo.Echo, controller *promotion_controller.Controller) {
+	adminGroup := server.Group("/admin/api/v1/stock/promotion")
+
+	adminGroup.GET("/get", controller.GetListAdmin)
+	adminGroup.GET("/get/:id", controller.GetSingleAdmin)
+	adminGroup.GET("/code/:code", controller.GetSingleCodeAdmin)
+	adminGroup.POST("/create", controller.CreateAdmin)
+	adminGroup.PUT("/update/:id", controller.UpdateAdmin)
+	adminGroup.PUT("/upload/:id", controller.UploadAdmin)
+	adminGroup.DELETE("/delete/:id", controller.DeleteAdmin)
 }

@@ -7,6 +7,7 @@ import (
 	"wkey-stock/src/repositories/brand_repository"
 	"wkey-stock/src/repositories/category_repository"
 	"wkey-stock/src/repositories/product_repository"
+	"wkey-stock/src/repositories/promotion_repository"
 	"wkey-stock/src/repositories/sub_category_repository"
 	"wkey-stock/src/services/postgres_helper"
 )
@@ -16,6 +17,7 @@ type ApiRepositories struct {
 	SubCategory *sub_category_repository.Repository
 	Product     *product_repository.Repository
 	Brand       *brand_repository.Repository
+	Promotion   *promotion_repository.Repository
 }
 
 func Get(apiEvents *events.ApiEvents) (*ApiRepositories, error) {
@@ -32,5 +34,6 @@ func Get(apiEvents *events.ApiEvents) (*ApiRepositories, error) {
 		SubCategory: sub_category_repository.Create(connectionPostgres, apiEvents),
 		Product:     product_repository.Create(connectionPostgres, apiEvents),
 		Brand:       brand_repository.Create(connectionPostgres, apiEvents),
+		Promotion:   promotion_repository.Create(connectionPostgres, apiEvents),
 	}, nil
 }

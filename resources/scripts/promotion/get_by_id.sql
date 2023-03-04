@@ -1,0 +1,1 @@
+select * from promotions where id = $1;

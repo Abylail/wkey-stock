@@ -1,0 +1,91 @@
+package promotion_controller
+
+import (
+	"github.com/lowl11/lazy-collection/type_list"
+	"wkey-stock/src/data/entities"
+	"wkey-stock/src/data/errors"
+	"wkey-stock/src/data/models"
+)
+
+// _getListAdmin список промоакций (в админке)
+func (controller *Controller) _getListAdmin() ([]models.PromotionAdminGet, *models.Error) {
+	list, err := controller.promotionRepo.GetAll()
+
+	if err != nil {
+		return nil, errors.PromotionGetList.With(err)
+	}
+
+	promotions := type_list.NewWithList[entities.AdminPromotion, models.PromotionAdminGet](list...).
+		Select(func(item entities.AdminPromotion) models.PromotionAdminGet {
+			return models.PromotionAdminGet{
+				ID:            item.ID,
+				CODE:          item.CODE,
+				TitleRU:       item.TitleRU,
+				TitleKZ:       item.TitleKZ,
+				ImageRU:       item.ImageRU,
+				ImageKZ:       item.ImageKZ,
+				DescriptionRU: item.DescriptionRU,
+				DescriptionKZ: item.DescriptionKZ,
+			}
+		}).
+		Slice()
+
+	return promotions, nil
+}
+
+// _getSingleAdmin промоакция по id
+func (controller *Controller) _getSingleAdmin(id int) (*models.PromotionAdminGet, *models.Error) {
+	rawPromotion, err := controller.promotionRepo.GetById(id)
+	if err != nil {
+		return nil, errors.PromotionGetById.With(err)
+	}
+
+	// Если не нашелся
+	if rawPromotion == nil {
+		return nil, errors.PromotionNotFound
+	}
+
+	return &models.PromotionAdminGet{
+		ID:            rawPromotion.ID,
+		CODE:          rawPromotion.CODE,
+		TitleRU:       rawPromotion.TitleRU,
+		TitleKZ:       rawPromotion.TitleKZ,
+		ImageRU:       rawPromotion.ImageRU,
+		ImageKZ:       rawPromotion.ImageKZ,
+		DescriptionRU: rawPromotion.DescriptionRU,
+		DescriptionKZ: rawPromotion.DescriptionKZ,
+	}, nil
+}
+
+// _getSingleCodeAdmin промоакция по code
+func (controller *Controller) _getSingleCodeAdmin(code string) (*models.PromotionAdminGet, *models.Error) {
+	rawPromotion, err := controller.promotionRepo.GetByCode(code)
+	if err != nil {
+		return nil, errors.PromotionGetByCode.With(err)
+	}
+
+	// Если не нашелся
+	if rawPromotion == nil {
+		return nil, errors.PromotionNotFound
+	}
+
+	return &models.PromotionAdminGet{
+		ID:            rawPromotion.ID,
+		CODE:          rawPromotion.CODE,
+		TitleRU:       rawPromotion.TitleRU,
+		TitleKZ:       rawPromotion.TitleKZ,
+		ImageRU:       rawPromotion.ImageRU,
+		ImageKZ:       rawPromotion.ImageKZ,
+		DescriptionRU: rawPromotion.DescriptionRU,
+		DescriptionKZ: rawPromotion.DescriptionKZ,
+	}, nil
+}
+
+// _createAdmin создание промоации
+func (controller *Controller) _createAdmin(model *models.PromotionAdminCreate) (*string, *models.Error) {
+	code, err := controller.promotionRepo.Create(model)
+	if err != nil {
+		return nil, errors.PromotionCreate.With(err)
+	}
+	return code, nil
+}

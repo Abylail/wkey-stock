@@ -1,0 +1,113 @@
+package promotion_repository
+
+import (
+	"github.com/jmoiron/sqlx"
+	"github.com/mehanizm/iuliia-go"
+	"strings"
+	"wkey-stock/src/data/entities"
+	"wkey-stock/src/data/models"
+)
+
+// GetAll список все акций
+func (repo *Repository) GetAll() ([]entities.AdminPromotion, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("promotion", "get_all_admin")
+
+	rows, err := repo.connection.QueryxContext(ctx, query)
+	if err != nil {
+		return nil, nil
+	}
+
+	list := make([]entities.AdminPromotion, 0)
+	for rows.Next() {
+		item := entities.AdminPromotion{}
+		if err = rows.StructScan(&item); err != nil {
+			return nil, err
+		}
+		list = append(list, item)
+	}
+
+	return list, nil
+}
+
+// GetById получить по id
+func (repo *Repository) GetById(id int) (*entities.AdminPromotion, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("promotion", "get_by_id")
+
+	rows, err := repo.connection.QueryxContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer repo.CloseRows(rows)
+
+	if rows.Next() {
+		item := entities.AdminPromotion{}
+		if err = rows.StructScan(&item); err != nil {
+			return nil, err
+		}
+		return &item, nil
+	}
+
+	return nil, nil
+}
+
+// GetById получить по id
+func (repo *Repository) GetByCode(code string) (*entities.AdminPromotion, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("promotion", "get_by_code")
+
+	rows, err := repo.connection.QueryxContext(ctx, query, code)
+	if err != nil {
+		return nil, err
+	}
+	defer repo.CloseRows(rows)
+
+	if rows.Next() {
+		item := entities.AdminPromotion{}
+		if err = rows.StructScan(&item); err != nil {
+			return nil, err
+		}
+		return &item, nil
+	}
+
+	return nil, nil
+}
+
+// Create создать (возвращает код акции)
+func (repo *Repository) Create(model *models.PromotionAdminCreate) (*string, error) {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	// генерируем код категории
+	code := strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU)))
+	code = strings.ReplaceAll(code, " ", "_")
+
+	entity := &entities.AdminPromotionCreate{
+		Code:          code,
+		TitleRU:       model.TitleRU,
+		TitleKZ:       model.TitleKZ,
+		DescriptionRU: model.DescriptionRU,
+		DescriptionKZ: model.DescriptionKZ,
+	}
+
+	query := repo.Script("promotion", "create")
+
+	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return &code, nil
+}
