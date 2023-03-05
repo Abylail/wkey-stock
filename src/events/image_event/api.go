@@ -157,3 +157,47 @@ func (event *Event) UploadProductImages(productID int, model *models.ProductUplo
 
 	return pathList, nil
 }
+
+func (event *Event) UploadPromotion(promotionCode string, name, buffer string) (string, error) {
+	event.mutex.Lock()
+	defer event.mutex.Unlock()
+
+	imageExtension := filepath.Ext(name)
+
+	fileName := uuid.New().String()
+	fullPath := promotionImagePath + "/" + promotionCode + "/" + fileName + imageExtension
+
+	// проверить существует ли папка категории
+	if !folderapi.Exist(promotionImagePath) {
+		// если нет создаем ее
+		if err := folderapi.Create("/cdn", "promotion"); err != nil {
+			return "", err
+		}
+	}
+
+	// проверяем существует ли уже файл
+	if fileapi.Exist(fullPath) {
+		// удаляем его если существует
+		if err := fileapi.Delete(fullPath); err != nil {
+			return "", err
+		}
+	}
+
+	// проверить существует ли папка категории
+	if err := folderapi.Create(promotionImagePath, promotionCode); err != nil {
+		return "", err
+	}
+
+	// декодируем из base64 в байты
+	fileContent, err := base64.StdEncoding.DecodeString(buffer)
+	if err != nil {
+		return "", err
+	}
+
+	// создаем файл
+	if err = fileapi.Create(fullPath, fileContent); err != nil {
+		return "", err
+	}
+
+	return fullPath, nil
+}

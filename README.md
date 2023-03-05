@@ -9,6 +9,9 @@
 /admin/api/v1/stock/promotion/get/:id - получить по id
 /admin/api/v1/stock/promotion/code/:code - получить по code
 /admin/api/v1/stock/promotion/create - создание акции
+/admin/api/v1/stock/promotion/update - обновление акции
+/admin/api/v1/stock/promotion/upload - обновление картинок акции (не работает)
+/admin/api/v1/stock/promotion/delete/:code - удаление акции
 ```
 
 ## Клиентские роуты

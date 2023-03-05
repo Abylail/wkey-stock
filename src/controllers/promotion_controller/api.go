@@ -89,3 +89,33 @@ func (controller *Controller) _createAdmin(model *models.PromotionAdminCreate) (
 	}
 	return code, nil
 }
+
+// _updateAdmin обновление промоакции
+func (controller *Controller) _updateAdmin(model *models.PromotionAdminUpdate) *models.Error {
+	if err := controller.promotionRepo.Update(model); err != nil {
+		return errors.PromotionUpdate.With(err)
+	}
+	return nil
+}
+
+// _uploadAdmin загрузка фотографий
+func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) *models.Error {
+	promotion, err := controller.promotionRepo.GetByCode(model.Code)
+	if err != nil {
+		return errors.PromotionGetByCode.With(err)
+	}
+
+	if promotion == nil {
+		return errors.PromotionNotFound
+	}
+
+	return nil
+}
+
+// _deleteAdmin удалить акцию
+func (controller *Controller) _deleteAdmin(code *string) *models.Error {
+	if err := controller.promotionRepo.Delete(code); err != nil {
+		return errors.PromotionUpdate.With(err)
+	}
+	return nil
+}

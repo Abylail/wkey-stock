@@ -63,15 +63,49 @@ func (controller *Controller) CreateAdmin(ctx echo.Context) error {
 
 // UpdateAdmin Обновить промоакцию
 func (controller *Controller) UpdateAdmin(ctx echo.Context) error {
-	return nil
+	model := models.PromotionAdminUpdate{}
+
+	if err := ctx.Bind(&model); err != nil {
+		return controller.Error(ctx, errors.PromotionCreateBind.With(err))
+	}
+
+	if err := controller.validatePromotionUpdate(&model); err != nil {
+		return controller.Error(ctx, errors.BrandAddValidate.With(err))
+	}
+
+	if err := controller._updateAdmin(&model); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, "OK")
 }
 
 // UploadAdmin Загрузить фото в промоакцию
 func (controller *Controller) UploadAdmin(ctx echo.Context) error {
-	return nil
+	model := models.PromotionAdminUpload{}
+
+	if err := ctx.Bind(&model); err != nil {
+		return controller.Error(ctx, errors.PromotionCreateBind.With(err))
+	}
+
+	if err := controller.validatePromotionUpload(&model); err != nil {
+		return controller.Error(ctx, errors.PromotionCreateValidate.With(err))
+	}
+
+	if err := controller._uploadAdmin(&model); err != nil {
+		return controller.Error(ctx, errors.PromotionUpload.With(err))
+	}
+
+	return controller.Ok(ctx, "OK")
 }
 
 // DeleteAdmin Загрузить фото в промоакцию
 func (controller *Controller) DeleteAdmin(ctx echo.Context) error {
-	return nil
+	code := ctx.Param("code")
+
+	if err := controller._deleteAdmin(&code); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, "OK")
 }

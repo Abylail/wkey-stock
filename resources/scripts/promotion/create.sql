@@ -1,1 +1,1 @@
-INSERT INTO promotions (code, title_ru, title_kz, description_ru, description_kz) values (:code, :title_ru, :title_kz, :description_ru, :description_kz) RETURNING id;
+INSERT INTO promotions (code, title_ru, title_kz, description_ru, description_kz) values (:code, :title_ru, :title_kz, :description_ru, :description_kz);

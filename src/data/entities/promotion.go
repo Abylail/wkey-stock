@@ -18,3 +18,11 @@ type AdminPromotionCreate struct {
 	DescriptionRU *string `db:"description_ru"`
 	DescriptionKZ *string `db:"description_kz"`
 }
+
+type AdminPromotionUpdate struct {
+	Code          string  `db:"code"`
+	TitleRU       string  `db:"title_ru"`
+	TitleKZ       string  `db:"title_kz"`
+	DescriptionRU *string `db:"description_ru"`
+	DescriptionKZ *string `db:"description_kz"`
+}

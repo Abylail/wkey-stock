@@ -20,11 +20,23 @@ var (
 		BusinessMessage: defaultMessage,
 	}
 	PromotionCreateBind = &models.Error{
-		TechMessage:     "Add new promotion model bind error",
+		TechMessage:     "Create new promotion model bind error",
+		BusinessMessage: defaultMessage,
+	}
+	PromotionCreateValidate = &models.Error{
+		TechMessage:     "Validate promotion model error",
 		BusinessMessage: defaultMessage,
 	}
 	PromotionCreate = &models.Error{
 		TechMessage:     "Create new promotion error",
+		BusinessMessage: defaultMessage,
+	}
+	PromotionUpdate = &models.Error{
+		TechMessage:     "Update promotion error",
+		BusinessMessage: defaultMessage,
+	}
+	PromotionUpload = &models.Error{
+		TechMessage:     "Upload promotion error",
 		BusinessMessage: defaultMessage,
 	}
 )

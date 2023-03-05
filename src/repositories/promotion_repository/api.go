@@ -111,3 +111,51 @@ func (repo *Repository) Create(model *models.PromotionAdminCreate) (*string, err
 
 	return &code, nil
 }
+
+// Update обновить акцию
+func (repo *Repository) Update(model *models.PromotionAdminUpdate) error {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	entity := &entities.AdminPromotionUpdate{
+		Code:          model.Code,
+		TitleRU:       model.TitleRU,
+		TitleKZ:       model.TitleKZ,
+		DescriptionRU: model.DescriptionRU,
+		DescriptionKZ: model.DescriptionKZ,
+	}
+
+	query := repo.Script("promotion", "update")
+
+	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Delete удалить акцию
+func (repo *Repository) Delete(code *string) error {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	query := repo.Script("promotion", "delete")
+
+	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+		if _, err := tx.ExecContext(ctx, query, code); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}

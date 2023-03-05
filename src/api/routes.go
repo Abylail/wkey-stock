@@ -90,10 +90,10 @@ func setPromotion(server *echo.Echo, controller *promotion_controller.Controller
 	adminGroup := server.Group("/admin/api/v1/stock/promotion")
 
 	adminGroup.GET("/get", controller.GetListAdmin)
-	adminGroup.GET("/get/:id", controller.GetSingleAdmin)
-	adminGroup.GET("/code/:code", controller.GetSingleCodeAdmin)
+	adminGroup.GET("/get/:code", controller.GetSingleCodeAdmin)
+	adminGroup.GET("/id/:id", controller.GetSingleAdmin)
 	adminGroup.POST("/create", controller.CreateAdmin)
-	adminGroup.PUT("/update/:id", controller.UpdateAdmin)
-	adminGroup.PUT("/upload/:id", controller.UploadAdmin)
-	adminGroup.DELETE("/delete/:id", controller.DeleteAdmin)
+	adminGroup.PUT("/update", controller.UpdateAdmin)
+	adminGroup.PUT("/upload", controller.UploadAdmin)
+	adminGroup.DELETE("/delete/:code", controller.DeleteAdmin)
 }
