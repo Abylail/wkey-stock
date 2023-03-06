@@ -1,2 +1,2 @@
-UPDATE promotions SET :imageField = :imagePath
+UPDATE promotions SET :ImageField = :ImagePath
 where code = :code;
