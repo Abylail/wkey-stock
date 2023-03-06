@@ -157,7 +157,7 @@ func (repo *Repository) UpdateImage(code string, imagePath string, lang string) 
 		ImagePath:  imagePath,
 	}
 
-	query := fmt.Sprintf(repo.Script("promotion", "update_image"), entity.ImageField, entity.ImagePath)
+	query := fmt.Sprintf(repo.Script("promotion", "update_image"), entity.ImageField)
 
 	fmt.Println("query", query)
 

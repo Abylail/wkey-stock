@@ -1,2 +1,2 @@
-UPDATE promotions SET %s=%s
+UPDATE promotions SET %s=:image_path
 where code = :code;
