@@ -158,8 +158,6 @@ func (repo *Repository) UpdateImage(code string, imagePath string, lang string) 
 
 	query := fmt.Sprintf(repo.Script("promotion", "update_image"), imageField)
 
-	fmt.Println("query", query)
-
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
 			return err

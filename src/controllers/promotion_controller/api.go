@@ -1,6 +1,7 @@
 package promotion_controller
 
 import (
+	"fmt"
 	"github.com/lowl11/lazy-collection/type_list"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/errors"
@@ -101,7 +102,7 @@ func (controller *Controller) _updateAdmin(model *models.PromotionAdminUpdate) *
 // _uploadAdmin загрузка фотографий
 func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) *models.Error {
 
-	//if err := controller.promotionRepo.UpdateImage(model.Code, "testimagepath", model.Lang); err != nil {
+	//if err := controller.promotionRepo.UpdateImage(model.Code, "imagepattext", model.Lang); err != nil {
 	//	return errors.PromotionImageUpdate.With(err)
 	//}
 
@@ -118,6 +119,8 @@ func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) *
 	if err != nil {
 		return errors.PromotionImageUpload.With(err)
 	}
+
+	fmt.Println(imagePath)
 
 	if err := controller.promotionRepo.UpdateImage(model.Code, imagePath, model.Lang); err != nil {
 		return errors.PromotionImageUpdate.With(err)
