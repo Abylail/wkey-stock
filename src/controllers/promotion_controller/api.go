@@ -100,6 +100,11 @@ func (controller *Controller) _updateAdmin(model *models.PromotionAdminUpdate) *
 
 // _uploadAdmin загрузка фотографий
 func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) *models.Error {
+
+	//if err := controller.promotionRepo.UpdateImage(model.Code, "testimagepath", model.Lang); err != nil {
+	//	return errors.PromotionImageUpdate.With(err)
+	//}
+
 	promotion, err := controller.promotionRepo.GetByCode(model.Code)
 	if err != nil {
 		return errors.PromotionGetByCode.With(err)
@@ -114,7 +119,7 @@ func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) *
 		return errors.PromotionImageUpload.With(err)
 	}
 
-	if err = controller.promotionRepo.UpdateImage(model.Code, imagePath, model.Lang); err != nil {
+	if err := controller.promotionRepo.UpdateImage(model.Code, imagePath, model.Lang); err != nil {
 		return errors.PromotionImageUpdate.With(err)
 	}
 
