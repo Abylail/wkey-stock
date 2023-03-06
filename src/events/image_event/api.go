@@ -158,7 +158,7 @@ func (event *Event) UploadProductImages(productID int, model *models.ProductUplo
 	return pathList, nil
 }
 
-func (event *Event) UploadPromotion(promotionCode string, name, buffer string) (string, error) {
+func (event *Event) UploadPromotion(promotionCode string, name string, buffer string) (string, error) {
 	event.mutex.Lock()
 	defer event.mutex.Unlock()
 

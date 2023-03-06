@@ -109,6 +109,15 @@ func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) *
 		return errors.PromotionNotFound
 	}
 
+	imagePath, err := controller.image.UploadPromotion(model.Code, model.Image.Name, model.Image.Buffer)
+	if err != nil {
+		return errors.PromotionImageUpload.With(err)
+	}
+
+	if err = controller.promotionRepo.UpdateImage(model.Code, imagePath, model.Lang); err != nil {
+		return errors.PromotionImageUpdate.With(err)
+	}
+
 	return nil
 }
 

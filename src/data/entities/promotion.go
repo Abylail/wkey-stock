@@ -26,3 +26,9 @@ type AdminPromotionUpdate struct {
 	DescriptionRU *string `db:"description_ru"`
 	DescriptionKZ *string `db:"description_kz"`
 }
+
+type AdminPromotionUpdateImage struct {
+	Code       string `db:"code"`
+	ImageField string
+	ImagePath  string
+}

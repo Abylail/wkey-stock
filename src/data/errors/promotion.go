@@ -39,4 +39,12 @@ var (
 		TechMessage:     "Upload promotion error",
 		BusinessMessage: defaultMessage,
 	}
+	PromotionImageUpload = &models.Error{
+		TechMessage:     "Upload image error",
+		BusinessMessage: defaultMessage,
+	}
+	PromotionImageUpdate = &models.Error{
+		TechMessage:     "Update image error",
+		BusinessMessage: defaultMessage,
+	}
 )

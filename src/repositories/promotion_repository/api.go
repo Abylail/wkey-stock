@@ -140,6 +140,37 @@ func (repo *Repository) Update(model *models.PromotionAdminUpdate) error {
 	return nil
 }
 
+// UpdateImage загрузка картинки
+func (repo *Repository) UpdateImage(code string, imagePath string, lang string) error {
+	ctx, cancel := repo.Ctx()
+	defer cancel()
+
+	var imageField string = "image_ru"
+	if lang == "kz" {
+		imageField = "image_kz"
+	}
+
+	entity := &entities.AdminPromotionUpdateImage{
+		Code:       code,
+		ImageField: imageField,
+		ImagePath:  imagePath,
+	}
+
+	query := repo.Script("promotion", "update_image")
+
+	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Delete удалить акцию
 func (repo *Repository) Delete(code *string) error {
 	ctx, cancel := repo.Ctx()
