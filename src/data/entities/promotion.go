@@ -30,5 +30,5 @@ type AdminPromotionUpdate struct {
 type AdminPromotionUpdateImage struct {
 	Code       string `db:"code"`
 	ImageField string
-	ImagePath  string `db:"imagePath"`
+	ImagePath  string
 }

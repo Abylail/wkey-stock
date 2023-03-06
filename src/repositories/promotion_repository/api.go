@@ -1,6 +1,7 @@
 package promotion_repository
 
 import (
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/mehanizm/iuliia-go"
 	"strings"
@@ -156,7 +157,7 @@ func (repo *Repository) UpdateImage(code string, imagePath string, lang string) 
 		ImagePath:  imagePath,
 	}
 
-	query := repo.Script("promotion", "update_image")
+	query := fmt.Sprintf(repo.Script("promotion", "update_image"), entity.ImageField, entity.ImagePath)
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
