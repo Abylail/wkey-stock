@@ -47,4 +47,8 @@ var (
 		TechMessage:     "Update image error",
 		BusinessMessage: defaultMessage,
 	}
+	PromotionImageDelete = &models.Error{
+		TechMessage:     "Delete image error",
+		BusinessMessage: defaultMessage,
+	}
 )

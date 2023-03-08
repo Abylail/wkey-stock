@@ -1,7 +1,6 @@
 package promotion_controller
 
 import (
-	"fmt"
 	"github.com/lowl11/lazy-collection/type_list"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/errors"
@@ -120,10 +119,20 @@ func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) *
 		return errors.PromotionImageUpload.With(err)
 	}
 
-	fmt.Println(imagePath)
-
 	if err := controller.promotionRepo.UpdateImage(model.Code, imagePath, model.Lang); err != nil {
 		return errors.PromotionImageUpdate.With(err)
+	}
+
+	// Удаляю старую фотку
+	oldPath := promotion.ImageRU
+	if model.Lang == "kz" {
+		oldPath = promotion.ImageKZ
+	}
+
+	if oldPath != nil {
+		if err := controller.image.Delete(*oldPath); err != nil {
+			return errors.PromotionImageDelete.With(err)
+		}
 	}
 
 	return nil

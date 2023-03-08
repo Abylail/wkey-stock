@@ -201,3 +201,16 @@ func (event *Event) UploadPromotion(promotionCode string, name string, buffer st
 
 	return fullPath, nil
 }
+
+// Delete Удаление (принимает полный путь файла)
+func (event *Event) Delete(filepath string) error {
+	// проверяем существует ли уже файл
+	if fileapi.Exist(filepath) {
+		// удаляем его если существует
+		if err := fileapi.Delete(filepath); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
