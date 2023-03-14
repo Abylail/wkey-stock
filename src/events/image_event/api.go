@@ -202,6 +202,19 @@ func (event *Event) UploadPromotion(promotionCode string, name string, buffer st
 	return fullPath, nil
 }
 
+// DeletePromotionFolder Удаление папки акции со всеми файлами (принимает полный путь файла)
+func (event *Event) DeletePromotionFolder(code string) error {
+	// проверяем существует ли уже файл
+	if folderapi.Exist(promotionImagePath + "/" + code) {
+		// удаляем его если существует
+		if err := folderapi.Delete(promotionImagePath+"/"+code, true); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // Delete Удаление (принимает полный путь файла)
 func (event *Event) Delete(filepath string) error {
 	// проверяем существует ли уже файл

@@ -51,4 +51,8 @@ var (
 		TechMessage:     "Delete image error",
 		BusinessMessage: defaultMessage,
 	}
+	PromotionFolderDelete = &models.Error{
+		TechMessage:     "Delete image folder error",
+		BusinessMessage: defaultMessage,
+	}
 )

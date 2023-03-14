@@ -143,5 +143,10 @@ func (controller *Controller) _deleteAdmin(code *string) *models.Error {
 	if err := controller.promotionRepo.Delete(code); err != nil {
 		return errors.PromotionUpdate.With(err)
 	}
+
+	if err := controller.image.DeletePromotionFolder(*code); err != nil {
+		return errors.PromotionFolderDelete.With(err)
+	}
+
 	return nil
 }
