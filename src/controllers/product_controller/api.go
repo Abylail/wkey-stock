@@ -11,7 +11,7 @@ import (
 	"wkey-stock/src/definition"
 )
 
-func (controller *Controller) _getAdmin(from, to int, searchQuery, categoryKey string) (*models.AdminProductGet, *models.Error) {
+func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categoryKey string) (*models.AdminProductGet, *models.Error) {
 	logger := definition.Logger
 
 	// todo: что то придумать с этим
@@ -22,9 +22,9 @@ func (controller *Controller) _getAdmin(from, to int, searchQuery, categoryKey s
 
 	// получаем сами продукты
 	if len(searchQuery) == 0 {
-		products, err = controller.productRepo.GetAdmin(from, to)
+		products, err = controller.productRepo.GetAdmin(from, pageSize)
 	} else {
-		products, err = controller.productRepo.GetAdminByQuery(from, to, searchQuery)
+		products, err = controller.productRepo.GetAdminByQuery(from, pageSize, searchQuery)
 	}
 	if err != nil {
 		logger.Error(err, "Get products list error", layers.Database)
@@ -319,14 +319,14 @@ func (controller *Controller) _deleteBrand(id int) *models.Error {
 	return nil
 }
 
-func (controller *Controller) _getClient(from, to int, searchQuery string) (*models.ClientProductList, *models.Error) {
+func (controller *Controller) _getClient(from, pageSize int, searchQuery string) (*models.ClientProductList, *models.Error) {
 	var products []entities.ClientProductShort
 	var err error
 
 	if len(searchQuery) == 0 {
-		products, err = controller.productRepo.GetClient(from, to)
+		products, err = controller.productRepo.GetClient(from, pageSize)
 	} else {
-		products, err = controller.productRepo.GetClientQuery(from, to, searchQuery)
+		products, err = controller.productRepo.GetClientQuery(from, pageSize, searchQuery)
 	}
 
 	if err != nil {

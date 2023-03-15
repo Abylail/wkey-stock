@@ -9,13 +9,13 @@ import (
 	"wkey-stock/src/data/models"
 )
 
-func (repo *Repository) GetAdmin(from, to int) ([]entities.AdminProductGet, error) {
+func (repo *Repository) GetAdmin(from, pageSize int) ([]entities.AdminProductGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	query := repo.Script("product", "get_admin")
 
-	rows, err := repo.connection.QueryxContext(ctx, query, from, to)
+	rows, err := repo.connection.QueryxContext(ctx, query, from, pageSize)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func (repo *Repository) GetAdmin(from, to int) ([]entities.AdminProductGet, erro
 	return list, nil
 }
 
-func (repo *Repository) GetAdminByQuery(from, to int, searchQuery string) ([]entities.AdminProductGet, error) {
+func (repo *Repository) GetAdminByQuery(from, pageSize int, searchQuery string) ([]entities.AdminProductGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
@@ -41,7 +41,7 @@ func (repo *Repository) GetAdminByQuery(from, to int, searchQuery string) ([]ent
 
 	query := repo.Script("product", "get_admin_by_query")
 
-	rows, err := repo.connection.QueryxContext(ctx, query, from, to, searchQuery)
+	rows, err := repo.connection.QueryxContext(ctx, query, from, pageSize, searchQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -300,13 +300,13 @@ func (repo *Repository) GetSubCategoryPairs(productIDs []int) ([]entities.Produc
 }
 
 // GetClient список продуктов для клиента (без поискового текста)
-func (repo *Repository) GetClient(from, to int) ([]entities.ClientProductShort, error) {
+func (repo *Repository) GetClient(from, pageSize int) ([]entities.ClientProductShort, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	query := repo.Script("product", "get_client")
 
-	rows, err := repo.connection.QueryxContext(ctx, query, from, to)
+	rows, err := repo.connection.QueryxContext(ctx, query, from, pageSize)
 	if err != nil {
 		return nil, err
 	}
@@ -340,7 +340,7 @@ func (repo *Repository) GetClientCount() (int, error) {
 }
 
 // GetClientQuery список продуктов для клиента по поиску
-func (repo *Repository) GetClientQuery(from, to int, searchQuery string) ([]entities.ClientProductShort, error) {
+func (repo *Repository) GetClientQuery(from, pageSize int, searchQuery string) ([]entities.ClientProductShort, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
@@ -348,7 +348,7 @@ func (repo *Repository) GetClientQuery(from, to int, searchQuery string) ([]enti
 
 	query := repo.Script("product", "get_client_by_query")
 
-	rows, err := repo.connection.QueryxContext(ctx, query, from, to, searchQuery)
+	rows, err := repo.connection.QueryxContext(ctx, query, from, pageSize, searchQuery)
 	if err != nil {
 		return nil, err
 	}
