@@ -109,3 +109,13 @@ func (controller *Controller) DeleteAdmin(ctx echo.Context) error {
 
 	return controller.Ok(ctx, "OK")
 }
+
+// GetListClient Список всех акций
+func (controller *Controller) GetListClient(ctx echo.Context) error {
+	list, err := controller._getListClient()
+	if err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, list)
+}

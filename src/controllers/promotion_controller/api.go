@@ -150,3 +150,28 @@ func (controller *Controller) _deleteAdmin(code *string) *models.Error {
 
 	return nil
 }
+
+// _getListClient список промоакций (в админке)
+func (controller *Controller) _getListClient() ([]models.PromotionClinetGet, *models.Error) {
+	list, err := controller.promotionRepo.GetAll()
+
+	if err != nil {
+		return nil, errors.PromotionGetList.With(err)
+	}
+
+	promotions := type_list.NewWithList[entities.AdminPromotion, models.PromotionClinetGet](list...).
+		Select(func(item entities.AdminPromotion) models.PromotionClinetGet {
+			return models.PromotionClinetGet{
+				CODE:          item.CODE,
+				TitleRU:       item.TitleRU,
+				TitleKZ:       item.TitleKZ,
+				ImageRU:       item.ImageRU,
+				ImageKZ:       item.ImageKZ,
+				DescriptionRU: item.DescriptionRU,
+				DescriptionKZ: item.DescriptionKZ,
+			}
+		}).
+		Slice()
+
+	return promotions, nil
+}

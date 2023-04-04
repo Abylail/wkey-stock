@@ -31,3 +31,13 @@ type PromotionAdminUpload struct {
 	Lang  string `json:"lang"`
 	Image File   `json:"image"`
 }
+
+type PromotionClinetGet struct {
+	CODE          string  `json:"code"`
+	TitleRU       string  `json:"title_ru"`
+	TitleKZ       string  `json:"title_kz"`
+	ImageRU       *string `json:"image_ru"`
+	ImageKZ       *string `json:"image_kz"`
+	DescriptionRU *string `json:"description_ru"`
+	DescriptionKZ *string `json:"description_kz"`
+}

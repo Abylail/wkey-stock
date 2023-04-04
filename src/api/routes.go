@@ -31,7 +31,6 @@ func setProduct(server *echo.Echo, controller *product_controller.Controller) {
 	adminGroup.PUT("/upload/:id", controller.UploadProductREST)
 
 	clientGroup := server.Group("/api/v1/stock/product")
-
 	clientGroup.GET("/get", controller.GetClientREST)
 }
 
@@ -96,4 +95,7 @@ func setPromotion(server *echo.Echo, controller *promotion_controller.Controller
 	adminGroup.PUT("/update", controller.UpdateAdmin)
 	adminGroup.PUT("/upload", controller.UploadAdmin)
 	adminGroup.DELETE("/delete/:code", controller.DeleteAdmin)
+
+	clientGroup := server.Group("/api/v1/stock/promotion")
+	clientGroup.GET("/get", controller.GetListClient)
 }
