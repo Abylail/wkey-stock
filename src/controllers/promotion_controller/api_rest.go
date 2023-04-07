@@ -119,3 +119,15 @@ func (controller *Controller) GetListClient(ctx echo.Context) error {
 
 	return controller.Ok(ctx, list)
 }
+
+// GetSingleClient Получить промоакцию по code
+func (controller *Controller) GetSingleClient(ctx echo.Context) error {
+	code := ctx.Param("code")
+
+	promotion, err := controller._getSingleClient(code)
+	if err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, promotion)
+}

@@ -98,4 +98,5 @@ func setPromotion(server *echo.Echo, controller *promotion_controller.Controller
 
 	clientGroup := server.Group("/api/v1/stock/promotion")
 	clientGroup.GET("/get", controller.GetListClient)
+	clientGroup.GET("/get/:code", controller.GetSingleClient)
 }

@@ -175,3 +175,26 @@ func (controller *Controller) _getListClient() ([]models.PromotionClinetGet, *mo
 
 	return promotions, nil
 }
+
+// _getSingleCodeAdmin промоакция по code
+func (controller *Controller) _getSingleClient(code string) (*models.PromotionClinetGet, *models.Error) {
+	rawPromotion, err := controller.promotionRepo.GetByCode(code)
+	if err != nil {
+		return nil, errors.PromotionGetByCode.With(err)
+	}
+
+	// Если не нашелся
+	if rawPromotion == nil {
+		return nil, errors.PromotionNotFound
+	}
+
+	return &models.PromotionClinetGet{
+		CODE:          rawPromotion.CODE,
+		TitleRU:       rawPromotion.TitleRU,
+		TitleKZ:       rawPromotion.TitleKZ,
+		ImageRU:       rawPromotion.ImageRU,
+		ImageKZ:       rawPromotion.ImageKZ,
+		DescriptionRU: rawPromotion.DescriptionRU,
+		DescriptionKZ: rawPromotion.DescriptionKZ,
+	}, nil
+}
