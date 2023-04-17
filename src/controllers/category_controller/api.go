@@ -29,14 +29,37 @@ func (controller *Controller) _getClient(searchQuery string) ([]models.CategoryC
 	categories := type_list.NewWithList[entities.CategoryGet, models.CategoryClientGet](list...).
 		Select(func(item entities.CategoryGet) models.CategoryClientGet {
 			return models.CategoryClientGet{
-				Code:  item.Code,
-				Title: item.TitleRU,
-				Image: item.Icon,
+				Code:    item.Code,
+				TitleRU: item.TitleRU,
+				TitleKZ: item.TitleKZ,
+				Image:   item.Icon,
 			}
 		}).
 		Slice()
 
 	return categories, nil
+}
+
+func (controller *Controller) _getClientSingle(code string) (*models.CategoryClientGetSingle, *models.Error) {
+	logger := definition.Logger
+
+	category, err := controller.categoryRepo.GetByCode(code)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return nil, errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return nil, errors.CategoryNotFound
+	}
+
+	return &models.CategoryClientGetSingle{
+		Code:    category.Code,
+		TitleRU: category.TitleRU,
+		TitleKZ: category.TitleKZ,
+		Image:   category.Icon,
+		Status:  category.Status,
+	}, nil
 }
 
 func (controller *Controller) _getClientSub(parentCode string, searchQuery string) ([]models.SubCategoryClientGet, *models.Error) {

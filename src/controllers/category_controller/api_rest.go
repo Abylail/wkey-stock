@@ -17,6 +17,17 @@ func (controller *Controller) GetClientREST(ctx echo.Context) error {
 	return controller.Ok(ctx, list)
 }
 
+func (controller *Controller) GetClientSingleREST(ctx echo.Context) error {
+	code := ctx.Param("code")
+
+	category, err := controller._getClientSingle(code)
+	if err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, category)
+}
+
 func (controller *Controller) GetClientSubREST(ctx echo.Context) error {
 	parentCode := ctx.Param("par_code")
 	searchQuery := ctx.QueryParam("query")

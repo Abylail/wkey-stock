@@ -22,9 +22,18 @@ type CategoryAdminItem struct {
 
 // CategoryClientGet модель клиентской категории
 type CategoryClientGet struct {
-	Code  string  `json:"code"`
-	Title string  `json:"title"`
-	Image *string `json:"image"`
+	Code    string  `json:"code"`
+	TitleRU string  `json:"title_ru"`
+	TitleKZ string  `json:"title_kz"`
+	Image   *string `json:"image"`
+}
+
+type CategoryClientGetSingle struct {
+	Code    string  `json:"code"`
+	TitleRU string  `json:"title_ru"`
+	TitleKZ string  `json:"title_kz"`
+	Image   *string `json:"image"`
+	Status  string  `json:"status"`
 }
 
 type CategoryAdd struct {

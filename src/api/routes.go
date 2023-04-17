@@ -50,6 +50,7 @@ func setCategory(server *echo.Echo, controller *category_controller.Controller) 
 	clientGroup := server.Group("/api/v1/stock/category")
 
 	clientGroup.GET("/get", controller.GetClientREST)
+	clientGroup.GET("/get/:code", controller.GetClientSingleREST)
 }
 
 func setSubCategory(server *echo.Echo, controller *category_controller.Controller) {
