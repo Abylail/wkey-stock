@@ -10,9 +10,10 @@ type SubCategoryAdminGet struct {
 }
 
 type SubCategoryClientGet struct {
-	Code  string  `json:"code"`
-	Title string  `json:"title"`
-	Image *string `json:"image"`
+	Code    string  `json:"code"`
+	TitleRU string  `json:"title_ru"`
+	TitleKZ string  `json:"title_kz"`
+	Image   *string `json:"image"`
 }
 
 type SubCategoryAdd struct {

@@ -86,9 +86,10 @@ func (controller *Controller) _getClientSub(parentCode string, searchQuery strin
 	subcategories := type_list.NewWithList[entities.SubCategoryGet, models.SubCategoryClientGet](list...).
 		Select(func(item entities.SubCategoryGet) models.SubCategoryClientGet {
 			return models.SubCategoryClientGet{
-				Code:  item.Code,
-				Title: item.TitleRU,
-				Image: item.Icon,
+				Code:    item.Code,
+				TitleRU: item.TitleRU,
+				TitleKZ: item.TitleKZ,
+				Image:   item.Icon,
 			}
 		}).
 		Slice()
