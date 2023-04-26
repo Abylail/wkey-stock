@@ -39,6 +39,18 @@ func (controller *Controller) GetClientSubREST(ctx echo.Context) error {
 	return controller.Ok(ctx, list)
 }
 
+func (controller *Controller) GetClientSubSingleREST(ctx echo.Context) error {
+	parentCode := ctx.Param("par_code")
+	code := ctx.Param("code")
+
+	list, err := controller._getClientSubSingle(parentCode, code)
+	if err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx, list)
+}
+
 func (controller *Controller) GetAdminREST(ctx echo.Context) error {
 	searchQuery := ctx.QueryParam("query")
 

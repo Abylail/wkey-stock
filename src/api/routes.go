@@ -72,6 +72,7 @@ func setSubCategory(server *echo.Echo, controller *category_controller.Controlle
 	clientGroup := server.Group("/api/v1/stock/category/:par_code/sub")
 
 	clientGroup.GET("/get", controller.GetClientSubREST)
+	clientGroup.GET("/get/:code", controller.GetClientSubSingleREST)
 }
 
 func setBrand(server *echo.Echo, controller *product_controller.Controller) {

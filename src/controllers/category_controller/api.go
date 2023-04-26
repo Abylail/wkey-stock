@@ -97,6 +97,38 @@ func (controller *Controller) _getClientSub(parentCode string, searchQuery strin
 	return subcategories, nil
 }
 
+func (controller *Controller) _getClientSubSingle(parentCode string, code string) (*models.SubCategoryClientGet, *models.Error) {
+	logger := definition.Logger
+
+	// Беру категорию по которой идет поиск
+	category, err := controller.categoryRepo.GetByCode(parentCode)
+	if err != nil {
+		logger.Error(err, "Get category by code error", layers.Database)
+		return nil, errors.CategoryGetByCode.With(err)
+	}
+
+	if category == nil {
+		return nil, errors.CategoryNotFound
+	}
+
+	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, code)
+	if err != nil {
+		logger.Error(err, "Get sub category by code error", layers.Database)
+		return nil, errors.CategoryGetByCode.With(err)
+	}
+
+	if subCategory == nil {
+		return nil, errors.SubCategoryNotFound
+	}
+
+	return &models.SubCategoryClientGet{
+		Code:    subCategory.Code,
+		TitleRU: subCategory.TitleRU,
+		TitleKZ: subCategory.TitleKZ,
+		Image:   subCategory.Icon,
+	}, nil
+}
+
 func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAdminItem, *models.Error) {
 	var list []entities.CategoryGet
 	var err error
