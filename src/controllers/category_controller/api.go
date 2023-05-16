@@ -111,7 +111,7 @@ func (controller *Controller) _getClientSubSingle(parentCode string, code string
 		return nil, errors.CategoryNotFound
 	}
 
-	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, code)
+	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
 		logger.Error(err, "Get sub category by code error", layers.Database)
 		return nil, errors.CategoryGetByCode.With(err)
@@ -260,7 +260,7 @@ func (controller *Controller) _getAdminSubSingle(parentCode, code string) (*mode
 		return nil, errors.CategoryNotFound
 	}
 
-	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, code)
+	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
 		logger.Error(err, "Get sub category by code error", layers.Database)
 		return nil, errors.CategoryGetByCode.With(err)
@@ -326,7 +326,7 @@ func (controller *Controller) _createSub(parentCode string, model *models.SubCat
 	categoryCode = strings.ReplaceAll(categoryCode, " ", "_")
 
 	// ищем категорию с таким же кодом
-	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, categoryCode)
+	subCategory, err := controller.subCategoryRepo.GetByCode(categoryCode)
 	if err != nil {
 		logger.Error(err, "Get sub category by code error", layers.Database)
 		return "", errors.CategoryGetByCode.With(err)
@@ -519,7 +519,7 @@ func (controller *Controller) _activateSub(parentCode, code string) *models.Erro
 		return errors.CategoryNotFound
 	}
 
-	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, code)
+	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
 		logger.Error(err, "Get sub category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
@@ -581,7 +581,7 @@ func (controller *Controller) _bindProductList(parentCode, code string, model *m
 		return errors.CategoryNotFound
 	}
 
-	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, code)
+	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
 		logger.Error(err, "Get sub category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
@@ -612,7 +612,7 @@ func (controller *Controller) _unbindProductItem(parentCode, code string, produc
 		return errors.CategoryNotFound
 	}
 
-	subCategory, err := controller.subCategoryRepo.GetByCode(category.ID, code)
+	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
 		logger.Error(err, "Get sub category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)

@@ -10,6 +10,7 @@ import (
 func (controller *Controller) GetAdminREST(ctx echo.Context) error {
 	searchQuery := ctx.QueryParam("query")
 	categoryKey := ctx.QueryParam("category")
+	subcategoryKey := ctx.QueryParam("subcategory")
 	page, _ := strconv.Atoi(ctx.QueryParam("page"))
 	if page == 0 {
 		page = 1
@@ -18,7 +19,7 @@ func (controller *Controller) GetAdminREST(ctx echo.Context) error {
 	pageSize := 20
 	from := (page - 1) * pageSize
 
-	products, err := controller._getAdmin(from, pageSize, searchQuery, categoryKey)
+	products, err := controller._getAdmin(from, pageSize, searchQuery, categoryKey, subcategoryKey)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}

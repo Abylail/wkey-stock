@@ -56,13 +56,13 @@ func (repo *Repository) GetByQuery(parentID int, searchQuery string) ([]entities
 	return list, nil
 }
 
-func (repo *Repository) GetByCode(parentID int, code string) (*entities.SubCategoryGet, error) {
+func (repo *Repository) GetByCode(code string) (*entities.SubCategoryGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
 	query := repo.Script("sub_category", "get_by_code")
 
-	rows, err := repo.connection.QueryxContext(ctx, query, parentID, code)
+	rows, err := repo.connection.QueryxContext(ctx, query, code)
 	if err != nil {
 		return nil, err
 	}

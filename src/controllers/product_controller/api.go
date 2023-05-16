@@ -1,6 +1,7 @@
 package product_controller
 
 import (
+	"fmt"
 	"github.com/lowl11/lazy-collection/array"
 	"github.com/lowl11/lazy-collection/type_list"
 	"github.com/lowl11/lazylog/layers"
@@ -11,14 +12,23 @@ import (
 	"wkey-stock/src/definition"
 )
 
-func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categoryKey string) (*models.AdminProductGet, *models.Error) {
+func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categoryKey string, subcategoryKey string) (*models.AdminProductGet, *models.Error) {
 	logger := definition.Logger
-
-	// todo: что то придумать с этим
-	_ = categoryKey
 
 	var products []entities.AdminProductGet
 	var err error
+
+	// Ищу сабкатегорию если она есть
+	var subcategory *entities.SubCategoryGet
+	if subcategoryKey != "" {
+		fmt.Println("subcategoryKey", subcategoryKey)
+		subcategory, err = controller.subCategoryRepo.GetByCode(subcategoryKey)
+		if err != nil {
+			return nil, errors.AdminProductGet.With(err)
+		}
+	}
+
+	fmt.Println(subcategory)
 
 	// получаем сами продукты
 	if len(searchQuery) == 0 {
