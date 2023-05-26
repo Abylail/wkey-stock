@@ -21,6 +21,7 @@ type Controller struct {
 func Create(apiRepositories *repositories.ApiRepositories, apiEvents *events.ApiEvents) *Controller {
 	return &Controller{
 		productRepo: apiRepositories.Product,
+		subCategoryRepo: apiRepositories.SubCategory,
 		brandRepo:   apiRepositories.Brand,
 		image:       apiEvents.Image,
 	}
