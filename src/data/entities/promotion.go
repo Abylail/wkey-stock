@@ -1,6 +1,6 @@
 package entities
 
-type AdminPromotion struct {
+type Promotion struct {
 	ID            int     `db:"id"`
 	Code          string  `db:"code"`
 	TitleRU       string  `db:"title_ru"`

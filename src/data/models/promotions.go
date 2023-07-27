@@ -1,10 +1,5 @@
 package models
 
-import (
-	"wkey-stock/src/data/dtos"
-	"wkey-stock/src/enums/languages"
-)
-
 type PromotionGet struct {
 	ID            int     `json:"id"`
 	Code          string  `json:"code"`
@@ -14,18 +9,6 @@ type PromotionGet struct {
 	ImageKZ       *string `json:"image_kz"`
 	DescriptionRU *string `json:"description_ru"`
 	DescriptionKZ *string `json:"description_kz"`
-}
-
-func NewPromotion(promotion dtos.Promotion) PromotionGet {
-	return PromotionGet{
-		ID:            promotion.ID(),
-		Code:          promotion.Code(),
-		TitleRU:       promotion.Title(languages.RU),
-		TitleKZ:       promotion.Title(languages.KZ),
-		ImageRU:       promotion.Image(languages.RU),
-		DescriptionRU: promotion.Description(languages.RU),
-		DescriptionKZ: promotion.Description(languages.KZ),
-	}
 }
 
 type PromotionAdminCreate struct {

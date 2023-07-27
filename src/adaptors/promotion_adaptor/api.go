@@ -6,11 +6,11 @@ import (
 	"wkey-stock/src/data/models"
 )
 
-func EntityToDTO(entityList []entities.AdminPromotion) []dtos.Promotion {
+func EntityToDTO(entityList []entities.Promotion) []dtos.Promotion {
 	dtoList := make([]dtos.Promotion, 0, len(entityList))
 
 	for _, promotion := range entityList {
-		dtoList = append(dtoList, dtos.NewPromotion(promotion))
+		dtoList = append(dtoList, *dtos.NewPromotion(&promotion))
 	}
 
 	return dtoList
@@ -20,7 +20,7 @@ func DtoToModel(dtoList []dtos.Promotion) []models.PromotionGet {
 	modelList := make([]models.PromotionGet, 0, len(dtoList))
 
 	for _, promotion := range dtoList {
-		modelList = append(modelList, models.NewPromotion(promotion))
+		modelList = append(modelList, promotion.Model())
 	}
 
 	return modelList

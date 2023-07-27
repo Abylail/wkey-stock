@@ -17,27 +17,18 @@ func (controller *Controller) _getListAdmin() ([]dtos.Promotion, error) {
 }
 
 // _getSingleAdmin промоакция по id
-func (controller *Controller) _getSingleAdmin(id int) (*models.PromotionGet, error) {
-	rawPromotion, err := controller.promotionRepo.GetByID(id)
+func (controller *Controller) _getSingleAdmin(id int) (*dtos.Promotion, error) {
+	promotion, err := controller.promotionRepo.GetByID(id)
 	if err != nil {
 		return nil, ErrorPromotionGetByID(err)
 	}
 
 	// Если не нашелся
-	if rawPromotion == nil {
+	if promotion == nil {
 		return nil, ErrorPromotionNotFoundByID(id)
 	}
 
-	return &models.PromotionGet{
-		ID:            rawPromotion.ID,
-		Code:          rawPromotion.Code,
-		TitleRU:       rawPromotion.TitleRU,
-		TitleKZ:       rawPromotion.TitleKZ,
-		ImageRU:       rawPromotion.ImageRU,
-		ImageKZ:       rawPromotion.ImageKZ,
-		DescriptionRU: rawPromotion.DescriptionRU,
-		DescriptionKZ: rawPromotion.DescriptionKZ,
-	}, nil
+	return dtos.NewPromotion(promotion), nil
 }
 
 // _getSingleCodeAdmin промоакция по code

@@ -8,12 +8,12 @@ import (
 )
 
 type Repository struct {
-	repository.ICrudRepository[entities.AdminPromotion, int]
+	repository.ICrudRepository[entities.Promotion, int]
 }
 
 func New(connection *sqlx.DB) *Repository {
 	return &Repository{
-		ICrudRepository: repository.NewCrud[entities.AdminPromotion, int](
+		ICrudRepository: repository.NewCrud[entities.Promotion, int](
 			connection,
 			"promotions",
 			repo_config.Crud{},

@@ -25,7 +25,7 @@ func (controller *Controller) GetSingleAdmin(ctx boost.Context) error {
 		return controller.Error(ctx, err)
 	}
 
-	return controller.Ok(ctx, promotion)
+	return controller.Ok(ctx, promotion.Model())
 }
 
 // GetSingleCodeAdmin Получить промоакцию по code

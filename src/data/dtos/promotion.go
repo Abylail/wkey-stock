@@ -2,6 +2,7 @@ package dtos
 
 import (
 	"wkey-stock/src/data/entities"
+	"wkey-stock/src/data/models"
 	"wkey-stock/src/enums/languages"
 )
 
@@ -16,8 +17,8 @@ type Promotion struct {
 	descriptionKZ *string
 }
 
-func NewPromotion(entity entities.AdminPromotion) Promotion {
-	return Promotion{
+func NewPromotion(entity *entities.Promotion) *Promotion {
+	return &Promotion{
 		id:            entity.ID,
 		code:          entity.Code,
 		titleRU:       entity.TitleRU,
@@ -59,4 +60,16 @@ func (promotion Promotion) Description(language string) *string {
 	}
 
 	return promotion.descriptionRU
+}
+
+func (promotion Promotion) Model() models.PromotionGet {
+	return models.PromotionGet{
+		ID:            promotion.ID(),
+		Code:          promotion.Code(),
+		TitleRU:       promotion.Title(languages.RU),
+		TitleKZ:       promotion.Title(languages.KZ),
+		ImageRU:       promotion.Image(languages.RU),
+		DescriptionRU: promotion.Description(languages.RU),
+		DescriptionKZ: promotion.Description(languages.KZ),
+	}
 }
