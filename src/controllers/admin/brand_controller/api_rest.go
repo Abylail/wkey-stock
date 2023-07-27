@@ -34,7 +34,7 @@ func (controller Controller) GetSingleREST(ctx boost.Context) error {
 func (controller Controller) AddREST(ctx boost.Context) error {
 	model := models.BrandAdd{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorBrandBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	if err := controller._add(&model); err != nil {
@@ -52,7 +52,7 @@ func (controller Controller) UpdateREST(ctx boost.Context) error {
 
 	model := models.BrandUpdate{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorBrandBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	if err := controller._update(brandID, &model); err != nil {
@@ -70,7 +70,7 @@ func (controller Controller) UploadREST(ctx boost.Context) error {
 
 	model := models.BrandUpload{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorBrandBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	imagePath, err := controller._upload(brandID, &model)

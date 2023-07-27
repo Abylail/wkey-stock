@@ -6,7 +6,6 @@ import (
 )
 
 const (
-	typeErrorBrandBind           = "BrandParamBind"
 	typeErrorBrandParamRequired  = "BrandParamRequired"
 	typeErrorBrandAlreadyExist   = "BrandAlreadyExist"
 	typeErrorBrandGetByID        = "BrandGetByID"
@@ -19,14 +18,6 @@ const (
 	typeErrorBrandDelete         = "BrandDelete"
 	typeErrorBrandNotFound       = "BrandNotFound"
 )
-
-func ErrorBrandBind(err error) error {
-	return errors.
-		New("Bind brand object error").
-		SetType(typeErrorBrandBind).
-		SetHttpCode(http.StatusInternalServerError).
-		SetError(err)
-}
 
 func ErrorBrandParamRequired(paramName string) error {
 	return errors.

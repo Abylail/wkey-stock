@@ -6,7 +6,6 @@ import (
 )
 
 const (
-	typeErrorProductBind             = "ProductParamBind"
 	typeErrorProductParamRequired    = "ProductParamRequired"
 	typeErrorProductGetImages        = "ProductGetImages"
 	typeErrorProductUpdate           = "ProductUpdate"
@@ -17,14 +16,6 @@ const (
 	typeErrorProductGet              = "ProductGet"
 	typeErrorProductGetCount         = "ProductGetCount"
 )
-
-func ErrorProductBind(err error) error {
-	return errors.
-		New("Bind product object error").
-		SetType(typeErrorProductBind).
-		SetHttpCode(http.StatusInternalServerError).
-		SetError(err)
-}
 
 func ErrorProductParamRequired(paramName string) error {
 	return errors.

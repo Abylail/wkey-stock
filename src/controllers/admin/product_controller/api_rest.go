@@ -44,7 +44,7 @@ func (controller Controller) UpdateProductREST(ctx boost.Context) error {
 
 	model := models.ProductUpdate{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorProductBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	if err := controller._update(productID, &model); err != nil {
@@ -62,7 +62,7 @@ func (controller Controller) UploadProductREST(ctx boost.Context) error {
 
 	model := models.ProductUpload{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorProductBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	if err := controller._upload(productID, &model); err != nil {

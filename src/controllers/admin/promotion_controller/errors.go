@@ -6,7 +6,6 @@ import (
 )
 
 const (
-	typeErrorPromotionBind             = "PromotionBind"
 	typeErrorPromotionNotFound         = "PromotionNotFound"
 	typeErrorPromotionGetList          = "PromotionGetList"
 	typeErrorPromotionGetByID          = "PromotionGetByID"
@@ -18,14 +17,6 @@ const (
 	typeErrorPromotionDelete           = "PromotionDelete"
 	typeErrorPromotionDeleteFolder     = "PromotionDeleteFolder"
 )
-
-func ErrorPromotionBind(err error) error {
-	return errors.
-		New("Promotion bind error").
-		SetType(typeErrorPromotionBind).
-		SetHttpCode(http.StatusUnprocessableEntity).
-		SetError(err)
-}
 
 func ErrorPromotionNotFoundByCode(promotionCode string) error {
 	return errors.

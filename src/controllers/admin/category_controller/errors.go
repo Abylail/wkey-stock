@@ -7,7 +7,6 @@ import (
 
 const (
 	// category
-	typeErrorCategoryBind            = "CategoryBind"
 	typeErrorCategoryParamRequired   = "CategoryParamRequired"
 	typeErrorCategoryAlreadyExist    = "CategoryAlreadyExist"
 	typeErrorCategoryNotFound        = "CategoryNotFound"
@@ -25,7 +24,6 @@ const (
 	typeErrorCategoryDelete          = "CategoryDelete"
 
 	// sub category
-	typeErrorSubCategoryBind            = "SubCategoryBind"
 	typeErrorSubCategoryAlreadyExist    = "SubCategoryAlreadyExist"
 	typeErrorSubCategoryNotFound        = "SubCategoryNotFound"
 	typeErrorSubCategoryGetList         = "SubCategoryGetList"
@@ -39,26 +37,11 @@ const (
 	typeErrorSubCategoryDelete          = "SubCategoryDelete"
 )
 
-func ErrorCategoryBind(err error) error {
-	return errors.New("Bind category error").
-		SetType(typeErrorCategoryBind).
-		SetHttpCode(http.StatusUnprocessableEntity).
-		SetError(err)
-}
-
 func ErrorCategoryParamRequired(paramName string) error {
 	return errors.New("AdminCategory param required error").
 		SetType(typeErrorCategoryParamRequired).
 		SetHttpCode(http.StatusUnprocessableEntity).
 		AddContext("param_name", paramName)
-}
-
-func ErrorSubCategoryBind(err error) error {
-	return errors.
-		New("Bind sub-category error").
-		SetType(typeErrorSubCategoryBind).
-		SetHttpCode(http.StatusUnprocessableEntity).
-		SetError(err)
 }
 
 func ErrorCategoryAlreadyExist(code string) error {

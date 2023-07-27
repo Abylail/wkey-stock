@@ -44,7 +44,7 @@ func (controller Controller) GetSingleByCodeREST(ctx boost.Context) error {
 func (controller Controller) CreateREST(ctx boost.Context) error {
 	model := models.PromotionAdminCreate{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorPromotionBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	code, err := controller._createAdmin(&model)
@@ -59,7 +59,7 @@ func (controller Controller) CreateREST(ctx boost.Context) error {
 func (controller Controller) UpdateREST(ctx boost.Context) error {
 	model := models.PromotionAdminUpdate{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorPromotionBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	if err := controller._updateAdmin(&model); err != nil {
@@ -73,7 +73,7 @@ func (controller Controller) UpdateREST(ctx boost.Context) error {
 func (controller Controller) UploadREST(ctx boost.Context) error {
 	model := models.PromotionAdminUpload{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorPromotionBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	if err := controller._uploadAdmin(&model); err != nil {

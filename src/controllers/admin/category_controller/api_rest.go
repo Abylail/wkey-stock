@@ -54,7 +54,7 @@ func (controller Controller) GetSingleSubREST(ctx boost.Context) error {
 func (controller Controller) AddREST(ctx boost.Context) error {
 	model := models.CategoryAdd{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorCategoryBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	categoryCode, err := controller._create(&model)
@@ -70,7 +70,7 @@ func (controller Controller) AddSubREST(ctx boost.Context) error {
 
 	model := models.SubCategoryAdd{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorCategoryBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	subCategoryCode, err := controller._createSub(parentCode, &model)
@@ -89,7 +89,7 @@ func (controller Controller) UpdateREST(ctx boost.Context) error {
 
 	model := models.CategoryUpdate{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorCategoryBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	if err := controller._update(code, &model); err != nil {
@@ -108,7 +108,7 @@ func (controller Controller) UpdateSubREST(ctx boost.Context) error {
 
 	model := models.SubCategoryUpdate{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorCategoryBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	if err := controller._updateSub(parentCode, code, &model); err != nil {
@@ -126,7 +126,7 @@ func (controller Controller) UploadREST(ctx boost.Context) error {
 
 	model := models.CategoryUpload{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorCategoryBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	imagePath, err := controller._upload(code, &model)
@@ -147,7 +147,7 @@ func (controller Controller) UploadSubREST(ctx boost.Context) error {
 
 	model := models.SubCategoryUpload{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorCategoryBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	imagePath, err := controller._uploadSub(parentCode, code, &model)
@@ -233,7 +233,7 @@ func (controller Controller) BindProductListREST(ctx boost.Context) error {
 
 	model := models.SubCategoryBindProductList{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorSubCategoryBind(err))
+		return controller.Error(ctx, err)
 	}
 
 	if err := controller._bindProductList(parentCode, code, &model); err != nil {
