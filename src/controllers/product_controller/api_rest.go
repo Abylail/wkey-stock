@@ -61,12 +61,12 @@ func (controller *Controller) GetClientREST(ctx boost.Context) error {
 func (controller *Controller) UpdateProductREST(ctx boost.Context) error {
 	productID := ctx.Param("id").Int()
 	if productID == 0 {
-		return controller.Error(ctx, ErrorProductParamRequired())
+		return controller.Error(ctx, ErrorProductParamRequired("id"))
 	}
 
 	model := models.ProductUpdate{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorProductBind())
+		return controller.Error(ctx, ErrorProductBind(err))
 	}
 
 	if err := controller._update(productID, &model); err != nil {
@@ -79,12 +79,12 @@ func (controller *Controller) UpdateProductREST(ctx boost.Context) error {
 func (controller *Controller) UploadProductREST(ctx boost.Context) error {
 	productID := ctx.Param("id").Int()
 	if productID == 0 {
-		return controller.Error(ctx, ErrorProductParamRequired())
+		return controller.Error(ctx, ErrorProductParamRequired("id"))
 	}
 
 	model := models.ProductUpload{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorProductBind())
+		return controller.Error(ctx, ErrorProductBind(err))
 	}
 
 	if err := controller._upload(productID, &model); err != nil {
@@ -108,7 +108,7 @@ func (controller *Controller) GetBrandREST(ctx boost.Context) error {
 func (controller *Controller) GetBrandSingleREST(ctx boost.Context) error {
 	brandID := ctx.Param("id").Int()
 	if brandID == 0 {
-		return controller.Error(ctx, ErrorBrandParamRequired())
+		return controller.Error(ctx, ErrorBrandParamRequired("id"))
 	}
 
 	brands, err := controller._getBrandSingle(brandID)
@@ -122,7 +122,7 @@ func (controller *Controller) GetBrandSingleREST(ctx boost.Context) error {
 func (controller *Controller) AddBrandREST(ctx boost.Context) error {
 	model := models.BrandAdd{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorBrandParamRequired())
+		return controller.Error(ctx, ErrorBrandBind(err))
 	}
 
 	controller.filterBrandAdd(&model)
@@ -137,12 +137,12 @@ func (controller *Controller) AddBrandREST(ctx boost.Context) error {
 func (controller *Controller) UpdateBrandREST(ctx boost.Context) error {
 	brandID := ctx.Param("id").Int()
 	if brandID == 0 {
-		return controller.Error(ctx, ErrorBrandParamRequired())
+		return controller.Error(ctx, ErrorBrandParamRequired("id"))
 	}
 
 	model := models.BrandUpdate{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorBrandBind())
+		return controller.Error(ctx, ErrorBrandBind(err))
 	}
 
 	if err := controller._updateBrand(brandID, &model); err != nil {
@@ -155,12 +155,12 @@ func (controller *Controller) UpdateBrandREST(ctx boost.Context) error {
 func (controller *Controller) UploadBrandREST(ctx boost.Context) error {
 	brandID := ctx.Param("id").Int()
 	if brandID == 0 {
-		return controller.Error(ctx, ErrorBrandParamRequired())
+		return controller.Error(ctx, ErrorBrandParamRequired("id"))
 	}
 
 	model := models.BrandUpload{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorBrandBind())
+		return controller.Error(ctx, ErrorBrandBind(err))
 	}
 
 	imagePath, err := controller._uploadBrand(brandID, &model)
@@ -174,7 +174,7 @@ func (controller *Controller) UploadBrandREST(ctx boost.Context) error {
 func (controller *Controller) DeleteBrandREST(ctx boost.Context) error {
 	brandID := ctx.Param("id").Int()
 	if brandID == 0 {
-		return controller.Error(ctx, ErrorBrandParamRequired())
+		return controller.Error(ctx, ErrorBrandParamRequired("id"))
 	}
 
 	if err := controller._deleteBrand(brandID); err != nil {

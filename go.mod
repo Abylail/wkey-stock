@@ -6,13 +6,12 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.7
-	github.com/lowl11/boost v0.0.1
+	github.com/lowl11/boost v0.0.3
 	github.com/lowl11/lazy-entity v0.1.8
 	github.com/lowl11/lazyconfig v1.2.0
 	github.com/lowl11/lazyfile v0.1.6
 	github.com/lowl11/lazylog v1.2.9
 	github.com/mehanizm/iuliia-go v1.0.2
-	github.com/streadway/amqp v1.0.0
 )
 
 require (

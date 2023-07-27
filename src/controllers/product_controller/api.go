@@ -17,7 +17,7 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 		fmt.Println("subcategoryKey", subcategoryKey)
 		subcategory, err = controller.subCategoryRepo.GetByCode(subcategoryKey)
 		if err != nil {
-			return nil, ErrorAdminProductGet()
+			return nil, ErrorAdminProductGet(err)
 		}
 	}
 
@@ -30,7 +30,7 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 		products, err = controller.productRepo.GetAdminByQuery(from, pageSize, searchQuery)
 	}
 	if err != nil {
-		return nil, ErrorAdminProductGet()
+		return nil, ErrorAdminProductGet(err)
 	}
 
 	// получаем массив с ID продуктов
@@ -42,7 +42,7 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 	// получаем картинки продуктов
 	images, err := controller.productRepo.GetImages(productIDs)
 	if err != nil {
-		return nil, ErrorProductGetImages()
+		return nil, ErrorProductGetImages(err)
 	}
 
 	imagesList := make([]entities.ProductImageGet, 0, len(images))
@@ -58,7 +58,7 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 		productCount, err = controller.productRepo.CountQuery(searchQuery)
 	}
 	if err != nil {
-		return nil, ErrorAdminProductGetCount()
+		return nil, ErrorAdminProductGetCount(err)
 	}
 
 	// считаем кол-во страниц
@@ -67,7 +67,7 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 	// получаем список категорий
 	categoryPairs, err := controller.productRepo.GetSubCategoryPairs(productIDs)
 	if err != nil {
-		return nil, ErrorProductGetPairs()
+		return nil, ErrorProductGetPairs(err)
 	}
 
 	productList := make([]models.AdminProductItem, 0, len(products))
@@ -127,22 +127,22 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProductItem, error) {
 	product, err := controller.productRepo.GetAdminByID(productID)
 	if err != nil {
-		return nil, ErrorAdminProductGet()
+		return nil, ErrorAdminProductGet(err)
 	}
 
 	if product == nil {
-		return nil, ErrorAdminProductNotFound()
+		return nil, ErrorAdminProductNotFound(productID)
 	}
 
 	images, err := controller.productRepo.GetImages([]int{productID})
 	if err != nil {
-		return nil, ErrorProductGetImages()
+		return nil, ErrorProductGetImages(err)
 	}
 
 	// получаем список категорий
 	categoryPairs, err := controller.productRepo.GetSubCategoryPairs([]int{productID})
 	if err != nil {
-		return nil, ErrorProductGetPairs()
+		return nil, ErrorProductGetPairs(err)
 	}
 
 	categories := make([]models.ProductCategoryPair, 0, len(categoryPairs))
@@ -181,7 +181,7 @@ func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProdu
 
 func (controller *Controller) _update(productID int, model *models.ProductUpdate) error {
 	if err := controller.productRepo.Update(productID, model); err != nil {
-		return ErrorProductUpdate()
+		return ErrorProductUpdate(err)
 	}
 
 	return nil
@@ -194,11 +194,11 @@ func (controller *Controller) _upload(productID int, model *models.ProductUpload
 
 	pathList, err := controller.image.UploadProductImages(productID, model)
 	if err != nil {
-		return ErrorProductUpdateFileImages()
+		return ErrorProductUpdateFileImages(err)
 	}
 
 	if err = controller.productRepo.UpdateImages(productID, model, pathList); err != nil {
-		return ErrorProductUpdateImages()
+		return ErrorProductUpdateImages(err)
 	}
 
 	return nil
@@ -214,7 +214,7 @@ func (controller *Controller) _getBrand(searchQuery string) ([]models.BrandGet, 
 		brands, err = controller.brandRepo.GetByQuery(searchQuery)
 	}
 	if err != nil {
-		return nil, ErrorBrandGetList()
+		return nil, ErrorBrandGetList(err)
 	}
 
 	list := make([]models.BrandGet, 0, len(brands))
@@ -232,7 +232,7 @@ func (controller *Controller) _getBrand(searchQuery string) ([]models.BrandGet, 
 func (controller *Controller) _getBrandSingle(id int) (*models.BrandGet, error) {
 	brand, err := controller.brandRepo.GetByID(id)
 	if err != nil {
-		return nil, ErrorBrandGetByID()
+		return nil, ErrorBrandGetByID(err)
 	}
 
 	return &models.BrandGet{
@@ -245,15 +245,15 @@ func (controller *Controller) _getBrandSingle(id int) (*models.BrandGet, error) 
 func (controller *Controller) _addBrand(model *models.BrandAdd) error {
 	brand, err := controller.brandRepo.GetByTitle(model.Title)
 	if err != nil {
-		return ErrorBrandGetByTitle()
+		return ErrorBrandGetByTitle(model.Title)
 	}
 
 	if brand != nil {
-		return ErrorBrandAlreadyExist()
+		return ErrorBrandAlreadyExist(model.Title)
 	}
 
 	if err = controller.brandRepo.Create(model); err != nil {
-		return ErrorBrandAdd()
+		return ErrorBrandAdd(err)
 	}
 
 	return nil
@@ -261,7 +261,7 @@ func (controller *Controller) _addBrand(model *models.BrandAdd) error {
 
 func (controller *Controller) _updateBrand(id int, model *models.BrandUpdate) error {
 	if err := controller.brandRepo.Update(id, model); err != nil {
-		return ErrorBrandUpdate()
+		return ErrorBrandUpdate(err)
 	}
 
 	return nil
@@ -270,20 +270,20 @@ func (controller *Controller) _updateBrand(id int, model *models.BrandUpdate) er
 func (controller *Controller) _uploadBrand(brandID int, model *models.BrandUpload) (string, error) {
 	brand, err := controller.brandRepo.GetByID(brandID)
 	if err != nil {
-		return "", ErrorBrandGetByID()
+		return "", ErrorBrandGetByID(err)
 	}
 
 	if brand == nil {
-		return "", ErrorBrandNotFound()
+		return "", ErrorBrandNotFound(brandID)
 	}
 
 	imagePath, err := controller.image.UploadBrandIcon(brandID, model.Image.Name, model.Image.Buffer)
 	if err != nil {
-		return "", ErrorBrandUpdateFileIcon()
+		return "", ErrorBrandUpdateFileIcon(err)
 	}
 
 	if err = controller.brandRepo.UpdateIcon(brandID, imagePath); err != nil {
-		return "", ErrorBrandUpdateIcon()
+		return "", ErrorBrandUpdateIcon(err)
 	}
 
 	return imagePath, nil
@@ -291,7 +291,7 @@ func (controller *Controller) _uploadBrand(brandID int, model *models.BrandUploa
 
 func (controller *Controller) _deleteBrand(id int) error {
 	if err := controller.brandRepo.DeleteByID(id); err != nil {
-		return ErrorBrandDelete()
+		return ErrorBrandDelete(err)
 	}
 
 	return nil
@@ -308,7 +308,7 @@ func (controller *Controller) _getClient(from, pageSize int, searchQuery string)
 	}
 
 	if err != nil {
-		return nil, ErrorClientProductGet()
+		return nil, ErrorClientProductGet(err)
 	}
 
 	productList := make([]models.ClientProductItemShort, 0, len(products))
@@ -331,7 +331,7 @@ func (controller *Controller) _getClient(from, pageSize int, searchQuery string)
 	// получаем картинки продуктов
 	images, err := controller.productRepo.GetImages(productIDs)
 	if err != nil {
-		return nil, ErrorProductGetImages()
+		return nil, ErrorProductGetImages(err)
 	}
 
 	for i := 0; i < len(productList); i++ {
@@ -361,7 +361,7 @@ func (controller *Controller) _getClient(from, pageSize int, searchQuery string)
 		productCount, err = controller.productRepo.GetClientCountQuery(searchQuery)
 	}
 	if err != nil {
-		return nil, ErrorClientProductGetCount()
+		return nil, ErrorClientProductGetCount(err)
 	}
 
 	// считаем кол-во страниц

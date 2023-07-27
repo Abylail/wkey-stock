@@ -19,7 +19,7 @@ func (controller *Controller) _getClient(searchQuery string) ([]models.CategoryC
 	}
 
 	if err != nil {
-		return nil, ErrorCategoryGetList()
+		return nil, ErrorCategoryGetList(err)
 	}
 
 	categories := make([]models.CategoryClientGet, 0, len(list))
@@ -38,11 +38,11 @@ func (controller *Controller) _getClient(searchQuery string) ([]models.CategoryC
 func (controller *Controller) _getClientSingle(code string) (*models.CategoryClientGetSingle, error) {
 	category, err := controller.categoryRepo.GetByCode(code)
 	if err != nil {
-		return nil, ErrorCategoryGetByCode()
+		return nil, ErrorCategoryGetByCode(code)
 	}
 
 	if category == nil {
-		return nil, ErrorCategoryNotFound()
+		return nil, ErrorCategoryNotFound(code)
 	}
 
 	return &models.CategoryClientGetSingle{
@@ -58,11 +58,11 @@ func (controller *Controller) _getClientSub(parentCode string, searchQuery strin
 	// Беру категорию по которой идет поиск
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		return nil, ErrorCategoryGetByCode()
+		return nil, ErrorCategoryGetByCode(parentCode)
 	}
 
 	if category == nil {
-		return nil, ErrorCategoryNotFound()
+		return nil, ErrorCategoryNotFound(parentCode)
 	}
 
 	// Беру список по id категории
@@ -90,20 +90,20 @@ func (controller *Controller) _getClientSubSingle(parentCode string, code string
 	// Беру категорию по которой идет поиск
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		return nil, ErrorCategoryGetByCode()
+		return nil, ErrorCategoryGetByCode(code)
 	}
 
 	if category == nil {
-		return nil, ErrorCategoryNotFound()
+		return nil, ErrorCategoryNotFound(code)
 	}
 
 	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
-		return nil, ErrorSubCategoryGetByCode()
+		return nil, ErrorSubCategoryGetByCode(err)
 	}
 
 	if subCategory == nil {
-		return nil, ErrorSubCategoryNotFound()
+		return nil, ErrorSubCategoryNotFound(code)
 	}
 
 	return &models.SubCategoryClientGet{
@@ -124,7 +124,7 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 		list, err = controller.categoryRepo.GetByQuery(searchQuery)
 	}
 	if err != nil {
-		return nil, ErrorCategoryGetList()
+		return nil, ErrorCategoryGetList(err)
 	}
 
 	if len(list) == 0 {
@@ -149,16 +149,16 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 func (controller *Controller) _getAdminSingle(code string) (*models.CategoryAdminGetSingle, error) {
 	category, err := controller.categoryRepo.GetByCode(code)
 	if err != nil {
-		return nil, ErrorCategoryGetByCode()
+		return nil, ErrorCategoryGetByCode(code)
 	}
 
 	if category == nil {
-		return nil, ErrorCategoryNotFound()
+		return nil, ErrorCategoryNotFound(code)
 	}
 
 	subCategories, err := controller.subCategoryRepo.GetByParent(category.ID)
 	if err != nil {
-		return nil, ErrorSubCategoryGetList()
+		return nil, ErrorSubCategoryGetList(err)
 	}
 
 	subCategoriesList := make([]models.SubCategoryAdminGet, 0, len(subCategories))
@@ -188,11 +188,11 @@ func (controller *Controller) _getAdminSingle(code string) (*models.CategoryAdmi
 func (controller *Controller) _getAdminSub(parentCode string, searchQuery string) ([]models.SubCategoryAdminGet, error) {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		return nil, ErrorCategoryGetByCode()
+		return nil, ErrorCategoryGetByCode(parentCode)
 	}
 
 	if category == nil {
-		return nil, ErrorCategoryNotFound()
+		return nil, ErrorCategoryNotFound(parentCode)
 	}
 
 	var list []entities.SubCategory
@@ -203,7 +203,7 @@ func (controller *Controller) _getAdminSub(parentCode string, searchQuery string
 		list, err = controller.subCategoryRepo.GetByQuery(category.ID, searchQuery)
 	}
 	if err != nil {
-		return nil, ErrorSubCategoryGetList()
+		return nil, ErrorSubCategoryGetList(err)
 	}
 
 	if len(list) == 0 {
@@ -228,20 +228,20 @@ func (controller *Controller) _getAdminSub(parentCode string, searchQuery string
 func (controller *Controller) _getAdminSubSingle(parentCode, code string) (*models.SubCategoryAdminGet, error) {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		return nil, ErrorCategoryGetByCode()
+		return nil, ErrorCategoryGetByCode(code)
 	}
 
 	if category == nil {
-		return nil, ErrorCategoryNotFound()
+		return nil, ErrorCategoryNotFound(code)
 	}
 
 	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
-		return nil, ErrorSubCategoryGetByCode()
+		return nil, ErrorSubCategoryGetByCode(err)
 	}
 
 	if subCategory == nil {
-		return nil, ErrorSubCategoryNotFound()
+		return nil, ErrorSubCategoryNotFound(code)
 	}
 
 	return &models.SubCategoryAdminGet{
@@ -262,17 +262,17 @@ func (controller *Controller) _create(model *models.CategoryAdd) (string, error)
 	// ищем категорию с таким же кодом
 	category, err := controller.categoryRepo.GetByCode(categoryCode)
 	if err != nil {
-		return "", ErrorCategoryGetByCode()
+		return "", ErrorCategoryGetByCode(categoryCode)
 	}
 
 	// выдаем ошибку если нашли категорию с таким же кодом
 	if category != nil {
-		return "", ErrorCategoryAlreadyExist()
+		return "", ErrorCategoryAlreadyExist(categoryCode)
 	}
 
 	// создаем запись в БД
 	if err = controller.categoryRepo.Create(model, categoryCode); err != nil {
-		return "", ErrorCategoryAdd()
+		return "", ErrorCategoryAdd(err)
 	}
 
 	return categoryCode, nil
@@ -281,11 +281,11 @@ func (controller *Controller) _create(model *models.CategoryAdd) (string, error)
 func (controller *Controller) _createSub(parentCode string, model *models.SubCategoryAdd) (string, error) {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		return "", ErrorCategoryGetByCode()
+		return "", ErrorCategoryGetByCode(parentCode)
 	}
 
 	if category == nil {
-		return "", ErrorCategoryNotFound()
+		return "", ErrorCategoryNotFound(parentCode)
 	}
 
 	// генерируем код категории
@@ -295,17 +295,17 @@ func (controller *Controller) _createSub(parentCode string, model *models.SubCat
 	// ищем категорию с таким же кодом
 	subCategory, err := controller.subCategoryRepo.GetByCode(categoryCode)
 	if err != nil {
-		return "", ErrorSubCategoryGetByCode()
+		return "", ErrorSubCategoryGetByCode(err)
 	}
 
 	// выдаем ошибку если нашли категорию с таким же кодом
 	if subCategory != nil {
-		return "", ErrorSubCategoryAlreadyExist()
+		return "", ErrorSubCategoryAlreadyExist(categoryCode)
 	}
 
 	// создаем запись в БД
 	if err = controller.subCategoryRepo.Create(category.ID, model, categoryCode); err != nil {
-		return "", ErrorSubCategoryAdd()
+		return "", ErrorSubCategoryAdd(err)
 	}
 
 	return categoryCode, nil
@@ -313,7 +313,7 @@ func (controller *Controller) _createSub(parentCode string, model *models.SubCat
 
 func (controller *Controller) _update(code string, model *models.CategoryUpdate) error {
 	if err := controller.categoryRepo.UpdateByCode(code, model); err != nil {
-		return ErrorCategoryUpdate()
+		return ErrorCategoryUpdate(err)
 	}
 
 	return nil
@@ -322,15 +322,15 @@ func (controller *Controller) _update(code string, model *models.CategoryUpdate)
 func (controller *Controller) _updateSub(parentCode, code string, model *models.SubCategoryUpdate) error {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		return ErrorCategoryGetByCode()
+		return ErrorCategoryGetByCode(code)
 	}
 
 	if category == nil {
-		return ErrorCategoryNotFound()
+		return ErrorCategoryNotFound(code)
 	}
 
 	if err = controller.subCategoryRepo.UpdateByParent(category.ID, code, model); err != nil {
-		return ErrorSubCategoryUpdate()
+		return ErrorSubCategoryUpdate(err)
 	}
 
 	return nil
@@ -339,20 +339,20 @@ func (controller *Controller) _updateSub(parentCode, code string, model *models.
 func (controller *Controller) _upload(code string, model *models.CategoryUpload) (string, error) {
 	category, err := controller.categoryRepo.GetByCode(code)
 	if err != nil {
-		return "", ErrorCategoryGetByCode()
+		return "", ErrorCategoryGetByCode(code)
 	}
 
 	if category == nil {
-		return "", ErrorCategoryNotFound()
+		return "", ErrorCategoryNotFound(code)
 	}
 
 	imagePath, err := controller.image.UploadCategoryIcon(code, model.Image.Name, model.Image.Buffer)
 	if err != nil {
-		return "", ErrorCategoryUpdateFileImage()
+		return "", ErrorCategoryUpdateFileImage(err)
 	}
 
 	if err = controller.categoryRepo.UpdateImage(code, imagePath); err != nil {
-		return "", ErrorCategoryUpdateImage()
+		return "", ErrorCategoryUpdateImage(err)
 	}
 
 	return imagePath, nil
@@ -361,20 +361,20 @@ func (controller *Controller) _upload(code string, model *models.CategoryUpload)
 func (controller *Controller) _uploadSub(parentCode, code string, model *models.SubCategoryUpload) (string, error) {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		return "", ErrorCategoryGetByCode()
+		return "", ErrorCategoryGetByCode(code)
 	}
 
 	if category == nil {
-		return "", ErrorCategoryNotFound()
+		return "", ErrorCategoryNotFound(code)
 	}
 
 	imagePath, err := controller.image.UploadSubCategoryIcon(parentCode, code, model.Image.Name, model.Image.Buffer)
 	if err != nil {
-		return "", ErrorSubCategoryUpdateFileImage()
+		return "", ErrorSubCategoryUpdateFileImage(err)
 	}
 
 	if err = controller.subCategoryRepo.UpdateImage(category.ID, code, imagePath); err != nil {
-		return "", ErrorSubCategoryUpdateImage()
+		return "", ErrorSubCategoryUpdateImage(err)
 	}
 
 	return imagePath, nil
@@ -383,24 +383,24 @@ func (controller *Controller) _uploadSub(parentCode, code string, model *models.
 func (controller *Controller) _delete(categoryCode string) error {
 	category, err := controller.categoryRepo.GetByCode(categoryCode)
 	if err != nil {
-		return ErrorCategoryGetByCode()
+		return ErrorCategoryGetByCode(categoryCode)
 	}
 
 	if category == nil {
-		return ErrorCategoryNotFound()
+		return ErrorCategoryNotFound(categoryCode)
 	}
 
 	count, err := controller.subCategoryRepo.CountByParent(category.ID)
 	if err != nil {
-		return ErrorSubCategoryGetCount()
+		return ErrorSubCategoryGetCount(err)
 	}
 
 	if count > 0 {
-		return ErrorCategoryHasChildren()
+		return ErrorCategoryHasChildren(category.ID)
 	}
 
 	if err = controller.categoryRepo.DeleteByCode(categoryCode); err != nil {
-		return ErrorCategoryDelete()
+		return ErrorCategoryDelete(err)
 	}
 
 	return nil
@@ -409,15 +409,15 @@ func (controller *Controller) _delete(categoryCode string) error {
 func (controller *Controller) _deleteSub(parentCode, categoryCode string) error {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		return ErrorCategoryGetByCode()
+		return ErrorCategoryGetByCode(parentCode)
 	}
 
 	if category == nil {
-		return ErrorCategoryNotFound()
+		return ErrorCategoryNotFound(categoryCode)
 	}
 
 	if err = controller.subCategoryRepo.DeleteByParent(category.ID, categoryCode); err != nil {
-		return ErrorSubCategoryDelete()
+		return ErrorSubCategoryDelete(err)
 	}
 
 	return nil
@@ -425,7 +425,7 @@ func (controller *Controller) _deleteSub(parentCode, categoryCode string) error 
 
 func (controller *Controller) _activate(code string) error {
 	if err := controller.categoryRepo.Activate(code); err != nil {
-		return ErrorCategoryUpdateStatus()
+		return ErrorCategoryUpdateStatus(err)
 	}
 
 	return nil
@@ -433,7 +433,7 @@ func (controller *Controller) _activate(code string) error {
 
 func (controller *Controller) _deactivate(code string) error {
 	if err := controller.categoryRepo.Deactivate(code); err != nil {
-		return ErrorCategoryUpdateStatus()
+		return ErrorCategoryUpdateStatus(err)
 	}
 
 	return nil
@@ -442,33 +442,33 @@ func (controller *Controller) _deactivate(code string) error {
 func (controller *Controller) _activateSub(parentCode, code string) error {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		return ErrorCategoryGetByCode()
+		return ErrorCategoryGetByCode(code)
 	}
 
 	if category == nil {
-		return ErrorCategoryNotFound()
+		return ErrorCategoryNotFound(code)
 	}
 
 	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
-		return ErrorCategoryGetByCode()
+		return ErrorCategoryGetByCode(code)
 	}
 
 	if subCategory == nil {
-		return ErrorCategoryNotFound()
+		return ErrorCategoryNotFound(code)
 	}
 
 	count, err := controller.productRepo.CountBySubCategory(subCategory.ID)
 	if err != nil {
-		return ErrorSubCategoryGetCount()
+		return ErrorSubCategoryGetCount(err)
 	}
 
 	if count == 0 {
-		return ErrorCategoryNoChildren()
+		return ErrorCategoryNoChildren(subCategory.ID)
 	}
 
 	if err = controller.subCategoryRepo.Activate(category.ID, code); err != nil {
-		return ErrorSubCategoryUpdateStatus()
+		return ErrorSubCategoryUpdateStatus(err)
 	}
 
 	return nil
@@ -477,15 +477,15 @@ func (controller *Controller) _activateSub(parentCode, code string) error {
 func (controller *Controller) _deactivateSub(parentCode, code string) error {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		return ErrorCategoryGetByCode()
+		return ErrorCategoryGetByCode(code)
 	}
 
 	if category == nil {
-		return ErrorCategoryNotFound()
+		return ErrorCategoryNotFound(code)
 	}
 
 	if err = controller.subCategoryRepo.Deactivate(category.ID, code); err != nil {
-		return ErrorCategoryUpdateStatus()
+		return ErrorCategoryUpdateStatus(err)
 	}
 
 	return nil
@@ -494,24 +494,24 @@ func (controller *Controller) _deactivateSub(parentCode, code string) error {
 func (controller *Controller) _bindProductList(parentCode, code string, model *models.SubCategoryBindProductList) error {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		return ErrorCategoryGetByCode()
+		return ErrorCategoryGetByCode(code)
 	}
 
 	if category == nil {
-		return ErrorCategoryNotFound()
+		return ErrorCategoryNotFound(code)
 	}
 
 	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
-		return ErrorSubCategoryGetByCode()
+		return ErrorSubCategoryGetByCode(err)
 	}
 
 	if subCategory == nil {
-		return ErrorSubCategoryNotFound()
+		return ErrorSubCategoryNotFound(code)
 	}
 
 	if err = controller.productRepo.BindSubCategory(subCategory.ID, model.List); err != nil {
-		return ErrorSubCategoryBindSub()
+		return ErrorSubCategoryBindSub(err)
 	}
 
 	return nil
@@ -520,24 +520,24 @@ func (controller *Controller) _bindProductList(parentCode, code string, model *m
 func (controller *Controller) _unbindProductItem(parentCode, code string, productID int) error {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		return ErrorCategoryGetByCode()
+		return ErrorCategoryGetByCode(code)
 	}
 
 	if category == nil {
-		return ErrorCategoryNotFound()
+		return ErrorCategoryNotFound(code)
 	}
 
 	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
-		return ErrorCategoryGetByCode()
+		return ErrorCategoryGetByCode(code)
 	}
 
 	if subCategory == nil {
-		return ErrorCategoryNotFound()
+		return ErrorCategoryNotFound(code)
 	}
 
 	if err = controller.productRepo.UnbindSubCategory(productID, subCategory.ID); err != nil {
-		return ErrorSubCategoryUnbindSub()
+		return ErrorSubCategoryUnbindSub(err)
 	}
 
 	return nil

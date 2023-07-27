@@ -7,9 +7,8 @@ import (
 // _getListAdmin список промоакций (в админке)
 func (controller *Controller) _getListAdmin() ([]models.PromotionAdminGet, error) {
 	list, err := controller.promotionRepo.GetAll()
-
 	if err != nil {
-		return nil, ErrorPromotionGetList()
+		return nil, ErrorPromotionGetList(err)
 	}
 
 	promotions := make([]models.PromotionAdminGet, 0, len(list))
@@ -33,12 +32,12 @@ func (controller *Controller) _getListAdmin() ([]models.PromotionAdminGet, error
 func (controller *Controller) _getSingleAdmin(id int) (*models.PromotionAdminGet, error) {
 	rawPromotion, err := controller.promotionRepo.GetByID(id)
 	if err != nil {
-		return nil, ErrorPromotionGetByID()
+		return nil, ErrorPromotionGetByID(err)
 	}
 
 	// Если не нашелся
 	if rawPromotion == nil {
-		return nil, ErrorPromotionNotFound()
+		return nil, ErrorPromotionNotFoundByID(id)
 	}
 
 	return &models.PromotionAdminGet{
@@ -57,12 +56,12 @@ func (controller *Controller) _getSingleAdmin(id int) (*models.PromotionAdminGet
 func (controller *Controller) _getSingleCodeAdmin(code string) (*models.PromotionAdminGet, error) {
 	rawPromotion, err := controller.promotionRepo.GetByCode(code)
 	if err != nil {
-		return nil, ErrorPromotionGetByCode()
+		return nil, ErrorPromotionGetByCode(err)
 	}
 
 	// Если не нашелся
 	if rawPromotion == nil {
-		return nil, ErrorPromotionNotFound()
+		return nil, ErrorPromotionNotFoundByCode(code)
 	}
 
 	return &models.PromotionAdminGet{
@@ -81,7 +80,7 @@ func (controller *Controller) _getSingleCodeAdmin(code string) (*models.Promotio
 func (controller *Controller) _createAdmin(model *models.PromotionAdminCreate) (*string, error) {
 	code, err := controller.promotionRepo.Create(model)
 	if err != nil {
-		return nil, ErrorPromotionAdd()
+		return nil, ErrorPromotionAdd(err)
 	}
 
 	return code, nil
@@ -90,7 +89,7 @@ func (controller *Controller) _createAdmin(model *models.PromotionAdminCreate) (
 // _updateAdmin обновление промоакции
 func (controller *Controller) _updateAdmin(model *models.PromotionAdminUpdate) error {
 	if err := controller.promotionRepo.UpdateByCode(model); err != nil {
-		return ErrorPromotionUpdate()
+		return ErrorPromotionUpdate(err)
 	}
 	return nil
 }
@@ -104,20 +103,20 @@ func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) e
 
 	promotion, err := controller.promotionRepo.GetByCode(model.Code)
 	if err != nil {
-		return ErrorPromotionGetByCode()
+		return ErrorPromotionGetByCode(err)
 	}
 
 	if promotion == nil {
-		return ErrorPromotionNotFound()
+		return ErrorPromotionNotFoundByCode(model.Code)
 	}
 
 	imagePath, err := controller.image.UploadPromotion(model.Code, model.Image.Name, model.Image.Buffer)
 	if err != nil {
-		return ErrorPromotionUpdateFileImages()
+		return ErrorPromotionUpdateFileImages(err)
 	}
 
 	if err = controller.promotionRepo.UpdateImage(model.Code, imagePath, model.Lang); err != nil {
-		return ErrorPromotionUpdateImages()
+		return ErrorPromotionUpdateImages(err)
 	}
 
 	// Удаляю старую фотку
@@ -128,7 +127,7 @@ func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) e
 
 	if oldPath != nil {
 		if err = controller.image.Delete(*oldPath); err != nil {
-			return ErrorPromotionDelete()
+			return ErrorPromotionDelete(err)
 		}
 	}
 
@@ -138,11 +137,11 @@ func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) e
 // _deleteAdmin удалить акцию
 func (controller *Controller) _deleteAdmin(code *string) error {
 	if err := controller.promotionRepo.DeleteByCode(code); err != nil {
-		return ErrorPromotionUpdate()
+		return ErrorPromotionUpdate(err)
 	}
 
 	if err := controller.image.DeletePromotionFolder(*code); err != nil {
-		return ErrorPromotionDeleteFolder()
+		return ErrorPromotionDeleteFolder(err)
 	}
 
 	return nil
@@ -151,9 +150,8 @@ func (controller *Controller) _deleteAdmin(code *string) error {
 // _getListClient список промоакций (в админке)
 func (controller *Controller) _getListClient() ([]models.PromotionClinetGet, error) {
 	list, err := controller.promotionRepo.GetAll()
-
 	if err != nil {
-		return nil, ErrorPromotionGetList()
+		return nil, ErrorPromotionGetList(err)
 	}
 
 	promotions := make([]models.PromotionClinetGet, 0, len(list))
@@ -176,12 +174,12 @@ func (controller *Controller) _getListClient() ([]models.PromotionClinetGet, err
 func (controller *Controller) _getSingleClient(code string) (*models.PromotionClinetGet, error) {
 	rawPromotion, err := controller.promotionRepo.GetByCode(code)
 	if err != nil {
-		return nil, ErrorPromotionGetByCode()
+		return nil, ErrorPromotionGetByCode(err)
 	}
 
 	// Если не нашелся
 	if rawPromotion == nil {
-		return nil, ErrorPromotionNotFound()
+		return nil, ErrorPromotionNotFoundByCode(code)
 	}
 
 	return &models.PromotionClinetGet{

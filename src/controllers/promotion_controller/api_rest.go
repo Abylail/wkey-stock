@@ -43,7 +43,7 @@ func (controller *Controller) GetSingleCodeAdmin(ctx boost.Context) error {
 func (controller *Controller) CreateAdmin(ctx boost.Context) error {
 	model := models.PromotionAdminCreate{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorPromotionBind())
+		return controller.Error(ctx, ErrorPromotionBind(err))
 	}
 
 	code, err := controller._createAdmin(&model)
@@ -60,7 +60,7 @@ func (controller *Controller) UpdateAdmin(ctx boost.Context) error {
 	model := models.PromotionAdminUpdate{}
 
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorPromotionBind())
+		return controller.Error(ctx, ErrorPromotionBind(err))
 	}
 
 	if err := controller._updateAdmin(&model); err != nil {
@@ -75,7 +75,7 @@ func (controller *Controller) UploadAdmin(ctx boost.Context) error {
 	model := models.PromotionAdminUpload{}
 
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, ErrorPromotionBind())
+		return controller.Error(ctx, ErrorPromotionBind(err))
 	}
 
 	if err := controller._uploadAdmin(&model); err != nil {

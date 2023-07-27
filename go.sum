@@ -13,8 +13,8 @@ github.com/klauspost/compress v1.16.3/go.mod h1:ntbaceVETuRiXiv4DpjP66DpAtAGkEQs
 github.com/lib/pq v1.2.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
 github.com/lib/pq v1.10.7 h1:p7ZhMD+KsSRozJr34udlUrhboJwWAgCg34+/ZZNvZZw=
 github.com/lib/pq v1.10.7/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
-github.com/lowl11/boost v0.0.1 h1:NvDo9CZP4dvZ3ArU9thqwIagxIv1JFqGXyZalf2iFGg=
-github.com/lowl11/boost v0.0.1/go.mod h1:55RNKEAtkexM+Q00jONySF1r5nSoy398a+YJpDc6w4E=
+github.com/lowl11/boost v0.0.3 h1:/wPTnBv/9KIwDmhS0VtBzq14iB8P2rcdML9kBW+6Bw0=
+github.com/lowl11/boost v0.0.3/go.mod h1:55RNKEAtkexM+Q00jONySF1r5nSoy398a+YJpDc6w4E=
 github.com/lowl11/boostcron v0.0.2 h1:aQVrMU7+O9SbqUV1AfyXRcBNdGQl1KNjjsSA9QL5PFQ=
 github.com/lowl11/boostcron v0.0.2/go.mod h1:SalwVibyxvNVoUsgraWCL52neHI+ahj19veFwqPrTVE=
 github.com/lowl11/lazy-entity v0.1.8 h1:aNHaN7kYekCXWnj/UqeVRRBxv1JxKQprFqWMRjaptBM=
@@ -31,8 +31,6 @@ github.com/mehanizm/iuliia-go v1.0.2 h1:bHfZZ+ymdt/m0deo0jcDgfWFSqxgV5aAgGeuecX6
 github.com/mehanizm/iuliia-go v1.0.2/go.mod h1:DwW+0FacfxBaTkMmy9RsxIsxmQzFEunORXw/QppQ1TY=
 github.com/satori/go.uuid v1.2.0 h1:0uYX9dsZ2yD7q2RtLRtPSdGDWzjeM3TbMJP9utgA0ww=
 github.com/satori/go.uuid v1.2.0/go.mod h1:dA0hQrYB0VpLJoorglMZABFdXlWrHn1NEOzdhQKdks0=
-github.com/streadway/amqp v1.0.0 h1:kuuDrUJFZL1QYL9hUNuCxNObNzB0bV/ZG5jV3RWAQgo=
-github.com/streadway/amqp v1.0.0/go.mod h1:AZpEONHx3DKn8O/DFsRAY58/XVQiIPMTMB1SddzLXVw=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasthttp v1.48.0 h1:oJWvHb9BIZToTQS3MuQ2R3bJZiNSa2KiNdeI8A+79Tc=
