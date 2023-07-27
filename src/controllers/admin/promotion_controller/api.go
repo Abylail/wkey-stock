@@ -7,7 +7,7 @@ import (
 )
 
 // _getListAdmin список промо акций (в админке)
-func (controller *Controller) _getListAdmin() ([]dtos.Promotion, error) {
+func (controller Controller) _getListAdmin() ([]dtos.Promotion, error) {
 	list, err := controller.promotionRepo.GetAll()
 	if err != nil {
 		return nil, ErrorPromotionGetList(err)
@@ -17,7 +17,7 @@ func (controller *Controller) _getListAdmin() ([]dtos.Promotion, error) {
 }
 
 // _getSingleAdmin промо акция по id
-func (controller *Controller) _getSingleAdmin(id int) (*dtos.Promotion, error) {
+func (controller Controller) _getSingleAdmin(id int) (*dtos.Promotion, error) {
 	promotion, err := controller.promotionRepo.GetByID(id)
 	if err != nil {
 		return nil, ErrorPromotionGetByID(err)
@@ -32,7 +32,7 @@ func (controller *Controller) _getSingleAdmin(id int) (*dtos.Promotion, error) {
 }
 
 // _getSingleCodeAdmin промо акция по code
-func (controller *Controller) _getSingleCodeAdmin(code string) (*dtos.Promotion, error) {
+func (controller Controller) _getSingleCodeAdmin(code string) (*dtos.Promotion, error) {
 	promotion, err := controller.promotionRepo.GetByCode(code)
 	if err != nil {
 		return nil, ErrorPromotionGetByCode(err)
@@ -47,7 +47,7 @@ func (controller *Controller) _getSingleCodeAdmin(code string) (*dtos.Promotion,
 }
 
 // _createAdmin создание промо акции
-func (controller *Controller) _createAdmin(model *models.PromotionAdminCreate) (*string, error) {
+func (controller Controller) _createAdmin(model *models.PromotionAdminCreate) (*string, error) {
 	code, err := controller.promotionRepo.Create(model)
 	if err != nil {
 		return nil, ErrorPromotionAdd(err)
@@ -57,7 +57,7 @@ func (controller *Controller) _createAdmin(model *models.PromotionAdminCreate) (
 }
 
 // _updateAdmin обновление промо акции
-func (controller *Controller) _updateAdmin(model *models.PromotionAdminUpdate) error {
+func (controller Controller) _updateAdmin(model *models.PromotionAdminUpdate) error {
 	if err := controller.promotionRepo.UpdateByCode(model); err != nil {
 		return ErrorPromotionUpdate(err)
 	}
@@ -66,7 +66,7 @@ func (controller *Controller) _updateAdmin(model *models.PromotionAdminUpdate) e
 }
 
 // _uploadAdmin загрузка фотографий
-func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) error {
+func (controller Controller) _uploadAdmin(model *models.PromotionAdminUpload) error {
 	promotion, err := controller.promotionRepo.GetByCode(model.Code)
 	if err != nil {
 		return ErrorPromotionGetByCode(err)
@@ -101,7 +101,7 @@ func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) e
 }
 
 // _deleteAdmin удалить акцию
-func (controller *Controller) _deleteAdmin(code *string) error {
+func (controller Controller) _deleteAdmin(code *string) error {
 	if err := controller.promotionRepo.DeleteByCode(code); err != nil {
 		return ErrorPromotionUpdate(err)
 	}

@@ -5,7 +5,7 @@ import (
 	"wkey-stock/src/data/models"
 )
 
-func (controller *Controller) GetREST(ctx boost.Context) error {
+func (controller Controller) GetREST(ctx boost.Context) error {
 	searchQuery := ctx.QueryParam("query").String()
 
 	brands, err := controller._get(searchQuery)
@@ -16,7 +16,7 @@ func (controller *Controller) GetREST(ctx boost.Context) error {
 	return controller.Ok(ctx, brands)
 }
 
-func (controller *Controller) GetSingleREST(ctx boost.Context) error {
+func (controller Controller) GetSingleREST(ctx boost.Context) error {
 	brandID := ctx.Param("id").Int()
 	if brandID == 0 {
 		return controller.Error(ctx, ErrorBrandParamRequired("id"))
@@ -30,7 +30,7 @@ func (controller *Controller) GetSingleREST(ctx boost.Context) error {
 	return controller.Ok(ctx, brands)
 }
 
-func (controller *Controller) AddREST(ctx boost.Context) error {
+func (controller Controller) AddREST(ctx boost.Context) error {
 	model := models.BrandAdd{}
 	if err := ctx.Parse(&model); err != nil {
 		return controller.Error(ctx, ErrorBrandBind(err))
@@ -43,7 +43,7 @@ func (controller *Controller) AddREST(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-func (controller *Controller) UpdateREST(ctx boost.Context) error {
+func (controller Controller) UpdateREST(ctx boost.Context) error {
 	brandID := ctx.Param("id").Int()
 	if brandID == 0 {
 		return controller.Error(ctx, ErrorBrandParamRequired("id"))
@@ -61,7 +61,7 @@ func (controller *Controller) UpdateREST(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-func (controller *Controller) UploadREST(ctx boost.Context) error {
+func (controller Controller) UploadREST(ctx boost.Context) error {
 	brandID := ctx.Param("id").Int()
 	if brandID == 0 {
 		return controller.Error(ctx, ErrorBrandParamRequired("id"))
@@ -80,7 +80,7 @@ func (controller *Controller) UploadREST(ctx boost.Context) error {
 	return controller.Ok(ctx, imagePath)
 }
 
-func (controller *Controller) DeleteREST(ctx boost.Context) error {
+func (controller Controller) DeleteREST(ctx boost.Context) error {
 	brandID := ctx.Param("id").Int()
 	if brandID == 0 {
 		return controller.Error(ctx, ErrorBrandParamRequired("id"))

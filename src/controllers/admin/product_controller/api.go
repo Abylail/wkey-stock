@@ -7,7 +7,7 @@ import (
 	"wkey-stock/src/data/models"
 )
 
-func (controller *Controller) _get(from, pageSize int, searchQuery, categoryKey string, subcategoryKey string) (*models.AdminProductGet, error) {
+func (controller Controller) _get(from, pageSize int, searchQuery, categoryKey string, subcategoryKey string) (*models.AdminProductGet, error) {
 	var products []entities.AdminProductGet
 	var err error
 
@@ -124,7 +124,7 @@ func (controller *Controller) _get(from, pageSize int, searchQuery, categoryKey 
 	}, nil
 }
 
-func (controller *Controller) _getSingle(productID int) (*models.AdminProductItem, error) {
+func (controller Controller) _getSingle(productID int) (*models.AdminProductItem, error) {
 	product, err := controller.productRepo.GetAdminByID(productID)
 	if err != nil {
 		return nil, ErrorAdminProductGet(err)
@@ -179,7 +179,7 @@ func (controller *Controller) _getSingle(productID int) (*models.AdminProductIte
 	}, nil
 }
 
-func (controller *Controller) _update(productID int, model *models.ProductUpdate) error {
+func (controller Controller) _update(productID int, model *models.ProductUpdate) error {
 	if err := controller.productRepo.Update(productID, model); err != nil {
 		return ErrorProductUpdate(err)
 	}
@@ -187,7 +187,7 @@ func (controller *Controller) _update(productID int, model *models.ProductUpdate
 	return nil
 }
 
-func (controller *Controller) _upload(productID int, model *models.ProductUpload) error {
+func (controller Controller) _upload(productID int, model *models.ProductUpload) error {
 	if len(model.Images) == 0 {
 		return nil
 	}

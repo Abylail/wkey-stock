@@ -5,7 +5,7 @@ import (
 	"wkey-stock/src/data/models"
 )
 
-func (controller *Controller) _get(searchQuery string) ([]models.BrandGet, error) {
+func (controller Controller) _get(searchQuery string) ([]models.BrandGet, error) {
 	var brands []entities.Brand
 	var err error
 
@@ -30,7 +30,7 @@ func (controller *Controller) _get(searchQuery string) ([]models.BrandGet, error
 	return list, nil
 }
 
-func (controller *Controller) _getSingle(id int) (*models.BrandGet, error) {
+func (controller Controller) _getSingle(id int) (*models.BrandGet, error) {
 	brand, err := controller.brandRepo.GetByID(id)
 	if err != nil {
 		return nil, ErrorBrandGetByID(err)
@@ -43,7 +43,7 @@ func (controller *Controller) _getSingle(id int) (*models.BrandGet, error) {
 	}, nil
 }
 
-func (controller *Controller) _add(model *models.BrandAdd) error {
+func (controller Controller) _add(model *models.BrandAdd) error {
 	brand, err := controller.brandRepo.GetByTitle(model.Title)
 	if err != nil {
 		return ErrorBrandGetByTitle(model.Title)
@@ -60,7 +60,7 @@ func (controller *Controller) _add(model *models.BrandAdd) error {
 	return nil
 }
 
-func (controller *Controller) _update(id int, model *models.BrandUpdate) error {
+func (controller Controller) _update(id int, model *models.BrandUpdate) error {
 	if err := controller.brandRepo.Update(id, model); err != nil {
 		return ErrorBrandUpdate(err)
 	}
@@ -68,7 +68,7 @@ func (controller *Controller) _update(id int, model *models.BrandUpdate) error {
 	return nil
 }
 
-func (controller *Controller) _upload(brandID int, model *models.BrandUpload) (string, error) {
+func (controller Controller) _upload(brandID int, model *models.BrandUpload) (string, error) {
 	brand, err := controller.brandRepo.GetByID(brandID)
 	if err != nil {
 		return "", ErrorBrandGetByID(err)
@@ -90,7 +90,7 @@ func (controller *Controller) _upload(brandID int, model *models.BrandUpload) (s
 	return imagePath, nil
 }
 
-func (controller *Controller) _delete(id int) error {
+func (controller Controller) _delete(id int) error {
 	if err := controller.brandRepo.DeleteByID(id); err != nil {
 		return ErrorBrandDelete(err)
 	}

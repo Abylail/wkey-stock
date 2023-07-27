@@ -7,7 +7,7 @@ import (
 	"wkey-stock/src/data/models"
 )
 
-func (controller *Controller) _get(searchQuery string) ([]models.CategoryAdminItem, error) {
+func (controller Controller) _get(searchQuery string) ([]models.CategoryAdminItem, error) {
 	var list []entities.Category
 	var err error
 
@@ -39,7 +39,7 @@ func (controller *Controller) _get(searchQuery string) ([]models.CategoryAdminIt
 	return categories, nil
 }
 
-func (controller *Controller) _getSingle(code string) (*models.CategoryAdminGetSingle, error) {
+func (controller Controller) _getSingle(code string) (*models.CategoryAdminGetSingle, error) {
 	category, err := controller.categoryRepo.GetByCode(code)
 	if err != nil {
 		return nil, ErrorCategoryGetByCode(code)
@@ -78,7 +78,7 @@ func (controller *Controller) _getSingle(code string) (*models.CategoryAdminGetS
 	}, nil
 }
 
-func (controller *Controller) _getSubList(parentCode string, searchQuery string) ([]models.SubCategoryAdminGet, error) {
+func (controller Controller) _getSubList(parentCode string, searchQuery string) ([]models.SubCategoryAdminGet, error) {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
 		return nil, ErrorCategoryGetByCode(parentCode)
@@ -118,7 +118,7 @@ func (controller *Controller) _getSubList(parentCode string, searchQuery string)
 	return subCategories, nil
 }
 
-func (controller *Controller) _getSubSingle(parentCode, code string) (*models.SubCategoryAdminGet, error) {
+func (controller Controller) _getSubSingle(parentCode, code string) (*models.SubCategoryAdminGet, error) {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
 		return nil, ErrorCategoryGetByCode(code)
@@ -147,7 +147,7 @@ func (controller *Controller) _getSubSingle(parentCode, code string) (*models.Su
 	}, nil
 }
 
-func (controller *Controller) _create(model *models.CategoryAdd) (string, error) {
+func (controller Controller) _create(model *models.CategoryAdd) (string, error) {
 	// генерируем код категории
 	categoryCode := strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU)))
 	categoryCode = strings.ReplaceAll(categoryCode, " ", "_")
@@ -171,7 +171,7 @@ func (controller *Controller) _create(model *models.CategoryAdd) (string, error)
 	return categoryCode, nil
 }
 
-func (controller *Controller) _createSub(parentCode string, model *models.SubCategoryAdd) (string, error) {
+func (controller Controller) _createSub(parentCode string, model *models.SubCategoryAdd) (string, error) {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
 		return "", ErrorCategoryGetByCode(parentCode)
@@ -204,7 +204,7 @@ func (controller *Controller) _createSub(parentCode string, model *models.SubCat
 	return categoryCode, nil
 }
 
-func (controller *Controller) _update(code string, model *models.CategoryUpdate) error {
+func (controller Controller) _update(code string, model *models.CategoryUpdate) error {
 	if err := controller.categoryRepo.UpdateByCode(code, model); err != nil {
 		return ErrorCategoryUpdate(err)
 	}
@@ -212,7 +212,7 @@ func (controller *Controller) _update(code string, model *models.CategoryUpdate)
 	return nil
 }
 
-func (controller *Controller) _updateSub(parentCode, code string, model *models.SubCategoryUpdate) error {
+func (controller Controller) _updateSub(parentCode, code string, model *models.SubCategoryUpdate) error {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
 		return ErrorCategoryGetByCode(code)
@@ -229,7 +229,7 @@ func (controller *Controller) _updateSub(parentCode, code string, model *models.
 	return nil
 }
 
-func (controller *Controller) _upload(code string, model *models.CategoryUpload) (string, error) {
+func (controller Controller) _upload(code string, model *models.CategoryUpload) (string, error) {
 	category, err := controller.categoryRepo.GetByCode(code)
 	if err != nil {
 		return "", ErrorCategoryGetByCode(code)
@@ -251,7 +251,7 @@ func (controller *Controller) _upload(code string, model *models.CategoryUpload)
 	return imagePath, nil
 }
 
-func (controller *Controller) _uploadSub(parentCode, code string, model *models.SubCategoryUpload) (string, error) {
+func (controller Controller) _uploadSub(parentCode, code string, model *models.SubCategoryUpload) (string, error) {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
 		return "", ErrorCategoryGetByCode(code)
@@ -273,7 +273,7 @@ func (controller *Controller) _uploadSub(parentCode, code string, model *models.
 	return imagePath, nil
 }
 
-func (controller *Controller) _delete(categoryCode string) error {
+func (controller Controller) _delete(categoryCode string) error {
 	category, err := controller.categoryRepo.GetByCode(categoryCode)
 	if err != nil {
 		return ErrorCategoryGetByCode(categoryCode)
@@ -299,7 +299,7 @@ func (controller *Controller) _delete(categoryCode string) error {
 	return nil
 }
 
-func (controller *Controller) _deleteSub(parentCode, categoryCode string) error {
+func (controller Controller) _deleteSub(parentCode, categoryCode string) error {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
 		return ErrorCategoryGetByCode(parentCode)
@@ -316,7 +316,7 @@ func (controller *Controller) _deleteSub(parentCode, categoryCode string) error 
 	return nil
 }
 
-func (controller *Controller) _activate(code string) error {
+func (controller Controller) _activate(code string) error {
 	if err := controller.categoryRepo.Activate(code); err != nil {
 		return ErrorCategoryUpdateStatus(err)
 	}
@@ -324,7 +324,7 @@ func (controller *Controller) _activate(code string) error {
 	return nil
 }
 
-func (controller *Controller) _deactivate(code string) error {
+func (controller Controller) _deactivate(code string) error {
 	if err := controller.categoryRepo.Deactivate(code); err != nil {
 		return ErrorCategoryUpdateStatus(err)
 	}
@@ -332,7 +332,7 @@ func (controller *Controller) _deactivate(code string) error {
 	return nil
 }
 
-func (controller *Controller) _activateSub(parentCode, code string) error {
+func (controller Controller) _activateSub(parentCode, code string) error {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
 		return ErrorCategoryGetByCode(code)
@@ -367,7 +367,7 @@ func (controller *Controller) _activateSub(parentCode, code string) error {
 	return nil
 }
 
-func (controller *Controller) _deactivateSub(parentCode, code string) error {
+func (controller Controller) _deactivateSub(parentCode, code string) error {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
 		return ErrorCategoryGetByCode(code)
@@ -384,7 +384,7 @@ func (controller *Controller) _deactivateSub(parentCode, code string) error {
 	return nil
 }
 
-func (controller *Controller) _bindProductList(parentCode, code string, model *models.SubCategoryBindProductList) error {
+func (controller Controller) _bindProductList(parentCode, code string, model *models.SubCategoryBindProductList) error {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
 		return ErrorCategoryGetByCode(code)
@@ -410,7 +410,7 @@ func (controller *Controller) _bindProductList(parentCode, code string, model *m
 	return nil
 }
 
-func (controller *Controller) _unbindProductItem(parentCode, code string, productID int) error {
+func (controller Controller) _unbindProductItem(parentCode, code string, productID int) error {
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
 		return ErrorCategoryGetByCode(code)

@@ -7,7 +7,7 @@ import (
 )
 
 // GetListREST Список всех акций
-func (controller *Controller) GetListREST(ctx boost.Context) error {
+func (controller Controller) GetListREST(ctx boost.Context) error {
 	list, err := controller._getListAdmin()
 	if err != nil {
 		return controller.Error(ctx, err)
@@ -17,7 +17,7 @@ func (controller *Controller) GetListREST(ctx boost.Context) error {
 }
 
 // GetSingleREST Получить промо акцию по id
-func (controller *Controller) GetSingleREST(ctx boost.Context) error {
+func (controller Controller) GetSingleREST(ctx boost.Context) error {
 	id := ctx.Param("id").Int()
 
 	promotion, err := controller._getSingleAdmin(id)
@@ -29,7 +29,7 @@ func (controller *Controller) GetSingleREST(ctx boost.Context) error {
 }
 
 // GetSingleByCodeREST Получить промо акцию по code
-func (controller *Controller) GetSingleByCodeREST(ctx boost.Context) error {
+func (controller Controller) GetSingleByCodeREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 
 	promotion, err := controller._getSingleCodeAdmin(code)
@@ -41,7 +41,7 @@ func (controller *Controller) GetSingleByCodeREST(ctx boost.Context) error {
 }
 
 // CreateREST Создать промо акцию
-func (controller *Controller) CreateREST(ctx boost.Context) error {
+func (controller Controller) CreateREST(ctx boost.Context) error {
 	model := models.PromotionAdminCreate{}
 	if err := ctx.Parse(&model); err != nil {
 		return controller.Error(ctx, ErrorPromotionBind(err))
@@ -56,7 +56,7 @@ func (controller *Controller) CreateREST(ctx boost.Context) error {
 }
 
 // UpdateREST Обновить промо акцию
-func (controller *Controller) UpdateREST(ctx boost.Context) error {
+func (controller Controller) UpdateREST(ctx boost.Context) error {
 	model := models.PromotionAdminUpdate{}
 	if err := ctx.Parse(&model); err != nil {
 		return controller.Error(ctx, ErrorPromotionBind(err))
@@ -70,7 +70,7 @@ func (controller *Controller) UpdateREST(ctx boost.Context) error {
 }
 
 // UploadREST Загрузить фото в промо акцию
-func (controller *Controller) UploadREST(ctx boost.Context) error {
+func (controller Controller) UploadREST(ctx boost.Context) error {
 	model := models.PromotionAdminUpload{}
 	if err := ctx.Parse(&model); err != nil {
 		return controller.Error(ctx, ErrorPromotionBind(err))
@@ -84,7 +84,7 @@ func (controller *Controller) UploadREST(ctx boost.Context) error {
 }
 
 // DeleteREST Загрузить фото в промо акцию
-func (controller *Controller) DeleteREST(ctx boost.Context) error {
+func (controller Controller) DeleteREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 
 	if err := controller._deleteAdmin(&code); err != nil {

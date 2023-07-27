@@ -5,7 +5,7 @@ import (
 	"wkey-stock/src/data/models"
 )
 
-func (controller *Controller) GetREST(ctx boost.Context) error {
+func (controller Controller) GetREST(ctx boost.Context) error {
 	searchQuery := ctx.QueryParam("query").String()
 
 	list, err := controller._get(searchQuery)
@@ -16,7 +16,7 @@ func (controller *Controller) GetREST(ctx boost.Context) error {
 	return controller.Ok(ctx, list)
 }
 
-func (controller *Controller) GetSingleREST(ctx boost.Context) error {
+func (controller Controller) GetSingleREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 
 	category, err := controller._getSingle(code)
@@ -27,7 +27,7 @@ func (controller *Controller) GetSingleREST(ctx boost.Context) error {
 	return controller.Ok(ctx, category)
 }
 
-func (controller *Controller) GetSubREST(ctx boost.Context) error {
+func (controller Controller) GetSubREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 	searchQuery := ctx.QueryParam("query").String()
 
@@ -39,7 +39,7 @@ func (controller *Controller) GetSubREST(ctx boost.Context) error {
 	return controller.Ok(ctx, list)
 }
 
-func (controller *Controller) GetSingleSubREST(ctx boost.Context) error {
+func (controller Controller) GetSingleSubREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 	code := ctx.Param("code").String()
 
@@ -51,7 +51,7 @@ func (controller *Controller) GetSingleSubREST(ctx boost.Context) error {
 	return controller.Ok(ctx, list)
 }
 
-func (controller *Controller) AddREST(ctx boost.Context) error {
+func (controller Controller) AddREST(ctx boost.Context) error {
 	model := models.CategoryAdd{}
 	if err := ctx.Parse(&model); err != nil {
 		return controller.Error(ctx, ErrorCategoryBind(err))
@@ -65,7 +65,7 @@ func (controller *Controller) AddREST(ctx boost.Context) error {
 	return controller.Ok(ctx, categoryCode)
 }
 
-func (controller *Controller) AddSubREST(ctx boost.Context) error {
+func (controller Controller) AddSubREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 
 	model := models.SubCategoryAdd{}
@@ -81,7 +81,7 @@ func (controller *Controller) AddSubREST(ctx boost.Context) error {
 	return controller.Ok(ctx, subCategoryCode)
 }
 
-func (controller *Controller) UpdateREST(ctx boost.Context) error {
+func (controller Controller) UpdateREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 	if code == "" {
 		return controller.Error(ctx, ErrorCategoryParamRequired("code"))
@@ -99,7 +99,7 @@ func (controller *Controller) UpdateREST(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-func (controller *Controller) UpdateSubREST(ctx boost.Context) error {
+func (controller Controller) UpdateSubREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 	code := ctx.Param("code").String()
 	if code == "" {
@@ -118,7 +118,7 @@ func (controller *Controller) UpdateSubREST(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-func (controller *Controller) UploadREST(ctx boost.Context) error {
+func (controller Controller) UploadREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 	if code == "" {
 		return controller.Error(ctx, ErrorCategoryParamRequired("code"))
@@ -137,7 +137,7 @@ func (controller *Controller) UploadREST(ctx boost.Context) error {
 	return controller.Ok(ctx, imagePath)
 }
 
-func (controller *Controller) UploadSubREST(ctx boost.Context) error {
+func (controller Controller) UploadSubREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 
 	code := ctx.Param("code").String()
@@ -158,7 +158,7 @@ func (controller *Controller) UploadSubREST(ctx boost.Context) error {
 	return controller.Ok(ctx, imagePath)
 }
 
-func (controller *Controller) DeleteREST(ctx boost.Context) error {
+func (controller Controller) DeleteREST(ctx boost.Context) error {
 	categoryCode := ctx.Param("code").String()
 	if categoryCode == "" {
 		return controller.Error(ctx, ErrorCategoryParamRequired("code"))
@@ -171,7 +171,7 @@ func (controller *Controller) DeleteREST(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-func (controller *Controller) DeleteSubREST(ctx boost.Context) error {
+func (controller Controller) DeleteSubREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 	categoryCode := ctx.Param("code").String()
 	if categoryCode == "" {
@@ -185,7 +185,7 @@ func (controller *Controller) DeleteSubREST(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-func (controller *Controller) ActivateREST(ctx boost.Context) error {
+func (controller Controller) ActivateREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 
 	if err := controller._activate(code); err != nil {
@@ -195,7 +195,7 @@ func (controller *Controller) ActivateREST(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-func (controller *Controller) DeactivateREST(ctx boost.Context) error {
+func (controller Controller) DeactivateREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 
 	if err := controller._deactivate(code); err != nil {
@@ -205,7 +205,7 @@ func (controller *Controller) DeactivateREST(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-func (controller *Controller) ActivateSubREST(ctx boost.Context) error {
+func (controller Controller) ActivateSubREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 	code := ctx.Param("code").String()
 
@@ -216,7 +216,7 @@ func (controller *Controller) ActivateSubREST(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-func (controller *Controller) DeactivateSubREST(ctx boost.Context) error {
+func (controller Controller) DeactivateSubREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 	code := ctx.Param("code").String()
 
@@ -227,7 +227,7 @@ func (controller *Controller) DeactivateSubREST(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-func (controller *Controller) BindProductListREST(ctx boost.Context) error {
+func (controller Controller) BindProductListREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 	code := ctx.Param("code").String()
 
@@ -243,7 +243,7 @@ func (controller *Controller) BindProductListREST(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-func (controller *Controller) UnbindProductItemREST(ctx boost.Context) error {
+func (controller Controller) UnbindProductItemREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 	code := ctx.Param("code").String()
 	productID := ctx.Param("product_id").Int()

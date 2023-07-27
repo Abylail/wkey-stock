@@ -5,7 +5,7 @@ import (
 	"wkey-stock/src/data/models"
 )
 
-func (controller *Controller) GetREST(ctx boost.Context) error {
+func (controller Controller) GetREST(ctx boost.Context) error {
 	searchQuery := ctx.QueryParam("query").String()
 	categoryKey := ctx.QueryParam("category").String()
 	subcategoryKey := ctx.QueryParam("subcategory").String()
@@ -25,7 +25,7 @@ func (controller *Controller) GetREST(ctx boost.Context) error {
 	return controller.Ok(ctx, products)
 }
 
-func (controller *Controller) GetSingleREST(ctx boost.Context) error {
+func (controller Controller) GetSingleREST(ctx boost.Context) error {
 	productID := ctx.Param("id").Int()
 	if productID == 0 {
 		//return controller.NotFound(ctx, errors.AdminProductNotFound)
@@ -40,7 +40,7 @@ func (controller *Controller) GetSingleREST(ctx boost.Context) error {
 	return controller.Ok(ctx, product)
 }
 
-func (controller *Controller) UpdateProductREST(ctx boost.Context) error {
+func (controller Controller) UpdateProductREST(ctx boost.Context) error {
 	productID := ctx.Param("id").Int()
 	if productID == 0 {
 		return controller.Error(ctx, ErrorProductParamRequired("id"))
@@ -58,7 +58,7 @@ func (controller *Controller) UpdateProductREST(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-func (controller *Controller) UploadProductREST(ctx boost.Context) error {
+func (controller Controller) UploadProductREST(ctx boost.Context) error {
 	productID := ctx.Param("id").Int()
 	if productID == 0 {
 		return controller.Error(ctx, ErrorProductParamRequired("id"))
