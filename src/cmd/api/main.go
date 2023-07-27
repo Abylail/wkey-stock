@@ -2,8 +2,10 @@ package main
 
 import (
 	"github.com/lowl11/boost"
+	"github.com/lowl11/boost/pkg/middlewares"
 	"github.com/lowl11/lazyconfig/config"
 	"github.com/lowl11/lazylog/log"
+	"time"
 
 	"wkey-stock/src/controllers"
 	"wkey-stock/src/events"
@@ -12,6 +14,8 @@ import (
 
 func main() {
 	app := boost.New()
+
+	app.Use(middlewares.Timeout(time.Second * 10))
 
 	// инициализация ивентов
 	apiEvents, err := events.Get()
