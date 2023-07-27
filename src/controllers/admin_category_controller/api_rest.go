@@ -1,13 +1,14 @@
-package category_controller
+package admin_category_controller
 
 import (
 	"github.com/lowl11/boost"
 	"wkey-stock/src/data/models"
 )
 
-func (controller *Controller) GetClientREST(ctx boost.Context) error {
+func (controller *Controller) GetREST(ctx boost.Context) error {
 	searchQuery := ctx.QueryParam("query").String()
-	list, err := controller._getClient(searchQuery)
+
+	list, err := controller._get(searchQuery)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -15,10 +16,10 @@ func (controller *Controller) GetClientREST(ctx boost.Context) error {
 	return controller.Ok(ctx, list)
 }
 
-func (controller *Controller) GetClientSingleREST(ctx boost.Context) error {
+func (controller *Controller) GetSingleREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 
-	category, err := controller._getClientSingle(code)
+	category, err := controller._getSingle(code)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -26,57 +27,11 @@ func (controller *Controller) GetClientSingleREST(ctx boost.Context) error {
 	return controller.Ok(ctx, category)
 }
 
-func (controller *Controller) GetClientSubREST(ctx boost.Context) error {
-	parentCode := ctx.Param("par_code").String()
-	searchQuery := ctx.QueryParam("query").String()
-
-	list, err := controller._getClientSub(parentCode, searchQuery)
-	if err != nil {
-		return controller.Error(ctx, err)
-	}
-
-	return controller.Ok(ctx, list)
-}
-
-func (controller *Controller) GetClientSubSingleREST(ctx boost.Context) error {
-	parentCode := ctx.Param("par_code").String()
-	code := ctx.Param("code").String()
-
-	list, err := controller._getClientSubSingle(parentCode, code)
-	if err != nil {
-		return controller.Error(ctx, err)
-	}
-
-	return controller.Ok(ctx, list)
-}
-
-func (controller *Controller) GetAdminREST(ctx boost.Context) error {
-	searchQuery := ctx.QueryParam("query").String()
-
-	list, err := controller._getAdmin(searchQuery)
-	if err != nil {
-		return controller.Error(ctx, err)
-	}
-
-	return controller.Ok(ctx, list)
-}
-
-func (controller *Controller) GetAdminSingleREST(ctx boost.Context) error {
-	code := ctx.Param("code").String()
-
-	category, err := controller._getAdminSingle(code)
-	if err != nil {
-		return controller.Error(ctx, err)
-	}
-
-	return controller.Ok(ctx, category)
-}
-
-func (controller *Controller) GetAdminSubREST(ctx boost.Context) error {
+func (controller *Controller) GetSubREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 	searchQuery := ctx.QueryParam("query").String()
 
-	list, err := controller._getAdminSub(parentCode, searchQuery)
+	list, err := controller._getSubList(parentCode, searchQuery)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -84,11 +39,11 @@ func (controller *Controller) GetAdminSubREST(ctx boost.Context) error {
 	return controller.Ok(ctx, list)
 }
 
-func (controller *Controller) GetAdminSingleSubREST(ctx boost.Context) error {
+func (controller *Controller) GetSingleSubREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 	code := ctx.Param("code").String()
 
-	list, err := controller._getAdminSubSingle(parentCode, code)
+	list, err := controller._getSubSingle(parentCode, code)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}

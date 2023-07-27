@@ -1,4 +1,4 @@
-package promotion_controller
+package admin_promotion_controller
 
 import (
 	"github.com/lowl11/boost"
@@ -6,8 +6,8 @@ import (
 	"wkey-stock/src/data/models"
 )
 
-// GetListAdmin Список всех акций
-func (controller *Controller) GetListAdmin(ctx boost.Context) error {
+// GetListREST Список всех акций
+func (controller *Controller) GetListREST(ctx boost.Context) error {
 	list, err := controller._getListAdmin()
 	if err != nil {
 		return controller.Error(ctx, err)
@@ -16,8 +16,8 @@ func (controller *Controller) GetListAdmin(ctx boost.Context) error {
 	return controller.Ok(ctx, promotion_adaptor.DtoToModel(list))
 }
 
-// GetSingleAdmin Получить промо акцию по id
-func (controller *Controller) GetSingleAdmin(ctx boost.Context) error {
+// GetSingleREST Получить промо акцию по id
+func (controller *Controller) GetSingleREST(ctx boost.Context) error {
 	id := ctx.Param("id").Int()
 
 	promotion, err := controller._getSingleAdmin(id)
@@ -28,8 +28,8 @@ func (controller *Controller) GetSingleAdmin(ctx boost.Context) error {
 	return controller.Ok(ctx, promotion.Model())
 }
 
-// GetSingleCodeAdmin Получить промо акцию по code
-func (controller *Controller) GetSingleCodeAdmin(ctx boost.Context) error {
+// GetSingleByCodeREST Получить промо акцию по code
+func (controller *Controller) GetSingleByCodeREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 
 	promotion, err := controller._getSingleCodeAdmin(code)
@@ -40,8 +40,8 @@ func (controller *Controller) GetSingleCodeAdmin(ctx boost.Context) error {
 	return controller.Ok(ctx, promotion.Model())
 }
 
-// CreateAdmin Создать промо акцию
-func (controller *Controller) CreateAdmin(ctx boost.Context) error {
+// CreateREST Создать промо акцию
+func (controller *Controller) CreateREST(ctx boost.Context) error {
 	model := models.PromotionAdminCreate{}
 	if err := ctx.Parse(&model); err != nil {
 		return controller.Error(ctx, ErrorPromotionBind(err))
@@ -55,8 +55,8 @@ func (controller *Controller) CreateAdmin(ctx boost.Context) error {
 	return controller.Ok(ctx, code)
 }
 
-// UpdateAdmin Обновить промо акцию
-func (controller *Controller) UpdateAdmin(ctx boost.Context) error {
+// UpdateREST Обновить промо акцию
+func (controller *Controller) UpdateREST(ctx boost.Context) error {
 	model := models.PromotionAdminUpdate{}
 	if err := ctx.Parse(&model); err != nil {
 		return controller.Error(ctx, ErrorPromotionBind(err))
@@ -69,8 +69,8 @@ func (controller *Controller) UpdateAdmin(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-// UploadAdmin Загрузить фото в промо акцию
-func (controller *Controller) UploadAdmin(ctx boost.Context) error {
+// UploadREST Загрузить фото в промо акцию
+func (controller *Controller) UploadREST(ctx boost.Context) error {
 	model := models.PromotionAdminUpload{}
 	if err := ctx.Parse(&model); err != nil {
 		return controller.Error(ctx, ErrorPromotionBind(err))
@@ -83,8 +83,8 @@ func (controller *Controller) UploadAdmin(ctx boost.Context) error {
 	return controller.Ok(ctx, "OK")
 }
 
-// DeleteAdmin Загрузить фото в промо акцию
-func (controller *Controller) DeleteAdmin(ctx boost.Context) error {
+// DeleteREST Загрузить фото в промо акцию
+func (controller *Controller) DeleteREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 
 	if err := controller._deleteAdmin(&code); err != nil {
@@ -92,26 +92,4 @@ func (controller *Controller) DeleteAdmin(ctx boost.Context) error {
 	}
 
 	return controller.Ok(ctx, "OK")
-}
-
-// GetListClient Список всех акций
-func (controller *Controller) GetListClient(ctx boost.Context) error {
-	list, err := controller._getListClient()
-	if err != nil {
-		return controller.Error(ctx, err)
-	}
-
-	return controller.Ok(ctx, list)
-}
-
-// GetSingleClient Получить промо акцию по code
-func (controller *Controller) GetSingleClient(ctx boost.Context) error {
-	code := ctx.Param("code").String()
-
-	promotion, err := controller._getSingleClient(code)
-	if err != nil {
-		return controller.Error(ctx, err)
-	}
-
-	return controller.Ok(ctx, promotion)
 }

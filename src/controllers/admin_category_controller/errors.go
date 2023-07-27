@@ -1,4 +1,4 @@
-package category_controller
+package admin_category_controller
 
 import (
 	"github.com/lowl11/boost/pkg/errors"
@@ -47,7 +47,7 @@ func ErrorCategoryBind(err error) error {
 }
 
 func ErrorCategoryParamRequired(paramName string) error {
-	return errors.New("Category param required error").
+	return errors.New("AdminCategory param required error").
 		SetType(typeErrorCategoryParamRequired).
 		SetHttpCode(http.StatusUnprocessableEntity).
 		AddContext("param_name", paramName)
@@ -63,7 +63,7 @@ func ErrorSubCategoryBind(err error) error {
 
 func ErrorCategoryAlreadyExist(code string) error {
 	return errors.
-		New("Category already exist").
+		New("AdminCategory already exist").
 		SetType(typeErrorCategoryAlreadyExist).
 		SetHttpCode(http.StatusNotAcceptable).
 		AddContext("code", code)
@@ -71,7 +71,7 @@ func ErrorCategoryAlreadyExist(code string) error {
 
 func ErrorCategoryNotFound(code string) error {
 	return errors.
-		New("Category not found").
+		New("AdminCategory not found").
 		SetType(typeErrorCategoryNotFound).
 		SetHttpCode(http.StatusNotAcceptable).
 		AddContext("code", code)
@@ -79,7 +79,7 @@ func ErrorCategoryNotFound(code string) error {
 
 func ErrorCategoryHasChildren(categoryID int) error {
 	return errors.
-		New("Cannot delete. Category has children").
+		New("Cannot delete. AdminCategory has children").
 		SetType(typeErrorCategoryHasChildren).
 		SetHttpCode(http.StatusInternalServerError).
 		AddContext("category_id", categoryID)
@@ -87,7 +87,7 @@ func ErrorCategoryHasChildren(categoryID int) error {
 
 func ErrorCategoryNoChildren(subCategoryID int) error {
 	return errors.
-		New("Category has no children").
+		New("AdminCategory has no children").
 		SetType(typeErrorCategoryNoChildren).
 		SetHttpCode(http.StatusInternalServerError).
 		AddContext("sub_category_id", subCategoryID)

@@ -1,4 +1,4 @@
-package promotion_controller
+package admin_promotion_controller
 
 import (
 	"github.com/lowl11/boost/pkg/errors"

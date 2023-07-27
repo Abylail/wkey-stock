@@ -1,4 +1,4 @@
-package promotion_controller
+package admin_promotion_controller
 
 import (
 	"wkey-stock/src/adaptors/promotion_adaptor"
@@ -61,7 +61,7 @@ func (controller *Controller) _updateAdmin(model *models.PromotionAdminUpdate) e
 	if err := controller.promotionRepo.UpdateByCode(model); err != nil {
 		return ErrorPromotionUpdate(err)
 	}
-	
+
 	return nil
 }
 
@@ -111,50 +111,4 @@ func (controller *Controller) _deleteAdmin(code *string) error {
 	}
 
 	return nil
-}
-
-// _getListClient список промо акций (в админке)
-func (controller *Controller) _getListClient() ([]models.PromotionGet, error) {
-	list, err := controller.promotionRepo.GetAll()
-	if err != nil {
-		return nil, ErrorPromotionGetList(err)
-	}
-
-	promotions := make([]models.PromotionGet, 0, len(list))
-	for _, promotion := range list {
-		promotions = append(promotions, models.PromotionGet{
-			Code:          promotion.Code,
-			TitleRU:       promotion.TitleRU,
-			TitleKZ:       promotion.TitleKZ,
-			ImageRU:       promotion.ImageRU,
-			ImageKZ:       promotion.ImageKZ,
-			DescriptionRU: promotion.DescriptionRU,
-			DescriptionKZ: promotion.DescriptionKZ,
-		})
-	}
-
-	return promotions, nil
-}
-
-// _getSingleCodeAdmin промо акция по code
-func (controller *Controller) _getSingleClient(code string) (*models.PromotionGet, error) {
-	rawPromotion, err := controller.promotionRepo.GetByCode(code)
-	if err != nil {
-		return nil, ErrorPromotionGetByCode(err)
-	}
-
-	// Если не нашелся
-	if rawPromotion == nil {
-		return nil, ErrorPromotionNotFoundByCode(code)
-	}
-
-	return &models.PromotionGet{
-		Code:          rawPromotion.Code,
-		TitleRU:       rawPromotion.TitleRU,
-		TitleKZ:       rawPromotion.TitleKZ,
-		ImageRU:       rawPromotion.ImageRU,
-		ImageKZ:       rawPromotion.ImageKZ,
-		DescriptionRU: rawPromotion.DescriptionRU,
-		DescriptionKZ: rawPromotion.DescriptionKZ,
-	}, nil
 }

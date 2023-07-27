@@ -1,4 +1,4 @@
-package promotion_controller
+package client_promotion_controller
 
 import (
 	"github.com/lowl11/boost/pkg/base/controller"
@@ -11,6 +11,7 @@ import (
 
 type Controller struct {
 	controller.Base
+
 	promotionRepo *promotion_repository.Repository
 	productRepo   *product_repository.Repository
 	image         *image_event.Event

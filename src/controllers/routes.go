@@ -2,9 +2,11 @@ package controllers
 
 import (
 	"github.com/lowl11/boost"
-	"wkey-stock/src/controllers/category_controller"
+	"wkey-stock/src/controllers/admin_category_controller"
+	"wkey-stock/src/controllers/admin_promotion_controller"
+	"wkey-stock/src/controllers/client_category_controller"
+	"wkey-stock/src/controllers/client_promotion_controller"
 	"wkey-stock/src/controllers/product_controller"
-	"wkey-stock/src/controllers/promotion_controller"
 	"wkey-stock/src/events"
 	"wkey-stock/src/repositories"
 )
@@ -15,10 +17,13 @@ func Bind(app *boost.App, apiEvents *events.ApiEvents, apiRepositories *reposito
 
 func setRoutes(router boost.Router, apiControllers *ApiControllers) {
 	setProduct(router, apiControllers.Product)
-	setCategory(router, apiControllers.Category)
-	setSubCategory(router, apiControllers.Category)
 	setBrand(router, apiControllers.Product)
-	setPromotion(router, apiControllers.Promotion)
+
+	setAdminCategory(router, apiControllers.AdminCategory)
+	setClientCategory(router, apiControllers.ClientCategory)
+
+	setPromotionAdmin(router, apiControllers.AdminPromotion)
+	setPromotionClient(router, apiControllers.ClientPromotion)
 }
 
 func setProduct(router boost.Router, controller *product_controller.Controller) {
@@ -33,71 +38,76 @@ func setProduct(router boost.Router, controller *product_controller.Controller) 
 	clientGroup.GET("/get", controller.GetClientREST)
 }
 
-func setCategory(router boost.Router, controller *category_controller.Controller) {
-	adminGroup := router.Group("/admin/api/v1/stock/category")
+func setAdminCategory(router boost.Router, controller *admin_category_controller.Controller) {
+	// category
+	categoryGroup := router.Group("/admin/api/v1/stock/category")
 
-	adminGroup.GET("/get", controller.GetAdminREST)
-	adminGroup.GET("/get/:code", controller.GetAdminSingleREST)
-	adminGroup.POST("/add", controller.AddREST)
-	adminGroup.PUT("/update/:code", controller.UpdateREST)
-	adminGroup.PUT("/upload/:code", controller.UploadREST)
-	adminGroup.DELETE("/delete/:code", controller.DeleteREST)
+	categoryGroup.GET("/get", controller.GetREST)
+	categoryGroup.GET("/get/:code", controller.GetSingleREST)
+	categoryGroup.POST("/add", controller.AddREST)
+	categoryGroup.PUT("/update/:code", controller.UpdateREST)
+	categoryGroup.PUT("/upload/:code", controller.UploadREST)
+	categoryGroup.DELETE("/delete/:code", controller.DeleteREST)
 
-	adminGroup.POST("/activate/:code", controller.ActivateREST)
-	adminGroup.POST("/deactivate/:code", controller.DeactivateREST)
+	categoryGroup.POST("/activate/:code", controller.ActivateREST)
+	categoryGroup.POST("/deactivate/:code", controller.DeactivateREST)
 
-	clientGroup := router.Group("/api/v1/stock/category")
+	// sub category
+	subCategoryGroup := router.Group("/admin/api/v1/stock/category/:parent_code/sub")
 
-	clientGroup.GET("/get", controller.GetClientREST)
-	clientGroup.GET("/get/:code", controller.GetClientSingleREST)
+	subCategoryGroup.GET("/get", controller.GetSubREST)
+	subCategoryGroup.GET("/get/:code", controller.GetSingleSubREST)
+	subCategoryGroup.POST("/add", controller.AddSubREST)
+	subCategoryGroup.PUT("/update/:code", controller.UpdateSubREST)
+	subCategoryGroup.PUT("/upload/:code", controller.UploadSubREST)
+	subCategoryGroup.DELETE("/delete/:code", controller.DeleteSubREST)
+
+	subCategoryGroup.POST("/activate/:code", controller.ActivateSubREST)
+	subCategoryGroup.POST("/deactivate/:code", controller.DeactivateSubREST)
+
+	subCategoryGroup.POST("/bind/:code", controller.BindProductListREST)
+	subCategoryGroup.POST("/unbind/:code/product/:product_id", controller.UnbindProductItemREST)
 }
 
-func setSubCategory(router boost.Router, controller *category_controller.Controller) {
-	adminGroup := router.Group("/admin/api/v1/stock/category/:parent_code/sub")
+func setClientCategory(router boost.Router, controller *client_category_controller.Controller) {
+	// category
+	categoryGroup := router.Group("/api/v1/stock/category")
 
-	adminGroup.GET("/get", controller.GetAdminSubREST)
-	adminGroup.GET("/get/:code", controller.GetAdminSingleSubREST)
-	adminGroup.POST("/add", controller.AddSubREST)
-	adminGroup.PUT("/update/:code", controller.UpdateSubREST)
-	adminGroup.PUT("/upload/:code", controller.UploadSubREST)
-	adminGroup.DELETE("/delete/:code", controller.DeleteSubREST)
+	categoryGroup.GET("/get", controller.GetREST)
+	categoryGroup.GET("/get/:code", controller.GetSingleREST)
 
-	adminGroup.POST("/activate/:code", controller.ActivateSubREST)
-	adminGroup.POST("/deactivate/:code", controller.DeactivateSubREST)
+	// sub category
+	subCategoryGroup := router.Group("/api/v1/stock/category/:par_code/sub")
 
-	adminGroup.POST("/bind/:code", controller.BindProductListREST)
-	adminGroup.POST("/unbind/:code/product/:product_id", controller.UnbindProductItemREST)
-
-	clientGroup := router.Group("/api/v1/stock/category/:par_code/sub")
-
-	clientGroup.GET("/get", controller.GetClientSubREST)
-	clientGroup.GET("/get/:code", controller.GetClientSubSingleREST)
+	subCategoryGroup.GET("/get", controller.GetSubREST)
+	subCategoryGroup.GET("/get/:code", controller.GetSubSingleREST)
 }
 
 func setBrand(router boost.Router, controller *product_controller.Controller) {
-	adminGroup := router.Group("/admin/api/v1/stock/brand")
+	group := router.Group("/admin/api/v1/stock/brand")
 
-	adminGroup.GET("/get", controller.GetBrandREST)
-	adminGroup.GET("/get/:id", controller.GetBrandSingleREST)
-	adminGroup.POST("/add", controller.AddBrandREST)
-	adminGroup.PUT("/update/:id", controller.UpdateBrandREST)
-	adminGroup.PUT("/upload/:id", controller.UploadBrandREST)
-	adminGroup.DELETE("/delete/:id", controller.DeleteBrandREST)
+	group.GET("/get", controller.GetBrandREST)
+	group.GET("/get/:id", controller.GetBrandSingleREST)
+	group.POST("/add", controller.AddBrandREST)
+	group.PUT("/update/:id", controller.UpdateBrandREST)
+	group.PUT("/upload/:id", controller.UploadBrandREST)
+	group.DELETE("/delete/:id", controller.DeleteBrandREST)
 }
 
-// Промоакции
-func setPromotion(router boost.Router, controller *promotion_controller.Controller) {
-	adminGroup := router.Group("/admin/api/v1/stock/promotion")
+func setPromotionAdmin(router boost.Router, controller *admin_promotion_controller.Controller) {
+	group := router.Group("/admin/api/v1/stock/promotion")
 
-	adminGroup.GET("/get", controller.GetListAdmin)
-	adminGroup.GET("/get/:code", controller.GetSingleCodeAdmin)
-	adminGroup.GET("/id/:id", controller.GetSingleAdmin)
-	adminGroup.POST("/create", controller.CreateAdmin)
-	adminGroup.PUT("/update", controller.UpdateAdmin)
-	adminGroup.PUT("/upload", controller.UploadAdmin)
-	adminGroup.DELETE("/delete/:code", controller.DeleteAdmin)
+	group.GET("/get", controller.GetListREST)
+	group.GET("/get/:code", controller.GetSingleREST)
+	group.GET("/id/:id", controller.GetSingleREST)
+	group.POST("/create", controller.CreateREST)
+	group.PUT("/update", controller.UpdateREST)
+	group.PUT("/upload", controller.UploadREST)
+	group.DELETE("/delete/:code", controller.DeleteREST)
+}
 
-	clientGroup := router.Group("/api/v1/stock/promotion")
-	clientGroup.GET("/get", controller.GetListClient)
-	clientGroup.GET("/get/:code", controller.GetSingleClient)
+func setPromotionClient(router boost.Router, controller *client_promotion_controller.Controller) {
+	group := router.Group("/api/v1/stock/promotion")
+	group.GET("/get", controller.GetListREST)
+	group.GET("/get/:code", controller.GetByCodeREST)
 }
