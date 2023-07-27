@@ -7,22 +7,18 @@ import (
 
 func (controller Controller) GetREST(ctx boost.Context) error {
 	searchQuery := ctx.QueryParam("query").String()
-	categoryKey := ctx.QueryParam("category").String()
-	subcategoryKey := ctx.QueryParam("subcategory").String()
+
 	page := ctx.QueryParam("page").Int()
 	if page == 0 {
 		page = 1
 	}
 
-	pageSize := 20
-	from := (page - 1) * pageSize
-
-	products, err := controller._get(from, pageSize, searchQuery, categoryKey, subcategoryKey)
+	productList, err := controller._get(page, searchQuery)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
 
-	return controller.Ok(ctx, products)
+	return controller.Ok(ctx, productList.Model())
 }
 
 func (controller Controller) GetSingleREST(ctx boost.Context) error {
@@ -37,7 +33,7 @@ func (controller Controller) GetSingleREST(ctx boost.Context) error {
 		return controller.Error(ctx, err)
 	}
 
-	return controller.Ok(ctx, product)
+	return controller.Ok(ctx, product.Model(product.Categories()))
 }
 
 func (controller Controller) UpdateProductREST(ctx boost.Context) error {

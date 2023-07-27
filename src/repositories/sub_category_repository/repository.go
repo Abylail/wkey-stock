@@ -16,7 +16,9 @@ func New(connection *sqlx.DB) *Repository {
 		ICrudRepository: repository.NewCrud[entities.SubCategory, int](
 			connection,
 			"sub_categories",
-			repo_config.Crud{},
+			repo_config.Crud{
+				AliasName: "subCategory",
+			},
 		),
 	}
 }

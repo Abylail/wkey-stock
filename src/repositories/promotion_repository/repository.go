@@ -16,7 +16,9 @@ func New(connection *sqlx.DB) *Repository {
 		ICrudRepository: repository.NewCrud[entities.Promotion, int](
 			connection,
 			"promotions",
-			repo_config.Crud{},
+			repo_config.Crud{
+				AliasName: "promotion",
+			},
 		),
 	}
 }

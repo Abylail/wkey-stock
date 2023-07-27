@@ -1,27 +1,20 @@
 package product_controller
 
 import (
-	"fmt"
 	"math"
+	"wkey-stock/src/adaptors/product_adaptor"
+	"wkey-stock/src/adaptors/product_category_adaptor"
+	"wkey-stock/src/data/dtos"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/models"
 )
 
-func (controller Controller) _get(from, pageSize int, searchQuery, categoryKey string, subcategoryKey string) (*models.AdminProductGet, error) {
+func (controller Controller) _get(page int, searchQuery string) (*dtos.ProductList, error) {
+	pageSize := 20
+	from := (page - 1) * pageSize
+
 	var products []entities.AdminProductGet
 	var err error
-
-	// Ищу сабкатегорию если она есть
-	var subcategory *entities.SubCategory
-	if subcategoryKey != "" {
-		fmt.Println("subcategoryKey", subcategoryKey)
-		subcategory, err = controller.subCategoryRepo.GetByCode(subcategoryKey)
-		if err != nil {
-			return nil, ErrorAdminProductGet(err)
-		}
-	}
-
-	fmt.Println(subcategory)
 
 	// получаем сами продукты
 	if len(searchQuery) == 0 {
@@ -45,11 +38,6 @@ func (controller Controller) _get(from, pageSize int, searchQuery, categoryKey s
 		return nil, ErrorProductGetImages(err)
 	}
 
-	imagesList := make([]entities.ProductImageGet, 0, len(images))
-	for _, image := range images {
-		imagesList = append(imagesList, image)
-	}
-
 	// получаем кол-во продуктов
 	var productCount int
 	if len(searchQuery) == 0 {
@@ -62,7 +50,7 @@ func (controller Controller) _get(from, pageSize int, searchQuery, categoryKey s
 	}
 
 	// считаем кол-во страниц
-	pageCount := int(math.Ceil(float64(productCount) / float64(20)))
+	pageCount := int(math.Ceil(float64(productCount / 20)))
 
 	// получаем список категорий
 	categoryPairs, err := controller.productRepo.GetSubCategoryPairs(productIDs)
@@ -70,61 +58,17 @@ func (controller Controller) _get(from, pageSize int, searchQuery, categoryKey s
 		return nil, ErrorProductGetPairs(err)
 	}
 
-	productList := make([]models.AdminProductItem, 0, len(products))
-	for _, product := range products {
-		categories := make([]models.ProductCategoryPair, 0, len(categoryPairs))
-		for _, category := range categoryPairs {
-			categories = append(categories, models.ProductCategoryPair{
-				SubCategoryCode: category.SubCategoryCode,
-				SubCategoryName: category.SubCategoryName,
-				CategoryCode:    category.CategoryCode,
-				CategoryName:    category.CategoryName,
-			})
-		}
-
-		productList = append(productList, models.AdminProductItem{
-			ID:                product.ID,
-			Title:             product.Title,
-			Price:             product.Price,
-			VendorCode:        product.VendorCode,
-			Barcode:           product.Barcode,
-			UnitName:          product.UnitName,
-			Categories:        categories,
-			CreatedAt:         product.CreatedAt,
-			UpdatedAt:         product.UpdatedAt,
-			AdditionalPercent: product.AdditionalPercent,
-			DescriptionRU:     product.DescriptionRU,
-			DescriptionKZ:     product.DescriptionKZ,
-			Count:             product.Count,
-			BrandTitle:        product.BrandTitle,
-		})
-	}
+	categories := product_category_adaptor.EntityToDTO(categoryPairs)
+	productList := product_adaptor.EntityToDTO(products)
 
 	for i := 0; i < len(productList); i++ {
-		productID := productList[i].ID
-		productImages := make([]entities.ProductImageGet, 0)
-		for _, image := range imagesList {
-			if image.ProductID != productID {
-				continue
-			}
-
-			productImages = append(productImages, image)
-		}
-
-		productList[i].Images = make([]string, 0, len(productImages))
-
-		for _, image := range productImages {
-			productList[i].Images = append(productList[i].Images, image.Path)
-		}
+		productList[i].EditImage(images)
 	}
 
-	return &models.AdminProductGet{
-		PageCount: pageCount,
-		List:      productList,
-	}, nil
+	return dtos.NewProductList(pageCount, productList, categories), nil
 }
 
-func (controller Controller) _getSingle(productID int) (*models.AdminProductItem, error) {
+func (controller Controller) _getSingle(productID int) (*dtos.Product, error) {
 	product, err := controller.productRepo.GetAdminByID(productID)
 	if err != nil {
 		return nil, ErrorAdminProductGet(err)
@@ -145,38 +89,11 @@ func (controller Controller) _getSingle(productID int) (*models.AdminProductItem
 		return nil, ErrorProductGetPairs(err)
 	}
 
-	categories := make([]models.ProductCategoryPair, 0, len(categoryPairs))
-	for _, pair := range categoryPairs {
-		categories = append(categories, models.ProductCategoryPair{
-			SubCategoryCode: pair.SubCategoryCode,
-			SubCategoryName: pair.SubCategoryName,
-			CategoryCode:    pair.CategoryCode,
-			CategoryName:    pair.CategoryName,
-		})
-	}
+	productDTO := dtos.NewProduct(product)
+	productDTO.EditImage(images)
+	productDTO.SaveCategories(product_category_adaptor.EntityToDTO(categoryPairs))
 
-	productImages := make([]string, 0, len(images))
-	for _, image := range images {
-		productImages = append(productImages, image.Path)
-	}
-
-	return &models.AdminProductItem{
-		ID:                product.ID,
-		Title:             product.Title,
-		Price:             product.Price,
-		VendorCode:        product.VendorCode,
-		Barcode:           product.Barcode,
-		UnitName:          product.UnitName,
-		Categories:        categories,
-		CreatedAt:         product.CreatedAt,
-		UpdatedAt:         product.UpdatedAt,
-		AdditionalPercent: product.AdditionalPercent,
-		DescriptionRU:     product.DescriptionRU,
-		DescriptionKZ:     product.DescriptionKZ,
-		Count:             product.Count,
-		BrandTitle:        product.BrandTitle,
-		Images:            productImages,
-	}, nil
+	return productDTO, nil
 }
 
 func (controller Controller) _update(productID int, model *models.ProductUpdate) error {

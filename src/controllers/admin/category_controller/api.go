@@ -351,15 +351,6 @@ func (controller Controller) _activateSub(parentCode, code string) error {
 		return ErrorCategoryNotFound(code)
 	}
 
-	count, err := controller.productRepo.CountBySubCategory(subCategory.ID)
-	if err != nil {
-		return ErrorSubCategoryGetCount(err)
-	}
-
-	if count == 0 {
-		return ErrorCategoryNoChildren(subCategory.ID)
-	}
-
 	if err = controller.subCategoryRepo.Activate(category.ID, code); err != nil {
 		return ErrorSubCategoryUpdateStatus(err)
 	}
