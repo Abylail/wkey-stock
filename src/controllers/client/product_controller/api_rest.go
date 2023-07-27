@@ -2,7 +2,7 @@ package product_controller
 
 import "github.com/lowl11/boost"
 
-func (controller *Controller) GetREST(ctx boost.Context) error {
+func (controller Controller) GetREST(ctx boost.Context) error {
 	searchQuery := ctx.QueryParam("query").String()
 	page := ctx.QueryParam("page").Int()
 	if page == 0 {

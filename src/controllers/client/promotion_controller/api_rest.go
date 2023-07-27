@@ -6,7 +6,7 @@ import (
 )
 
 // GetListREST Список всех акций
-func (controller *Controller) GetListREST(ctx boost.Context) error {
+func (controller Controller) GetListREST(ctx boost.Context) error {
 	list, err := controller._getList()
 	if err != nil {
 		return controller.Error(ctx, err)
@@ -16,7 +16,7 @@ func (controller *Controller) GetListREST(ctx boost.Context) error {
 }
 
 // GetByCodeREST Получить промо акцию по code
-func (controller *Controller) GetByCodeREST(ctx boost.Context) error {
+func (controller Controller) GetByCodeREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 
 	promotion, err := controller._getByCode(code)

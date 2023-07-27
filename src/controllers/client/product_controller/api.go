@@ -6,7 +6,7 @@ import (
 	"wkey-stock/src/data/models"
 )
 
-func (controller *Controller) _get(from, pageSize int, searchQuery string) (*models.ClientProductList, error) {
+func (controller Controller) _get(from, pageSize int, searchQuery string) (*models.ClientProductList, error) {
 	var products []entities.ClientProductShort
 	var err error
 

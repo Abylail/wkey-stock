@@ -6,7 +6,7 @@ import (
 )
 
 // _getListClient список промо акций (в админке)
-func (controller *Controller) _getList() ([]dtos.Promotion, error) {
+func (controller Controller) _getList() ([]dtos.Promotion, error) {
 	list, err := controller.promotionRepo.GetAll()
 	if err != nil {
 		return nil, ErrorPromotionGetList(err)
@@ -16,7 +16,7 @@ func (controller *Controller) _getList() ([]dtos.Promotion, error) {
 }
 
 // _getSingleCodeAdmin промо акция по code
-func (controller *Controller) _getByCode(code string) (*dtos.Promotion, error) {
+func (controller Controller) _getByCode(code string) (*dtos.Promotion, error) {
 	promotion, err := controller.promotionRepo.GetByCode(code)
 	if err != nil {
 		return nil, ErrorPromotionGetByCode(err)
