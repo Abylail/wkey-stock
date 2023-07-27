@@ -17,19 +17,19 @@ type SubCategoryClientGet struct {
 }
 
 type SubCategoryAdd struct {
-	TitleRU string `json:"title_ru"`
-	TitleKZ string `json:"title_kz"`
+	TitleRU string `json:"title_ru" validate:"required"`
+	TitleKZ string `json:"title_kz" validate:"required"`
 }
 
 type SubCategoryUpdate struct {
-	TitleRU string `json:"title_ru"`
-	TitleKZ string `json:"title_kz"`
+	TitleRU string `json:"title_ru" validate:"required"`
+	TitleKZ string `json:"title_kz" validate:"required"`
 }
 
 type SubCategoryUpload struct {
-	Image *File `json:"image"`
+	Image *File `json:"image" validate:"required"`
 }
 
 type SubCategoryBindProductList struct {
-	List []int `json:"list"`
+	List []int `json:"list" validate:"required"`
 }

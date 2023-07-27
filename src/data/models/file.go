@@ -1,6 +1,6 @@
 package models
 
 type File struct {
-	Name   string `json:"name"`
-	Buffer string `json:"buffer"`
+	Name   string `json:"name" validate:"required"`
+	Buffer string `json:"buffer" validate:"required"`
 }

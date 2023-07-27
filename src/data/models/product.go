@@ -47,15 +47,15 @@ type ProductCategoryPair struct {
 }
 
 type ProductUpdate struct {
-	DescriptionRU string `json:"description_ru"`
-	DescriptionKZ string `json:"description_kz"`
+	DescriptionRU string `json:"description_ru" validate:"required"`
+	DescriptionKZ string `json:"description_kz" validate:"required"`
 }
 
 type ProductUpload struct {
-	Images []productImage `json:"images"`
+	Images []productImage `json:"images" validate:"required"`
 }
 
 type productImage struct {
-	Position int  `json:"position"`
-	Image    File `json:"image"`
+	Position int  `json:"position" validate:"required"`
+	Image    File `json:"image" validate:"required"`
 }

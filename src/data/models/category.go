@@ -37,15 +37,15 @@ type CategoryClientGetSingle struct {
 }
 
 type CategoryAdd struct {
-	TitleRU string `json:"title_ru"`
-	TitleKZ string `json:"title_kz"`
+	TitleRU string `json:"title_ru" validate:"required"`
+	TitleKZ string `json:"title_kz" validate:"required"`
 }
 
 type CategoryUpdate struct {
-	TitleRU string `json:"title_ru"`
-	TitleKZ string `json:"title_kz"`
+	TitleRU string `json:"title_ru" validate:"required"`
+	TitleKZ string `json:"title_kz" validate:"required"`
 }
 
 type CategoryUpload struct {
-	Image File `json:"image"`
+	Image File `json:"image" validate:"required"`
 }
