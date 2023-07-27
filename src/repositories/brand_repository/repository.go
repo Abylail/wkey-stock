@@ -2,18 +2,17 @@ package brand_repository
 
 import (
 	"github.com/jmoiron/sqlx"
-	"wkey-stock/src/events"
-	"wkey-stock/src/repositories/repository"
+	"github.com/lowl11/lazy-entity/repository"
 )
 
 type Repository struct {
-	repository.Base
+	repository.IScriptRepository
 	connection *sqlx.DB
 }
 
-func Create(connection *sqlx.DB, apiEvents *events.ApiEvents) *Repository {
+func Create(connection *sqlx.DB) *Repository {
 	return &Repository{
-		Base:       repository.CreateBase(apiEvents.Script),
-		connection: connection,
+		IScriptRepository: repository.NewScript(),
+		connection:        connection,
 	}
 }

@@ -2,17 +2,13 @@ package product_controller
 
 import (
 	"fmt"
-	"github.com/lowl11/lazylog/layers"
 	"math"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/errors"
 	"wkey-stock/src/data/models"
-	"wkey-stock/src/definition"
 )
 
 func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categoryKey string, subcategoryKey string) (*models.AdminProductGet, *models.Error) {
-	logger := definition.Logger
-
 	var products []entities.AdminProductGet
 	var err error
 
@@ -35,7 +31,6 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 		products, err = controller.productRepo.GetAdminByQuery(from, pageSize, searchQuery)
 	}
 	if err != nil {
-		logger.Error(err, "Get products list error", layers.Database)
 		return nil, errors.AdminProductGet.With(err)
 	}
 
@@ -48,7 +43,6 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 	// получаем картинки продуктов
 	images, err := controller.productRepo.GetImages(productIDs)
 	if err != nil {
-		logger.Error(err, "Get product images error", layers.Database)
 		return nil, errors.ProductImagesGet.With(err)
 	}
 
@@ -65,7 +59,6 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 		productCount, err = controller.productRepo.CountQuery(searchQuery)
 	}
 	if err != nil {
-		logger.Error(err, "Get products count error", layers.Database)
 		return nil, errors.AdminProductCountGet.With(err)
 	}
 
@@ -75,7 +68,6 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 	// получаем список категорий
 	categoryPairs, err := controller.productRepo.GetSubCategoryPairs(productIDs)
 	if err != nil {
-		logger.Error(err, "Get product category pairs error", layers.Database)
 		return nil, errors.ProductGetPairs.With(err)
 	}
 
@@ -134,11 +126,8 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 }
 
 func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProductItem, *models.Error) {
-	logger := definition.Logger
-
 	product, err := controller.productRepo.GetAdminByID(productID)
 	if err != nil {
-		logger.Error(err, "Get admin product by id error", layers.Database)
 		return nil, errors.AdminProductGet.With(err)
 	}
 
@@ -148,14 +137,12 @@ func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProdu
 
 	images, err := controller.productRepo.GetImages([]int{productID})
 	if err != nil {
-		logger.Error(err, "Get product images error", layers.Database)
 		return nil, errors.ProductImagesGet.With(err)
 	}
 
 	// получаем список категорий
 	categoryPairs, err := controller.productRepo.GetSubCategoryPairs([]int{productID})
 	if err != nil {
-		logger.Error(err, "Get product category pairs error", layers.Database)
 		return nil, errors.ProductGetPairs.With(err)
 	}
 
@@ -194,10 +181,7 @@ func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProdu
 }
 
 func (controller *Controller) _update(productID int, model *models.ProductUpdate) *models.Error {
-	logger := definition.Logger
-
 	if err := controller.productRepo.Update(productID, model); err != nil {
-		logger.Error(err, "Update product error", layers.Database)
 		return errors.ProductUpdate.With(err)
 	}
 
@@ -205,20 +189,16 @@ func (controller *Controller) _update(productID int, model *models.ProductUpdate
 }
 
 func (controller *Controller) _upload(productID int, model *models.ProductUpload) *models.Error {
-	logger := definition.Logger
-
 	if len(model.Images) == 0 {
 		return nil
 	}
 
 	pathList, err := controller.image.UploadProductImages(productID, model)
 	if err != nil {
-		logger.Error(err, "Upload product images error", layers.File)
 		return errors.ProductUpload.With(err)
 	}
 
 	if err = controller.productRepo.UpdateImages(productID, model, pathList); err != nil {
-		logger.Error(err, "Upload product images error", layers.Database)
 		return errors.ProductUpload.With(err)
 	}
 
@@ -226,8 +206,6 @@ func (controller *Controller) _upload(productID int, model *models.ProductUpload
 }
 
 func (controller *Controller) _getBrand(searchQuery string) ([]models.BrandGet, *models.Error) {
-	logger := definition.Logger
-
 	var brands []entities.BrandGet
 	var err error
 
@@ -237,7 +215,6 @@ func (controller *Controller) _getBrand(searchQuery string) ([]models.BrandGet, 
 		brands, err = controller.brandRepo.GetByQuery(searchQuery)
 	}
 	if err != nil {
-		logger.Error(err, "Get list of brands error", layers.Database)
 		return nil, errors.BrandGetList.With(err)
 	}
 
@@ -254,11 +231,8 @@ func (controller *Controller) _getBrand(searchQuery string) ([]models.BrandGet, 
 }
 
 func (controller *Controller) _getBrandSingle(id int) (*models.BrandGet, *models.Error) {
-	logger := definition.Logger
-
 	brand, err := controller.brandRepo.GetByID(id)
 	if err != nil {
-		logger.Error(err, "Get brand by ID error", layers.Database)
 		return nil, errors.BrandGetByID.With(err)
 	}
 
@@ -270,11 +244,8 @@ func (controller *Controller) _getBrandSingle(id int) (*models.BrandGet, *models
 }
 
 func (controller *Controller) _addBrand(model *models.BrandAdd) *models.Error {
-	logger := definition.Logger
-
 	brand, err := controller.brandRepo.GetByTitle(model.Title)
 	if err != nil {
-		logger.Error(err, "Get brand by title error", layers.Database)
 		return errors.BrandGetByTitle.With(err)
 	}
 
@@ -283,7 +254,6 @@ func (controller *Controller) _addBrand(model *models.BrandAdd) *models.Error {
 	}
 
 	if err = controller.brandRepo.Create(model); err != nil {
-		logger.Error(err, "Create brand error", layers.Database)
 		return errors.BrandAdd.With(err)
 	}
 
@@ -291,10 +261,7 @@ func (controller *Controller) _addBrand(model *models.BrandAdd) *models.Error {
 }
 
 func (controller *Controller) _updateBrand(id int, model *models.BrandUpdate) *models.Error {
-	logger := definition.Logger
-
 	if err := controller.brandRepo.Update(id, model); err != nil {
-		logger.Error(err, "Update brand error", layers.Database)
 		return errors.BrandUpdate.With(err)
 	}
 
@@ -302,11 +269,8 @@ func (controller *Controller) _updateBrand(id int, model *models.BrandUpdate) *m
 }
 
 func (controller *Controller) _uploadBrand(brandID int, model *models.BrandUpload) (string, *models.Error) {
-	logger := definition.Logger
-
 	brand, err := controller.brandRepo.GetByID(brandID)
 	if err != nil {
-		logger.Error(err, "Get brand by ID error", layers.Database)
 		return "", errors.BrandGetByID.With(err)
 	}
 
@@ -316,12 +280,10 @@ func (controller *Controller) _uploadBrand(brandID int, model *models.BrandUploa
 
 	imagePath, err := controller.image.UploadBrandIcon(brandID, model.Image.Name, model.Image.Buffer)
 	if err != nil {
-		logger.Error(err, "Upload brand icon error", layers.File)
 		return "", errors.ImageUploadBrandIcon.With(err)
 	}
 
 	if err = controller.brandRepo.UpdateIcon(brandID, imagePath); err != nil {
-		logger.Error(err, "Update brand icon error", layers.Database)
 		return "", errors.BrandUpdateIcon.With(err)
 	}
 
@@ -329,12 +291,10 @@ func (controller *Controller) _uploadBrand(brandID int, model *models.BrandUploa
 }
 
 func (controller *Controller) _deleteBrand(id int) *models.Error {
-	logger := definition.Logger
-
 	if err := controller.brandRepo.Delete(id); err != nil {
-		logger.Error(err, "Delete brand error", layers.Database)
 		return errors.BrandDelete.With(err)
 	}
+
 	return nil
 }
 

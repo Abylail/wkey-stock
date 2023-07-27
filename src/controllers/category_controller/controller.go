@@ -1,7 +1,7 @@
 package category_controller
 
 import (
-	"wkey-stock/src/controllers/controller"
+	"github.com/lowl11/boost/pkg/base/controller"
 	"wkey-stock/src/events"
 	"wkey-stock/src/events/image_event"
 	"wkey-stock/src/repositories"

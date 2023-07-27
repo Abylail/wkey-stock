@@ -14,7 +14,7 @@ func (repo *Repository) GetAll() ([]entities.AdminPromotion, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("promotion", "get_all_admin")
+	query := repo.Get("promotion", "get_all_admin")
 
 	rows, err := repo.connection.QueryxContext(ctx, query)
 	if err != nil {
@@ -38,7 +38,7 @@ func (repo *Repository) GetById(id int) (*entities.AdminPromotion, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("promotion", "get_by_id")
+	query := repo.Get("promotion", "get_by_id")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, id)
 	if err != nil {
@@ -62,7 +62,7 @@ func (repo *Repository) GetByCode(code string) (*entities.AdminPromotion, error)
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("promotion", "get_by_code")
+	query := repo.Get("promotion", "get_by_code")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, code)
 	if err != nil {
@@ -98,7 +98,7 @@ func (repo *Repository) Create(model *models.PromotionAdminCreate) (*string, err
 		DescriptionKZ: model.DescriptionKZ,
 	}
 
-	query := repo.Script("promotion", "create")
+	query := repo.Get("promotion", "create")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -126,7 +126,7 @@ func (repo *Repository) Update(model *models.PromotionAdminUpdate) error {
 		DescriptionKZ: model.DescriptionKZ,
 	}
 
-	query := repo.Script("promotion", "update")
+	query := repo.Get("promotion", "update")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -156,7 +156,7 @@ func (repo *Repository) UpdateImage(code string, imagePath string, lang string) 
 		ImagePath: imagePath,
 	}
 
-	query := fmt.Sprintf(repo.Script("promotion", "update_image"), imageField)
+	query := fmt.Sprintf(repo.Get("promotion", "update_image"), imageField)
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -176,7 +176,7 @@ func (repo *Repository) Delete(code *string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("promotion", "delete")
+	query := repo.Get("promotion", "delete")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.ExecContext(ctx, query, code); err != nil {

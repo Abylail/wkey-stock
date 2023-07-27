@@ -1,15 +1,15 @@
 package repositories
 
 import (
-	"github.com/lowl11/lazylog/layers"
-	"wkey-stock/src/definition"
-	"wkey-stock/src/events"
+	"github.com/lowl11/boost"
+	"github.com/lowl11/lazy-entity/services/connection_service"
+	"github.com/lowl11/lazyconfig/config"
+	"github.com/lowl11/lazylog/log"
 	"wkey-stock/src/repositories/brand_repository"
 	"wkey-stock/src/repositories/category_repository"
 	"wkey-stock/src/repositories/product_repository"
 	"wkey-stock/src/repositories/promotion_repository"
 	"wkey-stock/src/repositories/sub_category_repository"
-	"wkey-stock/src/services/postgres_helper"
 )
 
 type ApiRepositories struct {
@@ -20,20 +20,28 @@ type ApiRepositories struct {
 	Promotion   *promotion_repository.Repository
 }
 
-func Get(apiEvents *events.ApiEvents) (*ApiRepositories, error) {
-	logger := definition.Logger
-
+func Get(app *boost.App) (*ApiRepositories, error) {
 	// подключение к Postgres
-	connectionPostgres, err := postgres_helper.NewConnection()
+	connection, err := connection_service.
+		New(config.Get("database_connection")).
+		ConnectionPool()
 	if err != nil {
-		logger.Fatal(err, "Connect to Postgres database error", layers.Database)
+		return nil, err
 	}
 
+	app.Destroy(func() {
+		if err = connection.Close(); err != nil {
+			log.Error(err, "Database connection close error")
+			return
+		}
+		log.Info("Database connection closed")
+	})
+
 	return &ApiRepositories{
-		Category:    category_repository.Create(connectionPostgres, apiEvents),
-		SubCategory: sub_category_repository.Create(connectionPostgres, apiEvents),
-		Product:     product_repository.Create(connectionPostgres, apiEvents),
-		Brand:       brand_repository.Create(connectionPostgres, apiEvents),
-		Promotion:   promotion_repository.Create(connectionPostgres, apiEvents),
+		Category:    category_repository.Create(connection),
+		SubCategory: sub_category_repository.Create(connection),
+		Product:     product_repository.Create(connection),
+		Brand:       brand_repository.Create(connection),
+		Promotion:   promotion_repository.Create(connection),
 	}, nil
 }

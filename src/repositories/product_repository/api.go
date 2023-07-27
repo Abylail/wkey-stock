@@ -13,7 +13,7 @@ func (repo *Repository) GetAdmin(from, pageSize int) ([]entities.AdminProductGet
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("product", "get_admin")
+	query := repo.Get("product", "get_admin")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, from, pageSize)
 	if err != nil {
@@ -39,7 +39,7 @@ func (repo *Repository) GetAdminByQuery(from, pageSize int, searchQuery string) 
 
 	searchQuery = "%" + searchQuery + "%"
 
-	query := repo.Script("product", "get_admin_by_query")
+	query := repo.Get("product", "get_admin_by_query")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, from, pageSize, searchQuery)
 	if err != nil {
@@ -63,7 +63,7 @@ func (repo *Repository) GetAdminByID(productID int) (*entities.AdminProductGet, 
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("product", "get_admin_by_id")
+	query := repo.Get("product", "get_admin_by_id")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, productID)
 	if err != nil {
@@ -86,7 +86,7 @@ func (repo *Repository) GetImages(productIDs []int) ([]entities.ProductImageGet,
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("product", "get_images")
+	query := repo.Get("product", "get_images")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, pq.Array(productIDs))
 	if err != nil {
@@ -110,7 +110,7 @@ func (repo *Repository) Count() (int, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("product", "count")
+	query := repo.Get("product", "count")
 
 	var count int
 	if err := repo.connection.QueryRowxContext(ctx, query).Scan(&count); err != nil {
@@ -126,7 +126,7 @@ func (repo *Repository) CountQuery(searchQuery string) (int, error) {
 
 	searchQuery = "%" + searchQuery + "%"
 
-	query := repo.Script("product", "count_query")
+	query := repo.Get("product", "count_query")
 
 	var count int
 	if err := repo.connection.QueryRowxContext(ctx, query, searchQuery).Scan(&count); err != nil {
@@ -140,7 +140,7 @@ func (repo *Repository) CountBySubCategory(subCategoryID int) (int, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("product", "count_by_sub_category")
+	query := repo.Get("product", "count_by_sub_category")
 
 	var count int
 	if err := repo.connection.QueryRowxContext(ctx, query, subCategoryID).Scan(&count); err != nil {
@@ -160,7 +160,7 @@ func (repo *Repository) Update(id int, model *models.ProductUpdate) error {
 		DescriptionKZ: model.DescriptionKZ,
 	}
 
-	query := repo.Script("product", "update")
+	query := repo.Get("product", "update")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -179,7 +179,7 @@ func (repo *Repository) GetImagePositions(productID int, positions []int) ([]ent
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("product", "get_image_positions")
+	query := repo.Get("product", "get_image_positions")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, productID, pq.Array(positions))
 	if err != nil {
@@ -218,7 +218,7 @@ func (repo *Repository) UpdateImages(id int, model *models.ProductUpload, pathLi
 		})
 	}
 
-	query := repo.Script("product", "update_image")
+	query := repo.Get("product", "update_image")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		for _, entity := range uploadEntities {
@@ -239,7 +239,7 @@ func (repo *Repository) BindSubCategory(subCategoryID int, productIDs []int) err
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("product", "bind")
+	query := repo.Get("product", "bind")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		for _, productID := range productIDs {
@@ -260,7 +260,7 @@ func (repo *Repository) UnbindSubCategory(productID, subCategoryID int) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("product", "unbind")
+	query := repo.Get("product", "unbind")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.ExecContext(ctx, query, productID, subCategoryID); err != nil {
@@ -279,7 +279,7 @@ func (repo *Repository) GetSubCategoryPairs(productIDs []int) ([]entities.Produc
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("product", "get_pairs")
+	query := repo.Get("product", "get_pairs")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, pq.Array(productIDs))
 	if err != nil {
@@ -304,7 +304,7 @@ func (repo *Repository) GetClient(from, pageSize int) ([]entities.ClientProductS
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("product", "get_client")
+	query := repo.Get("product", "get_client")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, from, pageSize)
 	if err != nil {
@@ -329,7 +329,7 @@ func (repo *Repository) GetClientCount() (int, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("product", "client_count")
+	query := repo.Get("product", "client_count")
 
 	var count int
 	if err := repo.connection.QueryRowxContext(ctx, query).Scan(&count); err != nil {
@@ -346,7 +346,7 @@ func (repo *Repository) GetClientQuery(from, pageSize int, searchQuery string) (
 
 	searchQuery = "%" + searchQuery + "%"
 
-	query := repo.Script("product", "get_client_by_query")
+	query := repo.Get("product", "get_client_by_query")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, from, pageSize, searchQuery)
 	if err != nil {
@@ -373,7 +373,7 @@ func (repo *Repository) GetClientCountQuery(searchQuery string) (int, error) {
 
 	searchQuery = "%" + searchQuery + "%"
 
-	query := repo.Script("product", "get_client_count_by_query")
+	query := repo.Get("product", "get_client_count_by_query")
 
 	var count int
 	if err := repo.connection.QueryRowxContext(ctx, query, searchQuery).Scan(&count); err != nil {

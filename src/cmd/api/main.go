@@ -1,33 +1,32 @@
 package main
 
 import (
-	"github.com/lowl11/lazylog/layers"
-	"wkey-stock/src/api"
+	"github.com/lowl11/boost"
+	"github.com/lowl11/lazyconfig/config"
+	"github.com/lowl11/lazylog/log"
+
 	"wkey-stock/src/controllers"
-	"wkey-stock/src/definition"
 	"wkey-stock/src/events"
 	"wkey-stock/src/repositories"
 )
 
 func main() {
-	definition.Init()
-	logger := definition.Logger
+	app := boost.New()
 
 	// инициализация ивентов
 	apiEvents, err := events.Get()
 	if err != nil {
-		logger.Fatal(err, "Initializing events error", "Application")
+		log.Fatal(err, "Initializing events error")
 	}
 
 	// инициализация репозиториев
-	apiRepositories, err := repositories.Get(apiEvents)
+	apiRepositories, err := repositories.Get(app)
 	if err != nil {
-		logger.Fatal(err, "Initializing repositories error", layers.Database)
+		log.Fatal(err, "Initializing repositories error")
 	}
 
-	// контроллеры
-	apiControllers := controllers.Get(apiEvents, apiRepositories)
+	controllers.Bind(app, apiEvents, apiRepositories)
 
 	// запуск сервера
-	api.StartServer(apiControllers, apiEvents)
+	app.Run(config.Get("port"))
 }

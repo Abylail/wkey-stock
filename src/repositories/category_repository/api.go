@@ -10,7 +10,7 @@ func (repo *Repository) GetAll() ([]entities.CategoryGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("category", "get_all")
+	query := repo.Get("category", "get_all")
 
 	rows, err := repo.connection.QueryxContext(ctx, query)
 	if err != nil {
@@ -36,7 +36,7 @@ func (repo *Repository) GetByQuery(searchQuery string) ([]entities.CategoryGet, 
 
 	searchQuery = "%" + searchQuery + "%"
 
-	query := repo.Script("category", "get_by_query")
+	query := repo.Get("category", "get_by_query")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, searchQuery)
 	if err != nil {
@@ -60,7 +60,7 @@ func (repo *Repository) GetByCode(code string) (*entities.CategoryGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("category", "get_by_code")
+	query := repo.Get("category", "get_by_code")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, code)
 	if err != nil {
@@ -89,7 +89,7 @@ func (repo *Repository) Create(model *models.CategoryAdd, categoryCode string) e
 		TitleKZ: model.TitleKZ,
 	}
 
-	query := repo.Script("category", "create")
+	query := repo.Get("category", "create")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -114,7 +114,7 @@ func (repo *Repository) Update(code string, model *models.CategoryUpdate) error 
 		TitleKZ: model.TitleKZ,
 	}
 
-	query := repo.Script("category", "update")
+	query := repo.Get("category", "update")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -138,7 +138,7 @@ func (repo *Repository) UpdateImage(code string, imagePath string) error {
 		Image: imagePath,
 	}
 
-	query := repo.Script("category", "update_image")
+	query := repo.Get("category", "update_image")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -165,7 +165,7 @@ func (repo *Repository) Delete(code string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("category", "delete")
+	query := repo.Get("category", "delete")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.ExecContext(ctx, query, code); err != nil {

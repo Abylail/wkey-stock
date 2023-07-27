@@ -15,7 +15,7 @@ func (repo *Repository) Create(model *models.BrandAdd) error {
 		Image: model.Image,
 	}
 
-	query := repo.Script("brand", "create")
+	query := repo.Get("brand", "create")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -39,7 +39,7 @@ func (repo *Repository) Update(id int, model *models.BrandUpdate) error {
 		Title: model.Title,
 	}
 
-	query := repo.Script("brand", "update")
+	query := repo.Get("brand", "update")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -63,7 +63,7 @@ func (repo *Repository) UpdateIcon(id int, filePath string) error {
 		Image: filePath,
 	}
 
-	query := repo.Script("brand", "update_icon")
+	query := repo.Get("brand", "update_icon")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -82,7 +82,7 @@ func (repo *Repository) Delete(id int) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("brand", "delete")
+	query := repo.Get("brand", "delete")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.ExecContext(ctx, query, id); err != nil {
@@ -101,7 +101,7 @@ func (repo *Repository) GetAll() ([]entities.BrandGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("brand", "get_all")
+	query := repo.Get("brand", "get_all")
 
 	rows, err := repo.connection.QueryxContext(ctx, query)
 	if err != nil {
@@ -125,7 +125,7 @@ func (repo *Repository) GetByTitle(title string) (*entities.BrandGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("brand", "get_by_title")
+	query := repo.Get("brand", "get_by_title")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, title)
 	if err != nil {
@@ -148,7 +148,7 @@ func (repo *Repository) GetByID(id int) (*entities.BrandGet, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("brand", "get_by_id")
+	query := repo.Get("brand", "get_by_id")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, id)
 	if err != nil {
@@ -173,7 +173,7 @@ func (repo *Repository) GetByQuery(searchQuery string) ([]entities.BrandGet, err
 
 	searchQuery = "%" + searchQuery + "%"
 
-	query := repo.Script("brand", "get_by_query")
+	query := repo.Get("brand", "get_by_query")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, searchQuery)
 	if err != nil {

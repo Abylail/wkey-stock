@@ -10,7 +10,7 @@ func (repo *Repository) GetByParent(parentID int) ([]entities.SubCategoryGet, er
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("sub_category", "get_by_parent")
+	query := repo.Get("sub_category", "get_by_parent")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, parentID)
 	if err != nil {
@@ -36,7 +36,7 @@ func (repo *Repository) GetByQuery(parentID int, searchQuery string) ([]entities
 
 	searchQuery = "%" + searchQuery + "%"
 
-	query := repo.Script("sub_category", "get_by_query")
+	query := repo.Get("sub_category", "get_by_query")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, parentID, searchQuery)
 	if err != nil {
@@ -60,7 +60,7 @@ func (repo *Repository) GetByCode(code string) (*entities.SubCategoryGet, error)
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("sub_category", "get_by_code")
+	query := repo.Get("sub_category", "get_by_code")
 
 	rows, err := repo.connection.QueryxContext(ctx, query, code)
 	if err != nil {
@@ -90,7 +90,7 @@ func (repo *Repository) Create(parentID int, model *models.SubCategoryAdd, categ
 		ParentID: parentID,
 	}
 
-	query := repo.Script("sub_category", "create")
+	query := repo.Get("sub_category", "create")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -116,7 +116,7 @@ func (repo *Repository) Update(parentID int, code string, model *models.SubCateg
 		ParentID: parentID,
 	}
 
-	query := repo.Script("sub_category", "update")
+	query := repo.Get("sub_category", "update")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -141,7 +141,7 @@ func (repo *Repository) UpdateImage(parentID int, code, imagePath string) error 
 		ParentID: parentID,
 	}
 
-	query := repo.Script("sub_category", "update_image")
+	query := repo.Get("sub_category", "update_image")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
@@ -160,7 +160,7 @@ func (repo *Repository) Delete(parentID int, code string) error {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("sub_category", "delete")
+	query := repo.Get("sub_category", "delete")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.ExecContext(ctx, query, parentID, code); err != nil {
@@ -179,7 +179,7 @@ func (repo *Repository) Count(parentID int) (int, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()
 
-	query := repo.Script("sub_category", "count")
+	query := repo.Get("sub_category", "count")
 
 	var count int
 	if err := repo.connection.QueryRowxContext(ctx, query, parentID).Scan(&count); err != nil {

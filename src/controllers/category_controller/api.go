@@ -1,13 +1,11 @@
 package category_controller
 
 import (
-	"github.com/lowl11/lazylog/layers"
 	"github.com/mehanizm/iuliia-go"
 	"strings"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/errors"
 	"wkey-stock/src/data/models"
-	"wkey-stock/src/definition"
 )
 
 // _getClient список
@@ -39,11 +37,8 @@ func (controller *Controller) _getClient(searchQuery string) ([]models.CategoryC
 }
 
 func (controller *Controller) _getClientSingle(code string) (*models.CategoryClientGetSingle, *models.Error) {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(code)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return nil, errors.CategoryGetByCode.With(err)
 	}
 
@@ -61,12 +56,9 @@ func (controller *Controller) _getClientSingle(code string) (*models.CategoryCli
 }
 
 func (controller *Controller) _getClientSub(parentCode string, searchQuery string) ([]models.SubCategoryClientGet, *models.Error) {
-	logger := definition.Logger
-
 	// Беру категорию по которой идет поиск
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return nil, errors.CategoryGetByCode.With(err)
 	}
 	if category == nil {
@@ -95,12 +87,9 @@ func (controller *Controller) _getClientSub(parentCode string, searchQuery strin
 }
 
 func (controller *Controller) _getClientSubSingle(parentCode string, code string) (*models.SubCategoryClientGet, *models.Error) {
-	logger := definition.Logger
-
 	// Беру категорию по которой идет поиск
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return nil, errors.CategoryGetByCode.With(err)
 	}
 
@@ -110,7 +99,6 @@ func (controller *Controller) _getClientSubSingle(parentCode string, code string
 
 	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
-		logger.Error(err, "Get sub category by code error", layers.Database)
 		return nil, errors.CategoryGetByCode.With(err)
 	}
 
@@ -159,11 +147,8 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 }
 
 func (controller *Controller) _getAdminSingle(code string) (*models.CategoryAdminGetSingle, *models.Error) {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(code)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return nil, errors.CategoryGetByCode.With(err)
 	}
 
@@ -173,7 +158,6 @@ func (controller *Controller) _getAdminSingle(code string) (*models.CategoryAdmi
 
 	subCategories, err := controller.subCategoryRepo.GetByParent(category.ID)
 	if err != nil {
-		logger.Error(err, "Get sub categories list error", layers.Database)
 		return nil, errors.CategoryGetList.With(err)
 	}
 
@@ -202,11 +186,8 @@ func (controller *Controller) _getAdminSingle(code string) (*models.CategoryAdmi
 }
 
 func (controller *Controller) _getAdminSub(parentCode string, searchQuery string) ([]models.SubCategoryAdminGet, *models.Error) {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return nil, errors.CategoryGetByCode.With(err)
 	}
 
@@ -222,7 +203,6 @@ func (controller *Controller) _getAdminSub(parentCode string, searchQuery string
 		list, err = controller.subCategoryRepo.GetByQuery(category.ID, searchQuery)
 	}
 	if err != nil {
-		logger.Error(err, "Get sub categories list error", layers.Database)
 		return nil, errors.CategoryGetList.With(err)
 	}
 
@@ -246,11 +226,8 @@ func (controller *Controller) _getAdminSub(parentCode string, searchQuery string
 }
 
 func (controller *Controller) _getAdminSubSingle(parentCode, code string) (*models.SubCategoryAdminGet, *models.Error) {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return nil, errors.CategoryGetByCode.With(err)
 	}
 
@@ -260,7 +237,6 @@ func (controller *Controller) _getAdminSubSingle(parentCode, code string) (*mode
 
 	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
-		logger.Error(err, "Get sub category by code error", layers.Database)
 		return nil, errors.CategoryGetByCode.With(err)
 	}
 
@@ -279,8 +255,6 @@ func (controller *Controller) _getAdminSubSingle(parentCode, code string) (*mode
 }
 
 func (controller *Controller) _create(model *models.CategoryAdd) (string, *models.Error) {
-	logger := definition.Logger
-
 	// генерируем код категории
 	categoryCode := strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU)))
 	categoryCode = strings.ReplaceAll(categoryCode, " ", "_")
@@ -288,7 +262,6 @@ func (controller *Controller) _create(model *models.CategoryAdd) (string, *model
 	// ищем категорию с таким же кодом
 	category, err := controller.categoryRepo.GetByCode(categoryCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return "", errors.CategoryGetByCode.With(err)
 	}
 
@@ -299,7 +272,6 @@ func (controller *Controller) _create(model *models.CategoryAdd) (string, *model
 
 	// создаем запись в БД
 	if err = controller.categoryRepo.Create(model, categoryCode); err != nil {
-		logger.Error(err, "Create category error", layers.Database)
 		return "", errors.CategoryAdd.With(err)
 	}
 
@@ -307,11 +279,8 @@ func (controller *Controller) _create(model *models.CategoryAdd) (string, *model
 }
 
 func (controller *Controller) _createSub(parentCode string, model *models.SubCategoryAdd) (string, *models.Error) {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return "", errors.CategoryGetByCode.With(err)
 	}
 
@@ -326,7 +295,6 @@ func (controller *Controller) _createSub(parentCode string, model *models.SubCat
 	// ищем категорию с таким же кодом
 	subCategory, err := controller.subCategoryRepo.GetByCode(categoryCode)
 	if err != nil {
-		logger.Error(err, "Get sub category by code error", layers.Database)
 		return "", errors.CategoryGetByCode.With(err)
 	}
 
@@ -337,7 +305,6 @@ func (controller *Controller) _createSub(parentCode string, model *models.SubCat
 
 	// создаем запись в БД
 	if err = controller.subCategoryRepo.Create(category.ID, model, categoryCode); err != nil {
-		logger.Error(err, "Create sub category error", layers.Database)
 		return "", errors.CategoryAdd.With(err)
 	}
 
@@ -345,10 +312,7 @@ func (controller *Controller) _createSub(parentCode string, model *models.SubCat
 }
 
 func (controller *Controller) _update(code string, model *models.CategoryUpdate) *models.Error {
-	logger := definition.Logger
-
 	if err := controller.categoryRepo.Update(code, model); err != nil {
-		logger.Error(err, "Update category error", layers.Database)
 		return errors.CategoryUpdate.With(err)
 	}
 
@@ -356,11 +320,8 @@ func (controller *Controller) _update(code string, model *models.CategoryUpdate)
 }
 
 func (controller *Controller) _updateSub(parentCode, code string, model *models.SubCategoryUpdate) *models.Error {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
 	}
 
@@ -369,7 +330,6 @@ func (controller *Controller) _updateSub(parentCode, code string, model *models.
 	}
 
 	if err = controller.subCategoryRepo.Update(category.ID, code, model); err != nil {
-		logger.Error(err, "Update sub category error", layers.Database)
 		return errors.CategoryUpdate.With(err)
 	}
 
@@ -377,11 +337,8 @@ func (controller *Controller) _updateSub(parentCode, code string, model *models.
 }
 
 func (controller *Controller) _upload(code string, model *models.CategoryUpload) (string, *models.Error) {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(code)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return "", errors.CategoryGetByCode.With(err)
 	}
 
@@ -391,12 +348,10 @@ func (controller *Controller) _upload(code string, model *models.CategoryUpload)
 
 	imagePath, err := controller.image.UploadCategoryIcon(code, model.Image.Name, model.Image.Buffer)
 	if err != nil {
-		logger.Error(err, "Upload category icon error", layers.File)
 		return "", errors.ImageUploadCategoryIcon.With(err)
 	}
 
 	if err = controller.categoryRepo.UpdateImage(code, imagePath); err != nil {
-		logger.Error(err, "Update category image error", layers.Database)
 		return "", errors.CategoryUpdate.With(err)
 	}
 
@@ -404,11 +359,8 @@ func (controller *Controller) _upload(code string, model *models.CategoryUpload)
 }
 
 func (controller *Controller) _uploadSub(parentCode, code string, model *models.SubCategoryUpload) (string, *models.Error) {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return "", errors.CategoryGetByCode.With(err)
 	}
 
@@ -418,12 +370,10 @@ func (controller *Controller) _uploadSub(parentCode, code string, model *models.
 
 	imagePath, err := controller.image.UploadSubCategoryIcon(parentCode, code, model.Image.Name, model.Image.Buffer)
 	if err != nil {
-		logger.Error(err, "Upload sub category icon error", layers.File)
 		return "", errors.ImageUploadCategoryIcon.With(err)
 	}
 
 	if err = controller.subCategoryRepo.UpdateImage(category.ID, code, imagePath); err != nil {
-		logger.Error(err, "Update sub category image error", layers.Database)
 		return "", errors.CategoryUpdate.With(err)
 	}
 
@@ -431,11 +381,8 @@ func (controller *Controller) _uploadSub(parentCode, code string, model *models.
 }
 
 func (controller *Controller) _delete(categoryCode string) *models.Error {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(categoryCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
 	}
 
@@ -445,7 +392,6 @@ func (controller *Controller) _delete(categoryCode string) *models.Error {
 
 	count, err := controller.subCategoryRepo.Count(category.ID)
 	if err != nil {
-		logger.Error(err, "Get count sub categories by parent id error", layers.Database)
 		return errors.CategoryGetCount.With(err)
 	}
 
@@ -454,7 +400,6 @@ func (controller *Controller) _delete(categoryCode string) *models.Error {
 	}
 
 	if err = controller.categoryRepo.Delete(categoryCode); err != nil {
-		logger.Error(err, "Delete category error", layers.Database)
 		return errors.CategoryDelete.With(err)
 	}
 
@@ -462,11 +407,8 @@ func (controller *Controller) _delete(categoryCode string) *models.Error {
 }
 
 func (controller *Controller) _deleteSub(parentCode, categoryCode string) *models.Error {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
 	}
 
@@ -475,7 +417,6 @@ func (controller *Controller) _deleteSub(parentCode, categoryCode string) *model
 	}
 
 	if err = controller.subCategoryRepo.Delete(category.ID, categoryCode); err != nil {
-		logger.Error(err, "Delete sub category error", layers.Database)
 		return errors.CategoryDelete.With(err)
 	}
 
@@ -483,10 +424,7 @@ func (controller *Controller) _deleteSub(parentCode, categoryCode string) *model
 }
 
 func (controller *Controller) _activate(code string) *models.Error {
-	logger := definition.Logger
-
 	if err := controller.categoryRepo.Activate(code); err != nil {
-		logger.Error(err, "Update category status 'active' error", layers.Database)
 		return errors.CategoryUpdateStatus.With(err)
 	}
 
@@ -494,10 +432,7 @@ func (controller *Controller) _activate(code string) *models.Error {
 }
 
 func (controller *Controller) _deactivate(code string) *models.Error {
-	logger := definition.Logger
-
 	if err := controller.categoryRepo.Deactivate(code); err != nil {
-		logger.Error(err, "Update category status 'inactive' error", layers.Database)
 		return errors.CategoryUpdateStatus.With(err)
 	}
 
@@ -505,11 +440,8 @@ func (controller *Controller) _deactivate(code string) *models.Error {
 }
 
 func (controller *Controller) _activateSub(parentCode, code string) *models.Error {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
 	}
 
@@ -519,7 +451,6 @@ func (controller *Controller) _activateSub(parentCode, code string) *models.Erro
 
 	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
-		logger.Error(err, "Get sub category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
 	}
 
@@ -529,7 +460,6 @@ func (controller *Controller) _activateSub(parentCode, code string) *models.Erro
 
 	count, err := controller.productRepo.CountBySubCategory(subCategory.ID)
 	if err != nil {
-		logger.Error(err, "Get count of products by sub category error", layers.Database)
 		return errors.AdminProductCountGet.With(err)
 	}
 
@@ -538,7 +468,6 @@ func (controller *Controller) _activateSub(parentCode, code string) *models.Erro
 	}
 
 	if err = controller.subCategoryRepo.Activate(category.ID, code); err != nil {
-		logger.Error(err, "Update sub category status 'active' error", layers.Database)
 		return errors.SubCategoryUpdateStatus.With(err)
 	}
 
@@ -546,11 +475,8 @@ func (controller *Controller) _activateSub(parentCode, code string) *models.Erro
 }
 
 func (controller *Controller) _deactivateSub(parentCode, code string) *models.Error {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
 	}
 
@@ -559,7 +485,6 @@ func (controller *Controller) _deactivateSub(parentCode, code string) *models.Er
 	}
 
 	if err = controller.subCategoryRepo.Deactivate(category.ID, code); err != nil {
-		logger.Error(err, "Update sub category status 'inactive' error", layers.Database)
 		return errors.SubCategoryUpdateStatus.With(err)
 	}
 
@@ -567,11 +492,8 @@ func (controller *Controller) _deactivateSub(parentCode, code string) *models.Er
 }
 
 func (controller *Controller) _bindProductList(parentCode, code string, model *models.SubCategoryBindProductList) *models.Error {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
 	}
 
@@ -581,7 +503,6 @@ func (controller *Controller) _bindProductList(parentCode, code string, model *m
 
 	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
-		logger.Error(err, "Get sub category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
 	}
 
@@ -590,7 +511,6 @@ func (controller *Controller) _bindProductList(parentCode, code string, model *m
 	}
 
 	if err = controller.productRepo.BindSubCategory(subCategory.ID, model.List); err != nil {
-		logger.Error(err, "Bind sub category to products list error", layers.Database)
 		return errors.SubCategoryBindProductList.With(err)
 	}
 
@@ -598,11 +518,8 @@ func (controller *Controller) _bindProductList(parentCode, code string, model *m
 }
 
 func (controller *Controller) _unbindProductItem(parentCode, code string, productID int) *models.Error {
-	logger := definition.Logger
-
 	category, err := controller.categoryRepo.GetByCode(parentCode)
 	if err != nil {
-		logger.Error(err, "Get category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
 	}
 
@@ -612,7 +529,6 @@ func (controller *Controller) _unbindProductItem(parentCode, code string, produc
 
 	subCategory, err := controller.subCategoryRepo.GetByCode(code)
 	if err != nil {
-		logger.Error(err, "Get sub category by code error", layers.Database)
 		return errors.CategoryGetByCode.With(err)
 	}
 
@@ -621,7 +537,6 @@ func (controller *Controller) _unbindProductItem(parentCode, code string, produc
 	}
 
 	if err = controller.productRepo.UnbindSubCategory(productID, subCategory.ID); err != nil {
-		logger.Error(err, "Unbind sub category to products list error", layers.Database)
 		return errors.SubCategoryUnbindProductItem.With(err)
 	}
 

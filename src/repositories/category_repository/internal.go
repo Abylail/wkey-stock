@@ -19,7 +19,7 @@ func (repo *Repository) setActive(code, status string) error {
 		Status: status,
 	}
 
-	query := repo.Script("category", "update_active")
+	query := repo.Get("category", "update_active")
 
 	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {

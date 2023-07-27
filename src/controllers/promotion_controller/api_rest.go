@@ -1,14 +1,13 @@
 package promotion_controller
 
 import (
-	"github.com/labstack/echo/v4"
-	"strconv"
+	"github.com/lowl11/boost"
 	"wkey-stock/src/data/errors"
 	"wkey-stock/src/data/models"
 )
 
 // GetListAdmin Список всех акций
-func (controller *Controller) GetListAdmin(ctx echo.Context) error {
+func (controller *Controller) GetListAdmin(ctx boost.Context) error {
 	list, err := controller._getListAdmin()
 	if err != nil {
 		return controller.Error(ctx, err)
@@ -18,8 +17,8 @@ func (controller *Controller) GetListAdmin(ctx echo.Context) error {
 }
 
 // GetSingleAdmin Получить промоакцию по id
-func (controller *Controller) GetSingleAdmin(ctx echo.Context) error {
-	id, _ := strconv.Atoi(ctx.Param("id"))
+func (controller *Controller) GetSingleAdmin(ctx boost.Context) error {
+	id := ctx.Param("id").Int()
 
 	promotion, err := controller._getSingleAdmin(id)
 	if err != nil {
@@ -30,8 +29,8 @@ func (controller *Controller) GetSingleAdmin(ctx echo.Context) error {
 }
 
 // GetSingleCodeAdmin Получить промоакцию по code
-func (controller *Controller) GetSingleCodeAdmin(ctx echo.Context) error {
-	code := ctx.Param("code")
+func (controller *Controller) GetSingleCodeAdmin(ctx boost.Context) error {
+	code := ctx.Param("code").String()
 
 	promotion, err := controller._getSingleCodeAdmin(code)
 	if err != nil {
@@ -42,14 +41,10 @@ func (controller *Controller) GetSingleCodeAdmin(ctx echo.Context) error {
 }
 
 // CreateAdmin Создать промоакцию
-func (controller *Controller) CreateAdmin(ctx echo.Context) error {
+func (controller *Controller) CreateAdmin(ctx boost.Context) error {
 	model := models.PromotionAdminCreate{}
-	if err := ctx.Bind(&model); err != nil {
+	if err := ctx.Parse(&model); err != nil {
 		return controller.Error(ctx, errors.PromotionCreateBind.With(err))
-	}
-
-	if err := controller.validatePromotionCreate(&model); err != nil {
-		return controller.Error(ctx, errors.BrandAddValidate.With(err))
 	}
 
 	code, err := controller._createAdmin(&model)
@@ -62,15 +57,11 @@ func (controller *Controller) CreateAdmin(ctx echo.Context) error {
 }
 
 // UpdateAdmin Обновить промоакцию
-func (controller *Controller) UpdateAdmin(ctx echo.Context) error {
+func (controller *Controller) UpdateAdmin(ctx boost.Context) error {
 	model := models.PromotionAdminUpdate{}
 
-	if err := ctx.Bind(&model); err != nil {
+	if err := ctx.Parse(&model); err != nil {
 		return controller.Error(ctx, errors.PromotionCreateBind.With(err))
-	}
-
-	if err := controller.validatePromotionUpdate(&model); err != nil {
-		return controller.Error(ctx, errors.BrandAddValidate.With(err))
 	}
 
 	if err := controller._updateAdmin(&model); err != nil {
@@ -81,15 +72,11 @@ func (controller *Controller) UpdateAdmin(ctx echo.Context) error {
 }
 
 // UploadAdmin Загрузить фото в промоакцию
-func (controller *Controller) UploadAdmin(ctx echo.Context) error {
+func (controller *Controller) UploadAdmin(ctx boost.Context) error {
 	model := models.PromotionAdminUpload{}
 
-	if err := ctx.Bind(&model); err != nil {
+	if err := ctx.Parse(&model); err != nil {
 		return controller.Error(ctx, errors.PromotionCreateBind.With(err))
-	}
-
-	if err := controller.validatePromotionUpload(&model); err != nil {
-		return controller.Error(ctx, errors.PromotionCreateValidate.With(err))
 	}
 
 	if err := controller._uploadAdmin(&model); err != nil {
@@ -100,8 +87,8 @@ func (controller *Controller) UploadAdmin(ctx echo.Context) error {
 }
 
 // DeleteAdmin Загрузить фото в промоакцию
-func (controller *Controller) DeleteAdmin(ctx echo.Context) error {
-	code := ctx.Param("code")
+func (controller *Controller) DeleteAdmin(ctx boost.Context) error {
+	code := ctx.Param("code").String()
 
 	if err := controller._deleteAdmin(&code); err != nil {
 		return controller.Error(ctx, err)
@@ -111,7 +98,7 @@ func (controller *Controller) DeleteAdmin(ctx echo.Context) error {
 }
 
 // GetListClient Список всех акций
-func (controller *Controller) GetListClient(ctx echo.Context) error {
+func (controller *Controller) GetListClient(ctx boost.Context) error {
 	list, err := controller._getListClient()
 	if err != nil {
 		return controller.Error(ctx, err)
@@ -121,8 +108,8 @@ func (controller *Controller) GetListClient(ctx echo.Context) error {
 }
 
 // GetSingleClient Получить промоакцию по code
-func (controller *Controller) GetSingleClient(ctx echo.Context) error {
-	code := ctx.Param("code")
+func (controller *Controller) GetSingleClient(ctx boost.Context) error {
+	code := ctx.Param("code").String()
 
 	promotion, err := controller._getSingleClient(code)
 	if err != nil {
