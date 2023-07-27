@@ -6,7 +6,7 @@ import (
 	"wkey-stock/src/data/models"
 )
 
-// _getListAdmin список промоакций (в админке)
+// _getListAdmin список промо акций (в админке)
 func (controller *Controller) _getListAdmin() ([]dtos.Promotion, error) {
 	list, err := controller.promotionRepo.GetAll()
 	if err != nil {
@@ -16,7 +16,7 @@ func (controller *Controller) _getListAdmin() ([]dtos.Promotion, error) {
 	return promotion_adaptor.EntityToDTO(list), nil
 }
 
-// _getSingleAdmin промоакция по id
+// _getSingleAdmin промо акция по id
 func (controller *Controller) _getSingleAdmin(id int) (*dtos.Promotion, error) {
 	promotion, err := controller.promotionRepo.GetByID(id)
 	if err != nil {
@@ -31,31 +31,22 @@ func (controller *Controller) _getSingleAdmin(id int) (*dtos.Promotion, error) {
 	return dtos.NewPromotion(promotion), nil
 }
 
-// _getSingleCodeAdmin промоакция по code
-func (controller *Controller) _getSingleCodeAdmin(code string) (*models.PromotionGet, error) {
-	rawPromotion, err := controller.promotionRepo.GetByCode(code)
+// _getSingleCodeAdmin промо акция по code
+func (controller *Controller) _getSingleCodeAdmin(code string) (*dtos.Promotion, error) {
+	promotion, err := controller.promotionRepo.GetByCode(code)
 	if err != nil {
 		return nil, ErrorPromotionGetByCode(err)
 	}
 
 	// Если не нашелся
-	if rawPromotion == nil {
+	if promotion == nil {
 		return nil, ErrorPromotionNotFoundByCode(code)
 	}
 
-	return &models.PromotionGet{
-		ID:            rawPromotion.ID,
-		Code:          rawPromotion.Code,
-		TitleRU:       rawPromotion.TitleRU,
-		TitleKZ:       rawPromotion.TitleKZ,
-		ImageRU:       rawPromotion.ImageRU,
-		ImageKZ:       rawPromotion.ImageKZ,
-		DescriptionRU: rawPromotion.DescriptionRU,
-		DescriptionKZ: rawPromotion.DescriptionKZ,
-	}, nil
+	return dtos.NewPromotion(promotion), nil
 }
 
-// _createAdmin создание промоации
+// _createAdmin создание промо акции
 func (controller *Controller) _createAdmin(model *models.PromotionAdminCreate) (*string, error) {
 	code, err := controller.promotionRepo.Create(model)
 	if err != nil {
@@ -65,21 +56,17 @@ func (controller *Controller) _createAdmin(model *models.PromotionAdminCreate) (
 	return code, nil
 }
 
-// _updateAdmin обновление промоакции
+// _updateAdmin обновление промо акции
 func (controller *Controller) _updateAdmin(model *models.PromotionAdminUpdate) error {
 	if err := controller.promotionRepo.UpdateByCode(model); err != nil {
 		return ErrorPromotionUpdate(err)
 	}
+	
 	return nil
 }
 
 // _uploadAdmin загрузка фотографий
 func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) error {
-
-	//if err := controller.promotionRepo.UpdateImage(model.Code, "imagepattext", model.Lang); err != nil {
-	//	return errors.PromotionImageUpdate.With(err)
-	//}
-
 	promotion, err := controller.promotionRepo.GetByCode(model.Code)
 	if err != nil {
 		return ErrorPromotionGetByCode(err)
@@ -126,7 +113,7 @@ func (controller *Controller) _deleteAdmin(code *string) error {
 	return nil
 }
 
-// _getListClient список промоакций (в админке)
+// _getListClient список промо акций (в админке)
 func (controller *Controller) _getListClient() ([]models.PromotionGet, error) {
 	list, err := controller.promotionRepo.GetAll()
 	if err != nil {
@@ -149,7 +136,7 @@ func (controller *Controller) _getListClient() ([]models.PromotionGet, error) {
 	return promotions, nil
 }
 
-// _getSingleCodeAdmin промоакция по code
+// _getSingleCodeAdmin промо акция по code
 func (controller *Controller) _getSingleClient(code string) (*models.PromotionGet, error) {
 	rawPromotion, err := controller.promotionRepo.GetByCode(code)
 	if err != nil {
