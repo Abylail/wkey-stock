@@ -1,4 +1,4 @@
-package product_controller
+package admin_product_controller
 
 import (
 	"github.com/lowl11/boost/pkg/errors"
@@ -6,7 +6,6 @@ import (
 )
 
 const (
-	// product types
 	typeErrorProductBind             = "ProductParamBind"
 	typeErrorProductParamRequired    = "ProductParamRequired"
 	typeErrorProductGetImages        = "ProductGetImages"
@@ -14,15 +13,9 @@ const (
 	typeErrorProductUpdateImages     = "ProductUpdateImages"
 	typeErrorProductUpdateFileImages = "ProductUpdateFileImages"
 	typeErrorProductGetPairs         = "ProductGetPairs"
-
-	// client products
-	typeErrorClientProductGet      = "ClientProductGet"
-	typeErrorClientProductGetCount = "ClientProductGetCount"
-
-	// admin products
-	typeErrorAdminProductNotFound = "AdminProductNotFound"
-	typeErrorAdminProductGet      = "AdminProductGet"
-	typeErrorAdminProductGetCount = "AdminProductGetCount"
+	typeErrorProductNotFound         = "ProductNotFound"
+	typeErrorProductGet              = "ProductGet"
+	typeErrorProductGetCount         = "ProductGetCount"
 
 	// brand types
 	typeErrorBrandBind           = "BrandParamBind"
@@ -49,7 +42,7 @@ func ErrorProductBind(err error) error {
 
 func ErrorProductParamRequired(paramName string) error {
 	return errors.
-		New("Product param required").
+		New("AdminProduct param required").
 		SetType(typeErrorProductParamRequired).
 		SetHttpCode(http.StatusInternalServerError).
 		AddContext("param_name", paramName)
@@ -79,26 +72,10 @@ func ErrorProductGetPairs(err error) error {
 		SetError(err)
 }
 
-func ErrorClientProductGet(err error) error {
-	return errors.
-		New("Get client product error").
-		SetType(typeErrorClientProductGet).
-		SetHttpCode(http.StatusInternalServerError).
-		SetError(err)
-}
-
-func ErrorClientProductGetCount(err error) error {
-	return errors.
-		New("Get client product count error").
-		SetType(typeErrorClientProductGetCount).
-		SetHttpCode(http.StatusInternalServerError).
-		SetError(err)
-}
-
 func ErrorAdminProductNotFound(productID int) error {
 	return errors.
 		New("Admin product not found").
-		SetType(typeErrorAdminProductNotFound).
+		SetType(typeErrorProductNotFound).
 		SetHttpCode(http.StatusInternalServerError).
 		AddContext("product_id", productID)
 }
@@ -106,7 +83,7 @@ func ErrorAdminProductNotFound(productID int) error {
 func ErrorAdminProductGet(err error) error {
 	return errors.
 		New("Get admin product error").
-		SetType(typeErrorAdminProductGet).
+		SetType(typeErrorProductGet).
 		SetHttpCode(http.StatusInternalServerError).
 		SetError(err)
 }
@@ -114,7 +91,7 @@ func ErrorAdminProductGet(err error) error {
 func ErrorAdminProductGetCount(err error) error {
 	return errors.
 		New("Get admin product count error").
-		SetType(typeErrorAdminProductGetCount).
+		SetType(typeErrorProductGetCount).
 		SetHttpCode(http.StatusInternalServerError).
 		SetError(err)
 }

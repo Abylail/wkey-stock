@@ -1,4 +1,4 @@
-package product_controller
+package client_product_controller
 
 import (
 	"github.com/lowl11/boost/pkg/base/controller"
@@ -12,6 +12,7 @@ import (
 
 type Controller struct {
 	controller.Base
+
 	productRepo     *product_repository.Repository
 	subCategoryRepo *sub_category_repository.Repository
 	brandRepo       *brand_repository.Repository

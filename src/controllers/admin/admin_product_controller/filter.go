@@ -1,4 +1,4 @@
-package product_controller
+package admin_product_controller
 
 import (
 	"strings"

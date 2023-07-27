@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"github.com/lowl11/boost"
-	"wkey-stock/src/controllers/admin_category_controller"
-	"wkey-stock/src/controllers/admin_promotion_controller"
-	"wkey-stock/src/controllers/client_category_controller"
-	"wkey-stock/src/controllers/client_promotion_controller"
-	"wkey-stock/src/controllers/product_controller"
+	"wkey-stock/src/controllers/admin/admin_category_controller"
+	"wkey-stock/src/controllers/admin/admin_product_controller"
+	"wkey-stock/src/controllers/admin/admin_promotion_controller"
+	"wkey-stock/src/controllers/client/client_category_controller"
+	"wkey-stock/src/controllers/client/client_product_controller"
+	"wkey-stock/src/controllers/client/client_promotion_controller"
 	"wkey-stock/src/events"
 	"wkey-stock/src/repositories"
 )
@@ -16,8 +17,10 @@ func Bind(app *boost.App, apiEvents *events.ApiEvents, apiRepositories *reposito
 }
 
 func setRoutes(router boost.Router, apiControllers *ApiControllers) {
-	setProduct(router, apiControllers.Product)
-	setBrand(router, apiControllers.Product)
+	setBrand(router, apiControllers.AdminProduct)
+
+	setAdminProduct(router, apiControllers.AdminProduct)
+	setClientProduct(router, apiControllers.ClientProduct)
 
 	setAdminCategory(router, apiControllers.AdminCategory)
 	setClientCategory(router, apiControllers.ClientCategory)
@@ -26,16 +29,18 @@ func setRoutes(router boost.Router, apiControllers *ApiControllers) {
 	setPromotionClient(router, apiControllers.ClientPromotion)
 }
 
-func setProduct(router boost.Router, controller *product_controller.Controller) {
-	adminGroup := router.Group("/admin/api/v1/stock/product")
+func setAdminProduct(router boost.Router, controller *admin_product_controller.Controller) {
+	group := router.Group("/admin/api/v1/stock/product")
 
-	adminGroup.GET("/get", controller.GetAdminREST)
-	adminGroup.GET("/get/:id", controller.GetAdminSingleREST)
-	adminGroup.PUT("/update/:id", controller.UpdateProductREST)
-	adminGroup.PUT("/upload/:id", controller.UploadProductREST)
+	group.GET("/get", controller.GetREST)
+	group.GET("/get/:id", controller.GetSingleREST)
+	group.PUT("/update/:id", controller.UpdateProductREST)
+	group.PUT("/upload/:id", controller.UploadProductREST)
+}
 
-	clientGroup := router.Group("/api/v1/stock/product")
-	clientGroup.GET("/get", controller.GetClientREST)
+func setClientProduct(router boost.Router, controller *client_product_controller.Controller) {
+	group := router.Group("/api/v1/stock/product")
+	group.GET("/get", controller.GetREST)
 }
 
 func setAdminCategory(router boost.Router, controller *admin_category_controller.Controller) {
@@ -83,7 +88,7 @@ func setClientCategory(router boost.Router, controller *client_category_controll
 	subCategoryGroup.GET("/get/:code", controller.GetSubSingleREST)
 }
 
-func setBrand(router boost.Router, controller *product_controller.Controller) {
+func setBrand(router boost.Router, controller *admin_product_controller.Controller) {
 	group := router.Group("/admin/api/v1/stock/brand")
 
 	group.GET("/get", controller.GetBrandREST)

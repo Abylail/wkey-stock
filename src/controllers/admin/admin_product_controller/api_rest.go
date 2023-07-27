@@ -1,11 +1,11 @@
-package product_controller
+package admin_product_controller
 
 import (
 	"github.com/lowl11/boost"
 	"wkey-stock/src/data/models"
 )
 
-func (controller *Controller) GetAdminREST(ctx boost.Context) error {
+func (controller *Controller) GetREST(ctx boost.Context) error {
 	searchQuery := ctx.QueryParam("query").String()
 	categoryKey := ctx.QueryParam("category").String()
 	subcategoryKey := ctx.QueryParam("subcategory").String()
@@ -17,7 +17,7 @@ func (controller *Controller) GetAdminREST(ctx boost.Context) error {
 	pageSize := 20
 	from := (page - 1) * pageSize
 
-	products, err := controller._getAdmin(from, pageSize, searchQuery, categoryKey, subcategoryKey)
+	products, err := controller._get(from, pageSize, searchQuery, categoryKey, subcategoryKey)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -25,37 +25,19 @@ func (controller *Controller) GetAdminREST(ctx boost.Context) error {
 	return controller.Ok(ctx, products)
 }
 
-func (controller *Controller) GetAdminSingleREST(ctx boost.Context) error {
+func (controller *Controller) GetSingleREST(ctx boost.Context) error {
 	productID := ctx.Param("id").Int()
 	if productID == 0 {
 		//return controller.NotFound(ctx, errors.AdminProductNotFound)
 		return controller.NotFound(ctx)
 	}
 
-	product, err := controller._getAdminSingle(productID)
+	product, err := controller._getSingle(productID)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
 
 	return controller.Ok(ctx, product)
-}
-
-func (controller *Controller) GetClientREST(ctx boost.Context) error {
-	searchQuery := ctx.QueryParam("query").String()
-	page := ctx.QueryParam("page").Int()
-	if page == 0 {
-		page = 1
-	}
-
-	pageSize := 20
-	from := (page - 1) * pageSize
-
-	products, err := controller._getClient(from, pageSize, searchQuery)
-	if err != nil {
-		return controller.Error(ctx, err)
-	}
-
-	return controller.Ok(ctx, products)
 }
 
 func (controller *Controller) UpdateProductREST(ctx boost.Context) error {

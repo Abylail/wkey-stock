@@ -1,17 +1,19 @@
 package controllers
 
 import (
-	"wkey-stock/src/controllers/admin_category_controller"
-	"wkey-stock/src/controllers/admin_promotion_controller"
-	"wkey-stock/src/controllers/client_category_controller"
-	"wkey-stock/src/controllers/client_promotion_controller"
-	"wkey-stock/src/controllers/product_controller"
+	"wkey-stock/src/controllers/admin/admin_category_controller"
+	"wkey-stock/src/controllers/admin/admin_product_controller"
+	"wkey-stock/src/controllers/admin/admin_promotion_controller"
+	"wkey-stock/src/controllers/client/client_category_controller"
+	"wkey-stock/src/controllers/client/client_product_controller"
+	"wkey-stock/src/controllers/client/client_promotion_controller"
 	"wkey-stock/src/events"
 	"wkey-stock/src/repositories"
 )
 
 type ApiControllers struct {
-	Product *product_controller.Controller
+	AdminProduct  *admin_product_controller.Controller
+	ClientProduct *client_product_controller.Controller
 
 	AdminCategory  *admin_category_controller.Controller
 	ClientCategory *client_category_controller.Controller
@@ -22,7 +24,8 @@ type ApiControllers struct {
 
 func Get(apiEvents *events.ApiEvents, apiRepositories *repositories.ApiRepositories) *ApiControllers {
 	return &ApiControllers{
-		Product: product_controller.New(apiRepositories, apiEvents),
+		AdminProduct:  admin_product_controller.New(apiRepositories, apiEvents),
+		ClientProduct: client_product_controller.New(apiRepositories, apiEvents),
 
 		AdminCategory:  admin_category_controller.New(apiRepositories, apiEvents),
 		ClientCategory: client_category_controller.New(apiRepositories, apiEvents),
