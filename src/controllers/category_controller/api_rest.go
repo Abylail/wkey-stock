@@ -2,7 +2,6 @@ package category_controller
 
 import (
 	"github.com/lowl11/boost"
-	"wkey-stock/src/data/errors"
 	"wkey-stock/src/data/models"
 )
 
@@ -100,7 +99,7 @@ func (controller *Controller) GetAdminSingleSubREST(ctx boost.Context) error {
 func (controller *Controller) AddREST(ctx boost.Context) error {
 	model := models.CategoryAdd{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, errors.CategoryAddBind.With(err))
+		return controller.Error(ctx, ErrorCategoryBind())
 	}
 
 	categoryCode, err := controller._create(&model)
@@ -116,7 +115,7 @@ func (controller *Controller) AddSubREST(ctx boost.Context) error {
 
 	model := models.SubCategoryAdd{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, errors.CategoryAddBind.With(err))
+		return controller.Error(ctx, ErrorCategoryBind())
 	}
 
 	subCategoryCode, err := controller._createSub(parentCode, &model)
@@ -130,12 +129,12 @@ func (controller *Controller) AddSubREST(ctx boost.Context) error {
 func (controller *Controller) UpdateREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 	if code == "" {
-		return controller.Error(ctx, errors.CategoryUpdateParam)
+		return controller.Error(ctx, ErrorCategoryParamRequired())
 	}
 
 	model := models.CategoryUpdate{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, errors.CategoryUpdateBind.With(err))
+		return controller.Error(ctx, ErrorCategoryBind())
 	}
 
 	if err := controller._update(code, &model); err != nil {
@@ -149,12 +148,12 @@ func (controller *Controller) UpdateSubREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 	code := ctx.Param("code").String()
 	if code == "" {
-		return controller.Error(ctx, errors.CategoryUpdateParam)
+		return controller.Error(ctx, ErrorCategoryParamRequired())
 	}
 
 	model := models.SubCategoryUpdate{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, errors.CategoryUpdateBind.With(err))
+		return controller.Error(ctx, ErrorCategoryBind())
 	}
 
 	if err := controller._updateSub(parentCode, code, &model); err != nil {
@@ -167,12 +166,12 @@ func (controller *Controller) UpdateSubREST(ctx boost.Context) error {
 func (controller *Controller) UploadREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 	if code == "" {
-		return controller.Error(ctx, errors.CategoryUploadParam)
+		return controller.Error(ctx, ErrorCategoryParamRequired())
 	}
 
 	model := models.CategoryUpload{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, errors.CategoryUploadBind.With(err))
+		return controller.Error(ctx, ErrorCategoryBind())
 	}
 
 	imagePath, err := controller._upload(code, &model)
@@ -188,12 +187,12 @@ func (controller *Controller) UploadSubREST(ctx boost.Context) error {
 
 	code := ctx.Param("code").String()
 	if code == "" {
-		return controller.Error(ctx, errors.CategoryUploadParam)
+		return controller.Error(ctx, ErrorCategoryParamRequired())
 	}
 
 	model := models.SubCategoryUpload{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, errors.CategoryUploadBind.With(err))
+		return controller.Error(ctx, ErrorCategoryBind())
 	}
 
 	imagePath, err := controller._uploadSub(parentCode, code, &model)
@@ -207,7 +206,7 @@ func (controller *Controller) UploadSubREST(ctx boost.Context) error {
 func (controller *Controller) DeleteREST(ctx boost.Context) error {
 	categoryCode := ctx.Param("code").String()
 	if categoryCode == "" {
-		return controller.Error(ctx, errors.CategoryDeleteParam)
+		return controller.Error(ctx, ErrorCategoryParamRequired())
 	}
 
 	if err := controller._delete(categoryCode); err != nil {
@@ -221,7 +220,7 @@ func (controller *Controller) DeleteSubREST(ctx boost.Context) error {
 	parentCode := ctx.Param("parent_code").String()
 	categoryCode := ctx.Param("code").String()
 	if categoryCode == "" {
-		return controller.Error(ctx, errors.CategoryDeleteParam)
+		return controller.Error(ctx, ErrorCategoryParamRequired())
 	}
 
 	if err := controller._deleteSub(parentCode, categoryCode); err != nil {
@@ -279,7 +278,7 @@ func (controller *Controller) BindProductListREST(ctx boost.Context) error {
 
 	model := models.SubCategoryBindProductList{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, errors.SubCategoryBindProductListBind.With(err))
+		return controller.Error(ctx, ErrorSubCategoryBind())
 	}
 
 	if err := controller._bindProductList(parentCode, code, &model); err != nil {
@@ -294,7 +293,7 @@ func (controller *Controller) UnbindProductItemREST(ctx boost.Context) error {
 	code := ctx.Param("code").String()
 	productID := ctx.Param("product_id").Int()
 	if productID == 0 {
-		return errors.UnbindProductFromSubCategory
+		return controller.Error(ctx, ErrorCategoryParamRequired())
 	}
 
 	if err := controller._unbindProductItem(parentCode, code, productID); err != nil {

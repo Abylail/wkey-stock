@@ -2,7 +2,6 @@ package promotion_controller
 
 import (
 	"github.com/lowl11/boost"
-	"wkey-stock/src/data/errors"
 	"wkey-stock/src/data/models"
 )
 
@@ -44,7 +43,7 @@ func (controller *Controller) GetSingleCodeAdmin(ctx boost.Context) error {
 func (controller *Controller) CreateAdmin(ctx boost.Context) error {
 	model := models.PromotionAdminCreate{}
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, errors.PromotionCreateBind.With(err))
+		return controller.Error(ctx, ErrorPromotionBind())
 	}
 
 	code, err := controller._createAdmin(&model)
@@ -61,7 +60,7 @@ func (controller *Controller) UpdateAdmin(ctx boost.Context) error {
 	model := models.PromotionAdminUpdate{}
 
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, errors.PromotionCreateBind.With(err))
+		return controller.Error(ctx, ErrorPromotionBind())
 	}
 
 	if err := controller._updateAdmin(&model); err != nil {
@@ -76,11 +75,11 @@ func (controller *Controller) UploadAdmin(ctx boost.Context) error {
 	model := models.PromotionAdminUpload{}
 
 	if err := ctx.Parse(&model); err != nil {
-		return controller.Error(ctx, errors.PromotionCreateBind.With(err))
+		return controller.Error(ctx, ErrorPromotionBind())
 	}
 
 	if err := controller._uploadAdmin(&model); err != nil {
-		return controller.Error(ctx, errors.PromotionUpload.With(err))
+		return controller.Error(ctx, err)
 	}
 
 	return controller.Ok(ctx, "OK")
