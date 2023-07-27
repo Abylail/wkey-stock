@@ -6,8 +6,9 @@ import (
 	"github.com/lowl11/lazyconfig/config"
 	"github.com/lowl11/lazylog/log"
 	"time"
+	"wkey-stock/src/controllers/admin"
+	"wkey-stock/src/controllers/client"
 
-	"wkey-stock/src/controllers"
 	"wkey-stock/src/events"
 	"wkey-stock/src/repositories"
 )
@@ -29,7 +30,9 @@ func main() {
 		log.Fatal(err, "Initializing repositories error")
 	}
 
-	controllers.Bind(app, apiEvents, apiRepositories)
+	// привязка роутов
+	admin.Bind(app, apiRepositories, apiEvents)
+	client.Bind(app, apiRepositories, apiEvents)
 
 	// запуск сервера
 	app.Run(config.Get("port"))
