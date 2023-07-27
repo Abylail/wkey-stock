@@ -2,6 +2,7 @@ package brand_controller
 
 import (
 	"github.com/lowl11/boost"
+	"wkey-stock/src/adaptors/brand_adaptor"
 	"wkey-stock/src/data/models"
 )
 
@@ -13,7 +14,7 @@ func (controller Controller) GetREST(ctx boost.Context) error {
 		return controller.Error(ctx, err)
 	}
 
-	return controller.Ok(ctx, brands)
+	return controller.Ok(ctx, brand_adaptor.DtoToModel(brands))
 }
 
 func (controller Controller) GetSingleREST(ctx boost.Context) error {
@@ -22,12 +23,12 @@ func (controller Controller) GetSingleREST(ctx boost.Context) error {
 		return controller.Error(ctx, ErrorBrandParamRequired("id"))
 	}
 
-	brands, err := controller._getSingle(brandID)
+	brand, err := controller._getSingle(brandID)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
 
-	return controller.Ok(ctx, brands)
+	return controller.Ok(ctx, brand.Model())
 }
 
 func (controller Controller) AddREST(ctx boost.Context) error {

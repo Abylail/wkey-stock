@@ -1,11 +1,13 @@
 package brand_controller
 
 import (
+	"wkey-stock/src/adaptors/brand_adaptor"
+	"wkey-stock/src/data/dtos"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/models"
 )
 
-func (controller Controller) _get(searchQuery string) ([]models.BrandGet, error) {
+func (controller Controller) _get(searchQuery string) ([]dtos.Brand, error) {
 	var brands []entities.Brand
 	var err error
 
@@ -18,29 +20,16 @@ func (controller Controller) _get(searchQuery string) ([]models.BrandGet, error)
 		return nil, ErrorBrandGetList(err)
 	}
 
-	list := make([]models.BrandGet, 0, len(brands))
-	for _, brand := range brands {
-		list = append(list, models.BrandGet{
-			ID:    brand.ProskladID,
-			Title: brand.Title,
-			Image: brand.Image,
-		})
-	}
-
-	return list, nil
+	return brand_adaptor.EntityToDTO(brands), nil
 }
 
-func (controller Controller) _getSingle(id int) (*models.BrandGet, error) {
+func (controller Controller) _getSingle(id int) (*dtos.Brand, error) {
 	brand, err := controller.brandRepo.GetByID(id)
 	if err != nil {
 		return nil, ErrorBrandGetByID(err)
 	}
 
-	return &models.BrandGet{
-		ID:    brand.ProskladID,
-		Title: brand.Title,
-		Image: brand.Image,
-	}, nil
+	return dtos.NewBrand(brand), nil
 }
 
 func (controller Controller) _add(model *models.BrandAdd) error {
