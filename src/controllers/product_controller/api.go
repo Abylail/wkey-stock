@@ -159,22 +159,29 @@ func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProdu
 		return nil, errors.ProductGetPairs.With(err)
 	}
 
+	categories := make([]models.ProductCategoryPair, 0, len(categoryPairs))
+	for _, pair := range categoryPairs {
+		categories = append(categories, models.ProductCategoryPair{
+			SubCategoryCode: pair.SubCategoryCode,
+			SubCategoryName: pair.SubCategoryName,
+			CategoryCode:    pair.CategoryCode,
+			CategoryName:    pair.CategoryName,
+		})
+	}
+
+	productImages := make([]string, 0, len(images))
+	for _, image := range images {
+		productImages = append(productImages, image.Path)
+	}
+
 	return &models.AdminProductItem{
-		ID:         product.ID,
-		Title:      product.Title,
-		Price:      product.Price,
-		VendorCode: product.VendorCode,
-		Barcode:    product.Barcode,
-		UnitName:   product.UnitName,
-		Categories: type_list.NewWithList[entities.ProductCategoryPair, models.ProductCategoryPair](categoryPairs...).
-			Select(func(pair entities.ProductCategoryPair) models.ProductCategoryPair {
-				return models.ProductCategoryPair{
-					SubCategoryCode: pair.SubCategoryCode,
-					SubCategoryName: pair.SubCategoryName,
-					CategoryCode:    pair.CategoryCode,
-					CategoryName:    pair.CategoryName,
-				}
-			}).Slice(),
+		ID:                product.ID,
+		Title:             product.Title,
+		Price:             product.Price,
+		VendorCode:        product.VendorCode,
+		Barcode:           product.Barcode,
+		UnitName:          product.UnitName,
+		Categories:        categories,
 		CreatedAt:         product.CreatedAt,
 		UpdatedAt:         product.UpdatedAt,
 		AdditionalPercent: product.AdditionalPercent,
@@ -182,10 +189,7 @@ func (controller *Controller) _getAdminSingle(productID int) (*models.AdminProdu
 		DescriptionKZ:     product.DescriptionKZ,
 		Count:             product.Count,
 		BrandTitle:        product.BrandTitle,
-		Images: type_list.NewWithList[entities.ProductImageGet, string](images...).
-			Select(func(item entities.ProductImageGet) string {
-				return item.Path
-			}).Slice(),
+		Images:            productImages,
 	}, nil
 }
 
@@ -237,14 +241,16 @@ func (controller *Controller) _getBrand(searchQuery string) ([]models.BrandGet, 
 		return nil, errors.BrandGetList.With(err)
 	}
 
-	return type_list.NewWithList[entities.BrandGet, models.BrandGet](brands...).
-		Select(func(item entities.BrandGet) models.BrandGet {
-			return models.BrandGet{
-				ID:    item.ProskladID,
-				Title: item.Title,
-				Image: item.Image,
-			}
-		}).Slice(), nil
+	list := make([]models.BrandGet, 0, len(brands))
+	for _, brand := range brands {
+		list = append(list, models.BrandGet{
+			ID:    brand.ProskladID,
+			Title: brand.Title,
+			Image: brand.Image,
+		})
+	}
+
+	return list, nil
 }
 
 func (controller *Controller) _getBrandSingle(id int) (*models.BrandGet, *models.Error) {
@@ -346,22 +352,22 @@ func (controller *Controller) _getClient(from, pageSize int, searchQuery string)
 		return nil, errors.ClientProductGet.With(err)
 	}
 
-	productList := type_list.NewWithList[entities.ClientProductShort, models.ClientProductItemShort](products...).
-		Select(func(item entities.ClientProductShort) models.ClientProductItemShort {
-			return models.ClientProductItemShort{
-				ID:         item.ID,
-				Title:      item.Title,
-				Price:      item.Price,
-				VendorCode: item.VendorCode,
-				Count:      item.Count,
-			}
-		}).Slice()
+	productList := make([]models.ClientProductItemShort, 0, len(products))
+	for _, product := range products {
+		productList = append(productList, models.ClientProductItemShort{
+			ID:         product.ID,
+			Title:      product.Title,
+			Price:      product.Price,
+			VendorCode: product.VendorCode,
+			Count:      product.Count,
+		})
+	}
 
 	// получаем массив с ID продуктов
 	productIDs := make([]int, 0, len(products))
-	array.NewWithList[entities.ClientProductShort](products...).Each(func(item entities.ClientProductShort) {
-		productIDs = append(productIDs, item.ID)
-	})
+	for _, product := range products {
+		productIDs = append(productIDs, product.ID)
+	}
 
 	// получаем картинки продуктов
 	images, err := controller.productRepo.GetImages(productIDs)
@@ -369,19 +375,23 @@ func (controller *Controller) _getClient(from, pageSize int, searchQuery string)
 		return nil, errors.ProductImagesGet.With(err)
 	}
 
-	imagesList := array.NewWithList[entities.ProductImageGet](images...)
-
 	for i := 0; i < len(productList); i++ {
 		productID := productList[i].ID
-		productImages := imagesList.Where(func(image entities.ProductImageGet) bool {
-			return image.ProductID == productID
-		})
 
-		productList[i].Images = make([]string, 0, productImages.Size())
+		productImages := make([]entities.ProductImageGet, 0)
+		for _, image := range images {
+			if image.ProductID != productID {
+				continue
+			}
 
-		productImages.Each(func(image entities.ProductImageGet) {
+			productImages = append(productImages, image)
+		}
+
+		productList[i].Images = make([]string, 0, len(productImages))
+
+		for _, image := range productImages {
 			productList[i].Images = append(productList[i].Images, image.Path)
-		})
+		}
 	}
 
 	// получаем кол-во продуктов

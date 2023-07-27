@@ -1,8 +1,6 @@
 package promotion_controller
 
 import (
-	"github.com/lowl11/lazy-collection/type_list"
-	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/errors"
 	"wkey-stock/src/data/models"
 )
@@ -15,20 +13,19 @@ func (controller *Controller) _getListAdmin() ([]models.PromotionAdminGet, *mode
 		return nil, errors.PromotionGetList.With(err)
 	}
 
-	promotions := type_list.NewWithList[entities.AdminPromotion, models.PromotionAdminGet](list...).
-		Select(func(item entities.AdminPromotion) models.PromotionAdminGet {
-			return models.PromotionAdminGet{
-				ID:            item.ID,
-				CODE:          item.CODE,
-				TitleRU:       item.TitleRU,
-				TitleKZ:       item.TitleKZ,
-				ImageRU:       item.ImageRU,
-				ImageKZ:       item.ImageKZ,
-				DescriptionRU: item.DescriptionRU,
-				DescriptionKZ: item.DescriptionKZ,
-			}
-		}).
-		Slice()
+	promotions := make([]models.PromotionAdminGet, 0, len(list))
+	for _, promotion := range list {
+		promotions = append(promotions, models.PromotionAdminGet{
+			ID:            promotion.ID,
+			CODE:          promotion.CODE,
+			TitleRU:       promotion.TitleRU,
+			TitleKZ:       promotion.TitleKZ,
+			ImageRU:       promotion.ImageRU,
+			ImageKZ:       promotion.ImageKZ,
+			DescriptionRU: promotion.DescriptionRU,
+			DescriptionKZ: promotion.DescriptionKZ,
+		})
+	}
 
 	return promotions, nil
 }
@@ -159,19 +156,18 @@ func (controller *Controller) _getListClient() ([]models.PromotionClinetGet, *mo
 		return nil, errors.PromotionGetList.With(err)
 	}
 
-	promotions := type_list.NewWithList[entities.AdminPromotion, models.PromotionClinetGet](list...).
-		Select(func(item entities.AdminPromotion) models.PromotionClinetGet {
-			return models.PromotionClinetGet{
-				CODE:          item.CODE,
-				TitleRU:       item.TitleRU,
-				TitleKZ:       item.TitleKZ,
-				ImageRU:       item.ImageRU,
-				ImageKZ:       item.ImageKZ,
-				DescriptionRU: item.DescriptionRU,
-				DescriptionKZ: item.DescriptionKZ,
-			}
-		}).
-		Slice()
+	promotions := make([]models.PromotionClinetGet, 0, len(list))
+	for _, promotion := range list {
+		promotions = append(promotions, models.PromotionClinetGet{
+			CODE:          promotion.CODE,
+			TitleRU:       promotion.TitleRU,
+			TitleKZ:       promotion.TitleKZ,
+			ImageRU:       promotion.ImageRU,
+			ImageKZ:       promotion.ImageKZ,
+			DescriptionRU: promotion.DescriptionRU,
+			DescriptionKZ: promotion.DescriptionKZ,
+		})
+	}
 
 	return promotions, nil
 }
