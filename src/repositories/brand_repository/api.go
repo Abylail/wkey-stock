@@ -1,29 +1,23 @@
 package brand_repository
 
 import (
-	"github.com/jmoiron/sqlx"
+	"github.com/lowl11/lazy-entity/builders/select_builder"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/models"
 )
 
+func (repo *Repository) UpdateIcon(id int, filePath string) error {
+	return repo.UpdateByID(id, entities.Brand{
+		Image: &filePath,
+	})
+}
+
 func (repo *Repository) Create(model *models.BrandAdd) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	entity := &entities.BrandCreate{
+	_, err := repo.Add(entities.Brand{
 		Title: model.Title,
-		Image: model.Image,
-	}
-
-	query := repo.Get("brand", "create")
-
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
+		Image: &model.Image,
+	})
+	if err != nil {
 		return err
 	}
 
@@ -31,164 +25,20 @@ func (repo *Repository) Create(model *models.BrandAdd) error {
 }
 
 func (repo *Repository) Update(id int, model *models.BrandUpdate) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	entity := &entities.BrandUpdate{
-		ID:    id,
+	return repo.UpdateByID(id, entities.Brand{
 		Title: model.Title,
-	}
-
-	query := repo.Get("brand", "update")
-
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+	})
 }
 
-func (repo *Repository) UpdateIcon(id int, filePath string) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	entity := &entities.BrandUpload{
-		ID:    id,
-		Image: filePath,
-	}
-
-	query := repo.Get("brand", "update_icon")
-
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+func (repo *Repository) GetByTitle(title string) (*entities.Brand, error) {
+	return repo.GetItem(func(builder *select_builder.Builder) {
+		builder.Where(builder.Equal("title", title))
+	})
 }
 
-func (repo *Repository) Delete(id int) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("brand", "delete")
-
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.ExecContext(ctx, query, id); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (repo *Repository) GetAll() ([]entities.BrandGet, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("brand", "get_all")
-
-	rows, err := repo.connection.QueryxContext(ctx, query)
-	if err != nil {
-		return nil, err
-	}
-	defer repo.CloseRows(rows)
-
-	list := make([]entities.BrandGet, 0)
-	for rows.Next() {
-		item := entities.BrandGet{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		list = append(list, item)
-	}
-
-	return list, nil
-}
-
-func (repo *Repository) GetByTitle(title string) (*entities.BrandGet, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("brand", "get_by_title")
-
-	rows, err := repo.connection.QueryxContext(ctx, query, title)
-	if err != nil {
-		return nil, err
-	}
-	defer repo.CloseRows(rows)
-
-	if rows.Next() {
-		item := entities.BrandGet{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		return &item, nil
-	}
-
-	return nil, nil
-}
-
-func (repo *Repository) GetByID(id int) (*entities.BrandGet, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("brand", "get_by_id")
-
-	rows, err := repo.connection.QueryxContext(ctx, query, id)
-	if err != nil {
-		return nil, err
-	}
-	defer repo.CloseRows(rows)
-
-	if rows.Next() {
-		item := entities.BrandGet{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		return &item, nil
-	}
-
-	return nil, nil
-}
-
-func (repo *Repository) GetByQuery(searchQuery string) ([]entities.BrandGet, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
+func (repo *Repository) GetByQuery(searchQuery string) ([]entities.Brand, error) {
 	searchQuery = "%" + searchQuery + "%"
-
-	query := repo.Get("brand", "get_by_query")
-
-	rows, err := repo.connection.QueryxContext(ctx, query, searchQuery)
-	if err != nil {
-		return nil, err
-	}
-	defer repo.CloseRows(rows)
-
-	list := make([]entities.BrandGet, 0)
-	for rows.Next() {
-		item := entities.BrandGet{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		list = append(list, item)
-	}
-
-	return list, nil
+	return repo.GetList(func(builder *select_builder.Builder) {
+		builder.Where(builder.ILike("title", searchQuery))
+	})
 }

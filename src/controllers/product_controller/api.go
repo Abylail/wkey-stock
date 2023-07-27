@@ -206,7 +206,7 @@ func (controller *Controller) _upload(productID int, model *models.ProductUpload
 }
 
 func (controller *Controller) _getBrand(searchQuery string) ([]models.BrandGet, *models.Error) {
-	var brands []entities.BrandGet
+	var brands []entities.Brand
 	var err error
 
 	if len(searchQuery) == 0 {
@@ -291,7 +291,7 @@ func (controller *Controller) _uploadBrand(brandID int, model *models.BrandUploa
 }
 
 func (controller *Controller) _deleteBrand(id int) *models.Error {
-	if err := controller.brandRepo.Delete(id); err != nil {
+	if err := controller.brandRepo.DeleteByID(id); err != nil {
 		return errors.BrandDelete.With(err)
 	}
 
