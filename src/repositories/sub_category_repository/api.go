@@ -1,198 +1,115 @@
 package sub_category_repository
 
 import (
-	"github.com/jmoiron/sqlx"
+	"github.com/lowl11/lazy-entity/builders/delete_builder"
+	"github.com/lowl11/lazy-entity/builders/select_builder"
+	"github.com/lowl11/lazy-entity/builders/update_builder"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/models"
 )
 
-func (repo *Repository) GetByParent(parentID int) ([]entities.SubCategoryGet, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
+const (
+	statusActive   = "active"
+	statusInactive = "inactive"
+)
 
-	query := repo.Get("sub_category", "get_by_parent")
-
-	rows, err := repo.connection.QueryxContext(ctx, query, parentID)
-	if err != nil {
-		return nil, err
-	}
-	defer repo.CloseRows(rows)
-
-	list := make([]entities.SubCategoryGet, 0)
-	for rows.Next() {
-		item := entities.SubCategoryGet{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		list = append(list, item)
-	}
-
-	return list, nil
+func (repo *Repository) GetByParent(parentID int) ([]entities.SubCategory, error) {
+	return repo.GetList(func(builder *select_builder.Builder) {
+		builder.Where(builder.Equal("parent_id", parentID))
+	})
 }
 
-func (repo *Repository) GetByQuery(parentID int, searchQuery string) ([]entities.SubCategoryGet, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
+func (repo *Repository) GetByQuery(parentID int, searchQuery string) ([]entities.SubCategory, error) {
 	searchQuery = "%" + searchQuery + "%"
 
-	query := repo.Get("sub_category", "get_by_query")
-
-	rows, err := repo.connection.QueryxContext(ctx, query, parentID, searchQuery)
-	if err != nil {
-		return nil, err
-	}
-	defer repo.CloseRows(rows)
-
-	list := make([]entities.SubCategoryGet, 0)
-	for rows.Next() {
-		item := entities.SubCategoryGet{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		list = append(list, item)
-	}
-
-	return list, nil
+	return repo.GetList(func(builder *select_builder.Builder) {
+		builder.Where(
+			builder.Equal("parent_id", parentID),
+			builder.Or(
+				builder.ILike("title_ru", searchQuery),
+				builder.ILike("title_kz", searchQuery),
+				builder.ILike("code", searchQuery),
+			),
+		)
+	})
 }
 
-func (repo *Repository) GetByCode(code string) (*entities.SubCategoryGet, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("sub_category", "get_by_code")
-
-	rows, err := repo.connection.QueryxContext(ctx, query, code)
-	if err != nil {
-		return nil, err
-	}
-	defer repo.CloseRows(rows)
-
-	if rows.Next() {
-		item := entities.SubCategoryGet{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		return &item, nil
-	}
-
-	return nil, nil
+func (repo *Repository) GetByCode(code string) (*entities.SubCategory, error) {
+	return repo.GetItem(func(builder *select_builder.Builder) {
+		builder.Where(builder.Equal("code", code))
+	})
 }
 
 func (repo *Repository) Create(parentID int, model *models.SubCategoryAdd, categoryCode string) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	entity := &entities.SubCategoryCreate{
+	_, err := repo.Add(entities.SubCategory{
 		Code:     categoryCode,
 		TitleRU:  model.TitleRU,
 		TitleKZ:  model.TitleKZ,
 		ParentID: parentID,
-	}
-
-	query := repo.Get("sub_category", "create")
-
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
+	})
+	if err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (repo *Repository) Update(parentID int, code string, model *models.SubCategoryUpdate) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	entity := &entities.SubCategoryUpdate{
-		Code:     code,
-		TitleRU:  model.TitleRU,
-		TitleKZ:  model.TitleKZ,
-		ParentID: parentID,
-	}
-
-	query := repo.Get("sub_category", "update")
-
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+func (repo *Repository) UpdateByParent(parentID int, code string, model *models.SubCategoryUpdate) error {
+	return repo.Update(func(builder *update_builder.Builder) {
+		builder.Where(
+			builder.Equal("code", code),
+			builder.Equal("parent_id", parentID),
+		)
+	}, entities.SubCategory{
+		TitleRU: model.TitleRU,
+		TitleKZ: model.TitleKZ,
+	})
 }
 
 func (repo *Repository) UpdateImage(parentID int, code, imagePath string) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	entity := &entities.SubCategoryUpdateImage{
-		Code:     code,
-		Image:    imagePath,
-		ParentID: parentID,
-	}
-
-	query := repo.Get("sub_category", "update_image")
-
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+	return repo.Update(func(builder *update_builder.Builder) {
+		builder.Where(
+			builder.Equal("code", code),
+			builder.Equal("parent_id", parentID),
+		)
+	}, entities.SubCategory{
+		Icon: &imagePath,
+	})
 }
 
-func (repo *Repository) Delete(parentID int, code string) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("sub_category", "delete")
-
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.ExecContext(ctx, query, parentID, code); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+func (repo *Repository) DeleteByParent(parentID int, code string) error {
+	return repo.Delete(func(builder *delete_builder.Builder) {
+		builder.Where(
+			builder.Equal("code", code),
+			builder.Equal("parent_id", parentID),
+		)
+	})
 }
 
-func (repo *Repository) Count(parentID int) (int, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("sub_category", "count")
-
-	var count int
-	if err := repo.connection.QueryRowxContext(ctx, query, parentID).Scan(&count); err != nil {
-		return 0, err
-	}
-
-	return count, nil
+func (repo *Repository) CountByParent(parentID int) (int, error) {
+	return repo.Count(func(builder *select_builder.Builder) {
+		builder.Where(builder.Equal("parent_id", parentID))
+	})
 }
 
 func (repo *Repository) Activate(parentID int, code string) error {
-	return repo.setActive(parentID, code, statusActive)
+	return repo.Update(func(builder *update_builder.Builder) {
+		builder.Where(
+			builder.Equal("code", code),
+			builder.Equal("parent_id", parentID),
+		)
+	}, entities.SubCategory{
+		Status: statusInactive,
+	})
 }
 
 func (repo *Repository) Deactivate(parentID int, code string) error {
-	return repo.setActive(parentID, code, statusInactive)
+	return repo.Update(func(builder *update_builder.Builder) {
+		builder.Where(
+			builder.Equal("code", code),
+			builder.Equal("parent_id", parentID),
+		)
+	}, entities.SubCategory{
+		Status: statusInactive,
+	})
 }

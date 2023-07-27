@@ -10,7 +10,7 @@ import (
 
 // _getClient список
 func (controller *Controller) _getClient(searchQuery string) ([]models.CategoryClientGet, *models.Error) {
-	var list []entities.CategoryGet
+	var list []entities.Category
 	var err error
 
 	if len(searchQuery) == 0 {
@@ -66,7 +66,7 @@ func (controller *Controller) _getClientSub(parentCode string, searchQuery strin
 	}
 
 	// Беру список по id категории
-	var list []entities.SubCategoryGet
+	var list []entities.SubCategory
 	if len(searchQuery) == 0 {
 		list, err = controller.subCategoryRepo.GetByParent(category.ID)
 	} else {
@@ -115,7 +115,7 @@ func (controller *Controller) _getClientSubSingle(parentCode string, code string
 }
 
 func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAdminItem, *models.Error) {
-	var list []entities.CategoryGet
+	var list []entities.Category
 	var err error
 
 	if searchQuery == "" {
@@ -195,7 +195,7 @@ func (controller *Controller) _getAdminSub(parentCode string, searchQuery string
 		return nil, errors.CategoryNotFound
 	}
 
-	var list []entities.SubCategoryGet
+	var list []entities.SubCategory
 
 	if len(searchQuery) == 0 {
 		list, err = controller.subCategoryRepo.GetByParent(category.ID)
@@ -312,7 +312,7 @@ func (controller *Controller) _createSub(parentCode string, model *models.SubCat
 }
 
 func (controller *Controller) _update(code string, model *models.CategoryUpdate) *models.Error {
-	if err := controller.categoryRepo.Update(code, model); err != nil {
+	if err := controller.categoryRepo.UpdateByCode(code, model); err != nil {
 		return errors.CategoryUpdate.With(err)
 	}
 
@@ -329,7 +329,7 @@ func (controller *Controller) _updateSub(parentCode, code string, model *models.
 		return errors.CategoryNotFound
 	}
 
-	if err = controller.subCategoryRepo.Update(category.ID, code, model); err != nil {
+	if err = controller.subCategoryRepo.UpdateByParent(category.ID, code, model); err != nil {
 		return errors.CategoryUpdate.With(err)
 	}
 
@@ -390,7 +390,7 @@ func (controller *Controller) _delete(categoryCode string) *models.Error {
 		return errors.CategoryNotFound
 	}
 
-	count, err := controller.subCategoryRepo.Count(category.ID)
+	count, err := controller.subCategoryRepo.CountByParent(category.ID)
 	if err != nil {
 		return errors.CategoryGetCount.With(err)
 	}
@@ -399,7 +399,7 @@ func (controller *Controller) _delete(categoryCode string) *models.Error {
 		return errors.CategoryHasSubCategories
 	}
 
-	if err = controller.categoryRepo.Delete(categoryCode); err != nil {
+	if err = controller.categoryRepo.DeleteByCode(categoryCode); err != nil {
 		return errors.CategoryDelete.With(err)
 	}
 
@@ -416,7 +416,7 @@ func (controller *Controller) _deleteSub(parentCode, categoryCode string) *model
 		return errors.CategoryNotFound
 	}
 
-	if err = controller.subCategoryRepo.Delete(category.ID, categoryCode); err != nil {
+	if err = controller.subCategoryRepo.DeleteByParent(category.ID, categoryCode); err != nil {
 		return errors.CategoryDelete.With(err)
 	}
 

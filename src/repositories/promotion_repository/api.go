@@ -100,7 +100,7 @@ func (repo *Repository) Create(model *models.PromotionAdminCreate) (*string, err
 
 	query := repo.Get("promotion", "create")
 
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+	if err := repo.TransactionQuery(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
 			return err
 		}
@@ -128,7 +128,7 @@ func (repo *Repository) Update(model *models.PromotionAdminUpdate) error {
 
 	query := repo.Get("promotion", "update")
 
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+	if err := repo.TransactionQuery(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
 			return err
 		}
@@ -158,7 +158,7 @@ func (repo *Repository) UpdateImage(code string, imagePath string, lang string) 
 
 	query := fmt.Sprintf(repo.Get("promotion", "update_image"), imageField)
 
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+	if err := repo.TransactionQuery(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
 			return err
 		}
@@ -178,7 +178,7 @@ func (repo *Repository) Delete(code *string) error {
 
 	query := repo.Get("promotion", "delete")
 
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+	if err := repo.TransactionQuery(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.ExecContext(ctx, query, code); err != nil {
 			return err
 		}

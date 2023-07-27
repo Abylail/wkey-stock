@@ -13,7 +13,7 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 	var err error
 
 	// Ищу сабкатегорию если она есть
-	var subcategory *entities.SubCategoryGet
+	var subcategory *entities.SubCategory
 	if subcategoryKey != "" {
 		fmt.Println("subcategoryKey", subcategoryKey)
 		subcategory, err = controller.subCategoryRepo.GetByCode(subcategoryKey)

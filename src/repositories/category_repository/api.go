@@ -1,181 +1,86 @@
 package category_repository
 
 import (
-	"github.com/jmoiron/sqlx"
+	"github.com/lowl11/lazy-entity/builders/delete_builder"
+	"github.com/lowl11/lazy-entity/builders/select_builder"
+	"github.com/lowl11/lazy-entity/builders/update_builder"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/models"
 )
 
-func (repo *Repository) GetAll() ([]entities.CategoryGet, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
+const (
+	statusActive   = "active"
+	statusInactive = "inactive"
+)
 
-	query := repo.Get("category", "get_all")
-
-	rows, err := repo.connection.QueryxContext(ctx, query)
-	if err != nil {
-		return nil, err
-	}
-	defer repo.CloseRows(rows)
-
-	list := make([]entities.CategoryGet, 0)
-	for rows.Next() {
-		item := entities.CategoryGet{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		list = append(list, item)
-	}
-
-	return list, nil
-}
-
-func (repo *Repository) GetByQuery(searchQuery string) ([]entities.CategoryGet, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
+func (repo *Repository) GetByQuery(searchQuery string) ([]entities.Category, error) {
 	searchQuery = "%" + searchQuery + "%"
 
-	query := repo.Get("category", "get_by_query")
-
-	rows, err := repo.connection.QueryxContext(ctx, query, searchQuery)
-	if err != nil {
-		return nil, err
-	}
-	defer repo.CloseRows(rows)
-
-	list := make([]entities.CategoryGet, 0)
-	for rows.Next() {
-		item := entities.CategoryGet{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		list = append(list, item)
-	}
-
-	return list, nil
+	return repo.GetList(func(builder *select_builder.Builder) {
+		builder.Where(
+			builder.Or(
+				builder.Equal("title_ru", searchQuery),
+				builder.Equal("title_kz", searchQuery),
+				builder.Equal("code", searchQuery),
+			),
+		)
+	})
 }
 
-func (repo *Repository) GetByCode(code string) (*entities.CategoryGet, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("category", "get_by_code")
-
-	rows, err := repo.connection.QueryxContext(ctx, query, code)
-	if err != nil {
-		return nil, err
-	}
-	defer repo.CloseRows(rows)
-
-	if rows.Next() {
-		item := entities.CategoryGet{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		return &item, nil
-	}
-
-	return nil, nil
+func (repo *Repository) GetByCode(code string) (*entities.Category, error) {
+	return repo.GetItem(func(builder *select_builder.Builder) {
+		builder.Where(builder.Equal("code", code))
+	})
 }
 
 func (repo *Repository) Create(model *models.CategoryAdd, categoryCode string) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	entity := &entities.CategoryCreate{
+	_, err := repo.Add(entities.Category{
 		Code:    categoryCode,
 		TitleRU: model.TitleRU,
 		TitleKZ: model.TitleKZ,
-	}
-
-	query := repo.Get("category", "create")
-
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
+	})
+	if err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (repo *Repository) Update(code string, model *models.CategoryUpdate) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	entity := &entities.CategoryUpdate{
-		Code:    code,
+func (repo *Repository) UpdateByCode(code string, model *models.CategoryUpdate) error {
+	return repo.Update(func(builder *update_builder.Builder) {
+		builder.Where(builder.Equal("code", code))
+	}, entities.Category{
 		TitleRU: model.TitleRU,
 		TitleKZ: model.TitleKZ,
-	}
-
-	query := repo.Get("category", "update")
-
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+	})
 }
 
 func (repo *Repository) UpdateImage(code string, imagePath string) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	entity := &entities.CategoryUpdateImage{
-		Code:  code,
-		Image: imagePath,
-	}
-
-	query := repo.Get("category", "update_image")
-
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+	return repo.Update(func(builder *update_builder.Builder) {
+		builder.Where(builder.Equal("code", code))
+	}, entities.Category{
+		Icon: &imagePath,
+	})
 }
 
 func (repo *Repository) Activate(code string) error {
-	return repo.setActive(code, statusActive)
+	return repo.Update(func(builder *update_builder.Builder) {
+		builder.Where(builder.Equal("code", code))
+	}, entities.Category{
+		Status: statusActive,
+	})
 }
 
 func (repo *Repository) Deactivate(code string) error {
-	return repo.setActive(code, statusInactive)
+	return repo.Update(func(builder *update_builder.Builder) {
+		builder.Where(builder.Equal("code", code))
+	}, entities.Category{
+		Status: statusInactive,
+	})
 }
 
-func (repo *Repository) Delete(code string) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("category", "delete")
-
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.ExecContext(ctx, query, code); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+func (repo *Repository) DeleteByCode(code string) error {
+	return repo.Delete(func(builder *delete_builder.Builder) {
+		builder.Where(builder.Equal("code", code))
+	})
 }

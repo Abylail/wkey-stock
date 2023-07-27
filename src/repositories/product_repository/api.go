@@ -162,7 +162,7 @@ func (repo *Repository) Update(id int, model *models.ProductUpdate) error {
 
 	query := repo.Get("product", "update")
 
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+	if err := repo.TransactionQuery(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
 			return err
 		}
@@ -220,7 +220,7 @@ func (repo *Repository) UpdateImages(id int, model *models.ProductUpload, pathLi
 
 	query := repo.Get("product", "update_image")
 
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+	if err := repo.TransactionQuery(repo.connection, func(tx *sqlx.Tx) error {
 		for _, entity := range uploadEntities {
 			if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
 				return err
@@ -241,7 +241,7 @@ func (repo *Repository) BindSubCategory(subCategoryID int, productIDs []int) err
 
 	query := repo.Get("product", "bind")
 
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+	if err := repo.TransactionQuery(repo.connection, func(tx *sqlx.Tx) error {
 		for _, productID := range productIDs {
 			if _, err := tx.ExecContext(ctx, query, productID, subCategoryID); err != nil {
 				return err
@@ -262,7 +262,7 @@ func (repo *Repository) UnbindSubCategory(productID, subCategoryID int) error {
 
 	query := repo.Get("product", "unbind")
 
-	if err := repo.Transaction(repo.connection, func(tx *sqlx.Tx) error {
+	if err := repo.TransactionQuery(repo.connection, func(tx *sqlx.Tx) error {
 		if _, err := tx.ExecContext(ctx, query, productID, subCategoryID); err != nil {
 			return err
 		}
