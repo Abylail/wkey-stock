@@ -1,192 +1,68 @@
 package promotion_repository
 
 import (
-	"fmt"
-	"github.com/jmoiron/sqlx"
+	"github.com/lowl11/lazy-entity/builders/delete_builder"
+	"github.com/lowl11/lazy-entity/builders/select_builder"
+	"github.com/lowl11/lazy-entity/builders/update_builder"
 	"github.com/mehanizm/iuliia-go"
 	"strings"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/models"
 )
 
-// GetAll список все акций
-func (repo *Repository) GetAll() ([]entities.AdminPromotion, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("promotion", "get_all_admin")
-
-	rows, err := repo.connection.QueryxContext(ctx, query)
-	if err != nil {
-		return nil, nil
-	}
-
-	list := make([]entities.AdminPromotion, 0)
-	for rows.Next() {
-		item := entities.AdminPromotion{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		list = append(list, item)
-	}
-
-	return list, nil
-}
-
-// GetById получить по id
-func (repo *Repository) GetById(id int) (*entities.AdminPromotion, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("promotion", "get_by_id")
-
-	rows, err := repo.connection.QueryxContext(ctx, query, id)
-	if err != nil {
-		return nil, err
-	}
-	defer repo.CloseRows(rows)
-
-	if rows.Next() {
-		item := entities.AdminPromotion{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		return &item, nil
-	}
-
-	return nil, nil
-}
-
-// GetById получить по id
 func (repo *Repository) GetByCode(code string) (*entities.AdminPromotion, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("promotion", "get_by_code")
-
-	rows, err := repo.connection.QueryxContext(ctx, query, code)
-	if err != nil {
-		return nil, err
-	}
-	defer repo.CloseRows(rows)
-
-	if rows.Next() {
-		item := entities.AdminPromotion{}
-		if err = rows.StructScan(&item); err != nil {
-			return nil, err
-		}
-		return &item, nil
-	}
-
-	return nil, nil
+	return repo.GetItem(func(builder *select_builder.Builder) {
+		builder.Where(builder.Equal("code", code))
+	})
 }
 
-// New создать (возвращает код акции)
 func (repo *Repository) Create(model *models.PromotionAdminCreate) (*string, error) {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
 	// генерируем код категории
 	code := strings.TrimSpace(strings.ToLower(iuliia.Wikipedia.Translate(model.TitleRU)))
 	code = strings.ReplaceAll(code, " ", "_")
 
-	entity := &entities.AdminPromotionCreate{
+	_, err := repo.Add(entities.AdminPromotion{
 		Code:          code,
 		TitleRU:       model.TitleRU,
 		TitleKZ:       model.TitleKZ,
 		DescriptionRU: model.DescriptionRU,
 		DescriptionKZ: model.DescriptionKZ,
-	}
-
-	query := repo.Get("promotion", "create")
-
-	if err := repo.TransactionQuery(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
+	})
+	if err != nil {
 		return nil, err
 	}
 
 	return &code, nil
 }
 
-// Update обновить акцию
-func (repo *Repository) Update(model *models.PromotionAdminUpdate) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	entity := &entities.AdminPromotionUpdate{
-		Code:          model.Code,
+func (repo *Repository) UpdateByCode(model *models.PromotionAdminUpdate) error {
+	return repo.Update(func(builder *update_builder.Builder) {
+		builder.Where(builder.Equal("code", model.Code))
+	}, entities.AdminPromotion{
 		TitleRU:       model.TitleRU,
 		TitleKZ:       model.TitleKZ,
 		DescriptionRU: model.DescriptionRU,
 		DescriptionKZ: model.DescriptionKZ,
-	}
-
-	query := repo.Get("promotion", "update")
-
-	if err := repo.TransactionQuery(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+	})
 }
 
-// UpdateImage загрузка картинки
 func (repo *Repository) UpdateImage(code string, imagePath string, lang string) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	var imageField string = "image_ru"
-	if lang == "kz" {
-		imageField = "image_kz"
-	}
-
-	entity := &entities.AdminPromotionUpdateImage{
-		Code:      code,
-		ImagePath: imagePath,
-	}
-
-	query := fmt.Sprintf(repo.Get("promotion", "update_image"), imageField)
-
-	if err := repo.TransactionQuery(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.NamedExecContext(ctx, query, entity); err != nil {
-			return err
-		}
-
+	var entity entities.AdminPromotion
+	if lang == "ru" {
+		entity.ImageRU = &imagePath
+	} else if lang == "kz" {
+		entity.ImageKZ = &imagePath
+	} else {
 		return nil
-	}); err != nil {
-		return err
 	}
 
-	return nil
+	return repo.Update(func(builder *update_builder.Builder) {
+		builder.Where(builder.Equal("code", code))
+	}, entity)
 }
 
-// Delete удалить акцию
-func (repo *Repository) Delete(code *string) error {
-	ctx, cancel := repo.Ctx()
-	defer cancel()
-
-	query := repo.Get("promotion", "delete")
-
-	if err := repo.TransactionQuery(repo.connection, func(tx *sqlx.Tx) error {
-		if _, err := tx.ExecContext(ctx, query, code); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+func (repo *Repository) DeleteByCode(code *string) error {
+	return repo.Delete(func(builder *delete_builder.Builder) {
+		builder.Equal("code", code)
+	})
 }

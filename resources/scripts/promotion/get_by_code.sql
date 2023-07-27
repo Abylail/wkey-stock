@@ -1,1 +1,0 @@
-select * from promotions where code = $1;

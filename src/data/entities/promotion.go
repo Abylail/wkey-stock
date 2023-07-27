@@ -2,7 +2,7 @@ package entities
 
 type AdminPromotion struct {
 	ID            int     `db:"id"`
-	CODE          string  `db:"code"`
+	Code          string  `db:"code"`
 	TitleRU       string  `db:"title_ru"`
 	TitleKZ       string  `db:"title_kz"`
 	ImageRU       *string `db:"image_ru"`

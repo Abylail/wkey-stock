@@ -17,7 +17,7 @@ func (controller *Controller) _getListAdmin() ([]models.PromotionAdminGet, *mode
 	for _, promotion := range list {
 		promotions = append(promotions, models.PromotionAdminGet{
 			ID:            promotion.ID,
-			CODE:          promotion.CODE,
+			CODE:          promotion.Code,
 			TitleRU:       promotion.TitleRU,
 			TitleKZ:       promotion.TitleKZ,
 			ImageRU:       promotion.ImageRU,
@@ -32,7 +32,7 @@ func (controller *Controller) _getListAdmin() ([]models.PromotionAdminGet, *mode
 
 // _getSingleAdmin промоакция по id
 func (controller *Controller) _getSingleAdmin(id int) (*models.PromotionAdminGet, *models.Error) {
-	rawPromotion, err := controller.promotionRepo.GetById(id)
+	rawPromotion, err := controller.promotionRepo.GetByID(id)
 	if err != nil {
 		return nil, errors.PromotionGetById.With(err)
 	}
@@ -44,7 +44,7 @@ func (controller *Controller) _getSingleAdmin(id int) (*models.PromotionAdminGet
 
 	return &models.PromotionAdminGet{
 		ID:            rawPromotion.ID,
-		CODE:          rawPromotion.CODE,
+		CODE:          rawPromotion.Code,
 		TitleRU:       rawPromotion.TitleRU,
 		TitleKZ:       rawPromotion.TitleKZ,
 		ImageRU:       rawPromotion.ImageRU,
@@ -68,7 +68,7 @@ func (controller *Controller) _getSingleCodeAdmin(code string) (*models.Promotio
 
 	return &models.PromotionAdminGet{
 		ID:            rawPromotion.ID,
-		CODE:          rawPromotion.CODE,
+		CODE:          rawPromotion.Code,
 		TitleRU:       rawPromotion.TitleRU,
 		TitleKZ:       rawPromotion.TitleKZ,
 		ImageRU:       rawPromotion.ImageRU,
@@ -89,7 +89,7 @@ func (controller *Controller) _createAdmin(model *models.PromotionAdminCreate) (
 
 // _updateAdmin обновление промоакции
 func (controller *Controller) _updateAdmin(model *models.PromotionAdminUpdate) *models.Error {
-	if err := controller.promotionRepo.Update(model); err != nil {
+	if err := controller.promotionRepo.UpdateByCode(model); err != nil {
 		return errors.PromotionUpdate.With(err)
 	}
 	return nil
@@ -116,7 +116,7 @@ func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) *
 		return errors.PromotionImageUpload.With(err)
 	}
 
-	if err := controller.promotionRepo.UpdateImage(model.Code, imagePath, model.Lang); err != nil {
+	if err = controller.promotionRepo.UpdateImage(model.Code, imagePath, model.Lang); err != nil {
 		return errors.PromotionImageUpdate.With(err)
 	}
 
@@ -127,7 +127,7 @@ func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) *
 	}
 
 	if oldPath != nil {
-		if err := controller.image.Delete(*oldPath); err != nil {
+		if err = controller.image.Delete(*oldPath); err != nil {
 			return errors.PromotionImageDelete.With(err)
 		}
 	}
@@ -137,7 +137,7 @@ func (controller *Controller) _uploadAdmin(model *models.PromotionAdminUpload) *
 
 // _deleteAdmin удалить акцию
 func (controller *Controller) _deleteAdmin(code *string) *models.Error {
-	if err := controller.promotionRepo.Delete(code); err != nil {
+	if err := controller.promotionRepo.DeleteByCode(code); err != nil {
 		return errors.PromotionUpdate.With(err)
 	}
 
@@ -159,7 +159,7 @@ func (controller *Controller) _getListClient() ([]models.PromotionClinetGet, *mo
 	promotions := make([]models.PromotionClinetGet, 0, len(list))
 	for _, promotion := range list {
 		promotions = append(promotions, models.PromotionClinetGet{
-			CODE:          promotion.CODE,
+			CODE:          promotion.Code,
 			TitleRU:       promotion.TitleRU,
 			TitleKZ:       promotion.TitleKZ,
 			ImageRU:       promotion.ImageRU,
@@ -185,7 +185,7 @@ func (controller *Controller) _getSingleClient(code string) (*models.PromotionCl
 	}
 
 	return &models.PromotionClinetGet{
-		CODE:          rawPromotion.CODE,
+		CODE:          rawPromotion.Code,
 		TitleRU:       rawPromotion.TitleRU,
 		TitleKZ:       rawPromotion.TitleKZ,
 		ImageRU:       rawPromotion.ImageRU,
