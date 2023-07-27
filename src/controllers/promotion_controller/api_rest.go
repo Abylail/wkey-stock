@@ -2,6 +2,7 @@ package promotion_controller
 
 import (
 	"github.com/lowl11/boost"
+	"wkey-stock/src/adaptors/promotion_adaptor"
 	"wkey-stock/src/data/models"
 )
 
@@ -12,7 +13,7 @@ func (controller *Controller) GetListAdmin(ctx boost.Context) error {
 		return controller.Error(ctx, err)
 	}
 
-	return controller.Ok(ctx, list)
+	return controller.Ok(ctx, promotion_adaptor.DtoToModel(list))
 }
 
 // GetSingleAdmin Получить промоакцию по id

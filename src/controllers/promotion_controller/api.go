@@ -1,35 +1,23 @@
 package promotion_controller
 
 import (
+	"wkey-stock/src/adaptors/promotion_adaptor"
+	"wkey-stock/src/data/dtos"
 	"wkey-stock/src/data/models"
 )
 
 // _getListAdmin список промоакций (в админке)
-func (controller *Controller) _getListAdmin() ([]models.PromotionAdminGet, error) {
+func (controller *Controller) _getListAdmin() ([]dtos.Promotion, error) {
 	list, err := controller.promotionRepo.GetAll()
 	if err != nil {
 		return nil, ErrorPromotionGetList(err)
 	}
 
-	promotions := make([]models.PromotionAdminGet, 0, len(list))
-	for _, promotion := range list {
-		promotions = append(promotions, models.PromotionAdminGet{
-			ID:            promotion.ID,
-			CODE:          promotion.Code,
-			TitleRU:       promotion.TitleRU,
-			TitleKZ:       promotion.TitleKZ,
-			ImageRU:       promotion.ImageRU,
-			ImageKZ:       promotion.ImageKZ,
-			DescriptionRU: promotion.DescriptionRU,
-			DescriptionKZ: promotion.DescriptionKZ,
-		})
-	}
-
-	return promotions, nil
+	return promotion_adaptor.EntityToDTO(list), nil
 }
 
 // _getSingleAdmin промоакция по id
-func (controller *Controller) _getSingleAdmin(id int) (*models.PromotionAdminGet, error) {
+func (controller *Controller) _getSingleAdmin(id int) (*models.PromotionGet, error) {
 	rawPromotion, err := controller.promotionRepo.GetByID(id)
 	if err != nil {
 		return nil, ErrorPromotionGetByID(err)
@@ -40,9 +28,9 @@ func (controller *Controller) _getSingleAdmin(id int) (*models.PromotionAdminGet
 		return nil, ErrorPromotionNotFoundByID(id)
 	}
 
-	return &models.PromotionAdminGet{
+	return &models.PromotionGet{
 		ID:            rawPromotion.ID,
-		CODE:          rawPromotion.Code,
+		Code:          rawPromotion.Code,
 		TitleRU:       rawPromotion.TitleRU,
 		TitleKZ:       rawPromotion.TitleKZ,
 		ImageRU:       rawPromotion.ImageRU,
@@ -53,7 +41,7 @@ func (controller *Controller) _getSingleAdmin(id int) (*models.PromotionAdminGet
 }
 
 // _getSingleCodeAdmin промоакция по code
-func (controller *Controller) _getSingleCodeAdmin(code string) (*models.PromotionAdminGet, error) {
+func (controller *Controller) _getSingleCodeAdmin(code string) (*models.PromotionGet, error) {
 	rawPromotion, err := controller.promotionRepo.GetByCode(code)
 	if err != nil {
 		return nil, ErrorPromotionGetByCode(err)
@@ -64,9 +52,9 @@ func (controller *Controller) _getSingleCodeAdmin(code string) (*models.Promotio
 		return nil, ErrorPromotionNotFoundByCode(code)
 	}
 
-	return &models.PromotionAdminGet{
+	return &models.PromotionGet{
 		ID:            rawPromotion.ID,
-		CODE:          rawPromotion.Code,
+		Code:          rawPromotion.Code,
 		TitleRU:       rawPromotion.TitleRU,
 		TitleKZ:       rawPromotion.TitleKZ,
 		ImageRU:       rawPromotion.ImageRU,
@@ -148,16 +136,16 @@ func (controller *Controller) _deleteAdmin(code *string) error {
 }
 
 // _getListClient список промоакций (в админке)
-func (controller *Controller) _getListClient() ([]models.PromotionClinetGet, error) {
+func (controller *Controller) _getListClient() ([]models.PromotionGet, error) {
 	list, err := controller.promotionRepo.GetAll()
 	if err != nil {
 		return nil, ErrorPromotionGetList(err)
 	}
 
-	promotions := make([]models.PromotionClinetGet, 0, len(list))
+	promotions := make([]models.PromotionGet, 0, len(list))
 	for _, promotion := range list {
-		promotions = append(promotions, models.PromotionClinetGet{
-			CODE:          promotion.Code,
+		promotions = append(promotions, models.PromotionGet{
+			Code:          promotion.Code,
 			TitleRU:       promotion.TitleRU,
 			TitleKZ:       promotion.TitleKZ,
 			ImageRU:       promotion.ImageRU,
@@ -171,7 +159,7 @@ func (controller *Controller) _getListClient() ([]models.PromotionClinetGet, err
 }
 
 // _getSingleCodeAdmin промоакция по code
-func (controller *Controller) _getSingleClient(code string) (*models.PromotionClinetGet, error) {
+func (controller *Controller) _getSingleClient(code string) (*models.PromotionGet, error) {
 	rawPromotion, err := controller.promotionRepo.GetByCode(code)
 	if err != nil {
 		return nil, ErrorPromotionGetByCode(err)
@@ -182,8 +170,8 @@ func (controller *Controller) _getSingleClient(code string) (*models.PromotionCl
 		return nil, ErrorPromotionNotFoundByCode(code)
 	}
 
-	return &models.PromotionClinetGet{
-		CODE:          rawPromotion.Code,
+	return &models.PromotionGet{
+		Code:          rawPromotion.Code,
 		TitleRU:       rawPromotion.TitleRU,
 		TitleKZ:       rawPromotion.TitleKZ,
 		ImageRU:       rawPromotion.ImageRU,
