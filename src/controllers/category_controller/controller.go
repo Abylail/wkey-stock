@@ -18,7 +18,7 @@ type Controller struct {
 	image           *image_event.Event
 }
 
-func Create(apiRepositories *repositories.ApiRepositories, apiEvents *events.ApiEvents) *Controller {
+func New(apiRepositories *repositories.ApiRepositories, apiEvents *events.ApiEvents) *Controller {
 	return &Controller{
 		categoryRepo:    apiRepositories.Category,
 		subCategoryRepo: apiRepositories.SubCategory,

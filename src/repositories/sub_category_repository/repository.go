@@ -10,7 +10,7 @@ type Repository struct {
 	connection *sqlx.DB
 }
 
-func Create(connection *sqlx.DB) *Repository {
+func New(connection *sqlx.DB) *Repository {
 	return &Repository{
 		IScriptRepository: repository.NewScript(),
 		connection:        connection,

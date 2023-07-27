@@ -6,7 +6,7 @@ type Event struct {
 	mutex sync.Mutex
 }
 
-func Create() (*Event, error) {
+func New() (*Event, error) {
 	return &Event{
 		mutex: sync.Mutex{},
 	}, nil

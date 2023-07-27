@@ -16,8 +16,8 @@ type ApiControllers struct {
 
 func Get(apiEvents *events.ApiEvents, apiRepositories *repositories.ApiRepositories) *ApiControllers {
 	return &ApiControllers{
-		Product:   product_controller.Create(apiRepositories, apiEvents),
-		Category:  category_controller.Create(apiRepositories, apiEvents),
-		Promotion: promotion_controller.Create(apiRepositories, apiEvents),
+		Product:   product_controller.New(apiRepositories, apiEvents),
+		Category:  category_controller.New(apiRepositories, apiEvents),
+		Promotion: promotion_controller.New(apiRepositories, apiEvents),
 	}
 }

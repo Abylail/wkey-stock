@@ -11,7 +11,7 @@ type Repository struct {
 	repository.ICrudRepository[entities.Brand, int]
 }
 
-func Create(connection *sqlx.DB) *Repository {
+func New(connection *sqlx.DB) *Repository {
 	return &Repository{
 		ICrudRepository: repository.NewCrud[entities.Brand, int](
 			connection,

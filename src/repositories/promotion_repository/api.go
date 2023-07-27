@@ -81,7 +81,7 @@ func (repo *Repository) GetByCode(code string) (*entities.AdminPromotion, error)
 	return nil, nil
 }
 
-// Create создать (возвращает код акции)
+// New создать (возвращает код акции)
 func (repo *Repository) Create(model *models.PromotionAdminCreate) (*string, error) {
 	ctx, cancel := repo.Ctx()
 	defer cancel()

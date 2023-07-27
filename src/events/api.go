@@ -9,7 +9,7 @@ type ApiEvents struct {
 }
 
 func Get() (*ApiEvents, error) {
-	image, err := image_event.Create()
+	image, err := image_event.New()
 	if err != nil {
 		return nil, err
 	}

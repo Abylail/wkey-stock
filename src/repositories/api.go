@@ -38,10 +38,10 @@ func Get(app *boost.App) (*ApiRepositories, error) {
 	})
 
 	return &ApiRepositories{
-		Category:    category_repository.Create(connection),
-		SubCategory: sub_category_repository.Create(connection),
-		Product:     product_repository.Create(connection),
-		Brand:       brand_repository.Create(connection),
-		Promotion:   promotion_repository.Create(connection),
+		Category:    category_repository.New(connection),
+		SubCategory: sub_category_repository.New(connection),
+		Product:     product_repository.New(connection),
+		Brand:       brand_repository.New(connection),
+		Promotion:   promotion_repository.New(connection),
 	}, nil
 }

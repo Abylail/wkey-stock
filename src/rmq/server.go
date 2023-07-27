@@ -9,7 +9,7 @@ type Server struct {
 	Product *product_controller.Controller
 }
 
-func Create(apiControllers *controllers.ApiControllers) *Server {
+func New(apiControllers *controllers.ApiControllers) *Server {
 	return &Server{
 		Product: apiControllers.Product,
 	}
