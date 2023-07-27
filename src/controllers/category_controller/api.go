@@ -1,7 +1,6 @@
 package category_controller
 
 import (
-	"github.com/lowl11/lazy-collection/type_list"
 	"github.com/lowl11/lazylog/layers"
 	"github.com/mehanizm/iuliia-go"
 	"strings"
@@ -26,16 +25,15 @@ func (controller *Controller) _getClient(searchQuery string) ([]models.CategoryC
 		return nil, errors.CategoryGetList.With(err)
 	}
 
-	categories := type_list.NewWithList[entities.CategoryGet, models.CategoryClientGet](list...).
-		Select(func(item entities.CategoryGet) models.CategoryClientGet {
-			return models.CategoryClientGet{
-				Code:    item.Code,
-				TitleRU: item.TitleRU,
-				TitleKZ: item.TitleKZ,
-				Image:   item.Icon,
-			}
-		}).
-		Slice()
+	categories := make([]models.CategoryClientGet, 0, len(list))
+	for _, category := range list {
+		categories = append(categories, models.CategoryClientGet{
+			Code:    category.Code,
+			TitleRU: category.TitleRU,
+			TitleKZ: category.TitleKZ,
+			Image:   category.Icon,
+		})
+	}
 
 	return categories, nil
 }
@@ -83,18 +81,17 @@ func (controller *Controller) _getClientSub(parentCode string, searchQuery strin
 		list, err = controller.subCategoryRepo.GetByQuery(category.ID, searchQuery)
 	}
 
-	subcategories := type_list.NewWithList[entities.SubCategoryGet, models.SubCategoryClientGet](list...).
-		Select(func(item entities.SubCategoryGet) models.SubCategoryClientGet {
-			return models.SubCategoryClientGet{
-				Code:    item.Code,
-				TitleRU: item.TitleRU,
-				TitleKZ: item.TitleKZ,
-				Image:   item.Icon,
-			}
-		}).
-		Slice()
+	subCategories := make([]models.SubCategoryClientGet, 0, len(list))
+	for _, subCategory := range list {
+		subCategories = append(subCategories, models.SubCategoryClientGet{
+			Code:    subCategory.Code,
+			TitleRU: subCategory.TitleRU,
+			TitleKZ: subCategory.TitleKZ,
+			Image:   subCategory.Icon,
+		})
+	}
 
-	return subcategories, nil
+	return subCategories, nil
 }
 
 func (controller *Controller) _getClientSubSingle(parentCode string, code string) (*models.SubCategoryClientGet, *models.Error) {
@@ -146,18 +143,17 @@ func (controller *Controller) _getAdmin(searchQuery string) ([]models.CategoryAd
 		return []models.CategoryAdminItem{}, nil
 	}
 
-	categories := type_list.NewWithList[entities.CategoryGet, models.CategoryAdminItem](list...).
-		Select(func(item entities.CategoryGet) models.CategoryAdminItem {
-			return models.CategoryAdminItem{
-				ID:      item.ID,
-				Code:    item.Code,
-				TitleRU: item.TitleRU,
-				TitleKZ: item.TitleKZ,
-				Image:   item.Icon,
-				Status:  item.Status,
-			}
-		}).
-		Slice()
+	categories := make([]models.CategoryAdminItem, 0, len(list))
+	for _, category := range list {
+		categories = append(categories, models.CategoryAdminItem{
+			ID:      category.ID,
+			Code:    category.Code,
+			TitleRU: category.TitleRU,
+			TitleKZ: category.TitleKZ,
+			Image:   category.Icon,
+			Status:  category.Status,
+		})
+	}
 
 	return categories, nil
 }
@@ -181,6 +177,18 @@ func (controller *Controller) _getAdminSingle(code string) (*models.CategoryAdmi
 		return nil, errors.CategoryGetList.With(err)
 	}
 
+	subCategoriesList := make([]models.SubCategoryAdminGet, 0, len(subCategories))
+	for _, subCategory := range subCategories {
+		subCategoriesList = append(subCategoriesList, models.SubCategoryAdminGet{
+			ID:      subCategory.ID,
+			Code:    subCategory.Code,
+			TitleRU: subCategory.TitleRU,
+			TitleKZ: subCategory.TitleKZ,
+			Image:   subCategory.Icon,
+			Status:  subCategory.Status,
+		})
+	}
+
 	return &models.CategoryAdminGetSingle{
 		ID:      category.ID,
 		Code:    category.Code,
@@ -189,18 +197,7 @@ func (controller *Controller) _getAdminSingle(code string) (*models.CategoryAdmi
 		Image:   category.Icon,
 		Status:  category.Status,
 
-		SubCategories: type_list.NewWithList[entities.SubCategoryGet, models.SubCategoryAdminGet](subCategories...).
-			Select(func(item entities.SubCategoryGet) models.SubCategoryAdminGet {
-				return models.SubCategoryAdminGet{
-					ID:      item.ID,
-					Code:    item.Code,
-					TitleRU: item.TitleRU,
-					TitleKZ: item.TitleKZ,
-					Image:   item.Icon,
-					Status:  item.Status,
-				}
-			}).
-			Slice(),
+		SubCategories: subCategoriesList,
 	}, nil
 }
 
@@ -233,18 +230,19 @@ func (controller *Controller) _getAdminSub(parentCode string, searchQuery string
 		return []models.SubCategoryAdminGet{}, nil
 	}
 
-	return type_list.NewWithList[entities.SubCategoryGet, models.SubCategoryAdminGet](list...).
-		Select(func(item entities.SubCategoryGet) models.SubCategoryAdminGet {
-			return models.SubCategoryAdminGet{
-				ID:      item.ID,
-				Code:    item.Code,
-				TitleRU: item.TitleRU,
-				TitleKZ: item.TitleKZ,
-				Image:   item.Icon,
-				Status:  item.Status,
-			}
-		}).
-		Slice(), nil
+	subCategories := make([]models.SubCategoryAdminGet, 0, len(list))
+	for _, subCategory := range list {
+		subCategories = append(subCategories, models.SubCategoryAdminGet{
+			ID:      subCategory.ID,
+			Code:    subCategory.Code,
+			TitleRU: subCategory.TitleRU,
+			TitleKZ: subCategory.TitleKZ,
+			Image:   subCategory.Icon,
+			Status:  subCategory.Status,
+		})
+	}
+
+	return subCategories, nil
 }
 
 func (controller *Controller) _getAdminSubSingle(parentCode, code string) (*models.SubCategoryAdminGet, *models.Error) {

@@ -2,8 +2,6 @@ package product_controller
 
 import (
 	"fmt"
-	"github.com/lowl11/lazy-collection/array"
-	"github.com/lowl11/lazy-collection/type_list"
 	"github.com/lowl11/lazylog/layers"
 	"math"
 	"wkey-stock/src/data/entities"
@@ -43,9 +41,9 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 
 	// получаем массив с ID продуктов
 	productIDs := make([]int, 0, len(products))
-	array.NewWithList[entities.AdminProductGet](products...).Each(func(item entities.AdminProductGet) {
-		productIDs = append(productIDs, item.ID)
-	})
+	for _, product := range products {
+		productIDs = append(productIDs, product.ID)
+	}
 
 	// получаем картинки продуктов
 	images, err := controller.productRepo.GetImages(productIDs)
@@ -54,7 +52,10 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 		return nil, errors.ProductImagesGet.With(err)
 	}
 
-	imagesList := array.NewWithList[entities.ProductImageGet](images...)
+	imagesList := make([]entities.ProductImageGet, 0, len(images))
+	for _, image := range images {
+		imagesList = append(imagesList, image)
+	}
 
 	// получаем кол-во продуктов
 	var productCount int
@@ -72,56 +73,58 @@ func (controller *Controller) _getAdmin(from, pageSize int, searchQuery, categor
 	pageCount := int(math.Ceil(float64(productCount) / float64(20)))
 
 	// получаем список категорий
-	categoryPairs, err := controller.productRepo.GetSubCategoryPairs(
-		type_list.NewWithList[entities.AdminProductGet, int](products...).
-			Select(func(item entities.AdminProductGet) int {
-				return item.ID
-			}).Slice(),
-	)
+	categoryPairs, err := controller.productRepo.GetSubCategoryPairs(productIDs)
 	if err != nil {
 		logger.Error(err, "Get product category pairs error", layers.Database)
 		return nil, errors.ProductGetPairs.With(err)
 	}
 
-	productList := type_list.NewWithList[entities.AdminProductGet, models.AdminProductItem](products...).
-		Select(func(item entities.AdminProductGet) models.AdminProductItem {
-			return models.AdminProductItem{
-				ID:         item.ID,
-				Title:      item.Title,
-				Price:      item.Price,
-				VendorCode: item.VendorCode,
-				Barcode:    item.Barcode,
-				UnitName:   item.UnitName,
-				Categories: type_list.NewWithList[entities.ProductCategoryPair, models.ProductCategoryPair](categoryPairs...).
-					Select(func(pair entities.ProductCategoryPair) models.ProductCategoryPair {
-						return models.ProductCategoryPair{
-							SubCategoryCode: pair.SubCategoryCode,
-							SubCategoryName: pair.SubCategoryName,
-							CategoryCode:    pair.CategoryCode,
-							CategoryName:    pair.CategoryName,
-						}
-					}).Slice(),
-				CreatedAt:         item.CreatedAt,
-				UpdatedAt:         item.UpdatedAt,
-				AdditionalPercent: item.AdditionalPercent,
-				DescriptionRU:     item.DescriptionRU,
-				DescriptionKZ:     item.DescriptionKZ,
-				Count:             item.Count,
-				BrandTitle:        item.BrandTitle,
-			}
-		}).Slice()
+	productList := make([]models.AdminProductItem, 0, len(products))
+	for _, product := range products {
+		categories := make([]models.ProductCategoryPair, 0, len(categoryPairs))
+		for _, category := range categoryPairs {
+			categories = append(categories, models.ProductCategoryPair{
+				SubCategoryCode: category.SubCategoryCode,
+				SubCategoryName: category.SubCategoryName,
+				CategoryCode:    category.CategoryCode,
+				CategoryName:    category.CategoryName,
+			})
+		}
+
+		productList = append(productList, models.AdminProductItem{
+			ID:                product.ID,
+			Title:             product.Title,
+			Price:             product.Price,
+			VendorCode:        product.VendorCode,
+			Barcode:           product.Barcode,
+			UnitName:          product.UnitName,
+			Categories:        categories,
+			CreatedAt:         product.CreatedAt,
+			UpdatedAt:         product.UpdatedAt,
+			AdditionalPercent: product.AdditionalPercent,
+			DescriptionRU:     product.DescriptionRU,
+			DescriptionKZ:     product.DescriptionKZ,
+			Count:             product.Count,
+			BrandTitle:        product.BrandTitle,
+		})
+	}
 
 	for i := 0; i < len(productList); i++ {
 		productID := productList[i].ID
-		productImages := imagesList.Where(func(image entities.ProductImageGet) bool {
-			return image.ProductID == productID
-		})
+		productImages := make([]entities.ProductImageGet, 0)
+		for _, image := range imagesList {
+			if image.ProductID != productID {
+				continue
+			}
 
-		productList[i].Images = make([]string, 0, productImages.Size())
+			productImages = append(productImages, image)
+		}
 
-		productImages.Each(func(image entities.ProductImageGet) {
+		productList[i].Images = make([]string, 0, len(productImages))
+
+		for _, image := range productImages {
 			productList[i].Images = append(productList[i].Images, image.Path)
-		})
+		}
 	}
 
 	return &models.AdminProductGet{
