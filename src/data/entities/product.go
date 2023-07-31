@@ -2,55 +2,39 @@ package entities
 
 import "time"
 
-type AdminProductGet struct {
-	ID                int       `db:"id"`
-	Title             string    `db:"title"`
-	Price             int       `db:"price"`
-	VendorCode        string    `db:"vendor_code"`
-	Barcode           string    `db:"barcode"`
-	UnitName          string    `db:"unit_name"`
-	CreatedAt         time.Time `db:"created_at"`
-	UpdatedAt         time.Time `db:"updated_at"`
-	AdditionalPercent any       `db:"additional_percent"`
-	DescriptionRU     *string   `db:"description_ru"`
-	DescriptionKZ     *string   `db:"description_kz"`
-	Count             int       `db:"count"`
-	BrandTitle        string    `db:"brand_title"`
-}
+type Product struct {
+	// common
+	ID               string `db:"id"`
+	ProskladID       int    `db:"prosklad_id"`
+	Title            string `db:"title"`
+	Barcode          string `db:"barcode"`
+	CompanyID        int    `db:"company_id"`
+	ItemCategoryName string `db:"item_category_name"`
 
-type ClientProductShort struct {
-	ID         int    `db:"id"`
-	Title      string `db:"title"`
-	Price      int    `db:"price"`
-	VendorCode string `db:"vendor_code"`
-	Count      int    `db:"count"`
-}
+	// price
+	SellingPrice          float32 `db:"selling_price"`
+	OldSellingPrice       float32 `db:"old_selling_price"`
+	PreviousPurchasePrice float32 `db:"previous_purchase_price"`
+	AdditionalPercent     float32 `db:"additional_percent"`
 
-type ProductImageGet struct {
-	ProductID int    `db:"product_id"`
-	Path      string `db:"path"`
-	Position  int    `db:"position"`
-	Key       string `db:"key"`
-}
+	// flags
+	HasInventory bool `db:"has_inventory"`
+	IsVirtual    bool `db:"is_virtual"`
+	Marked       bool `db:"marked"`
+	IsQuick      bool `db:"is_quick"`
 
-type ProductUpdate struct {
-	ID            int    `db:"id"`
-	DescriptionRU string `db:"description_ru"`
-	DescriptionKZ string `db:"description_kz"`
-}
+	// unit
+	UnitID   int    `db:"unit_id"`
+	UnitName string `db:"unit_name"`
+	UnitType int    `db:"unit_type"`
 
-type ProductUpdateImage struct {
-	ProductID int    `db:"product_id"`
-	Path      string `db:"path"`
-	Position  int    `db:"position"`
-	Key       string `db:"key"`
-}
+	// brand (vendor)
+	BrandID int `db:"brand_id"`
 
-type ProductCategoryPair struct {
-	ProductID       int    `db:"product_id"`
-	SubCategoryID   int    `db:"sub_category_id"`
-	SubCategoryName string `db:"sub_category_name"`
-	SubCategoryCode string `db:"sub_category_code"`
-	CategoryName    string `db:"category_name"`
-	CategoryCode    string `db:"category_code"`
+	// custom
+	DescriptionRU *string   `db:"description_ru"`
+	DescriptionKZ *string   `db:"description_kz"`
+	Count         int       `db:"count"`
+	CreatedAt     time.Time `db:"created_at"`
+	UpdatedAt     time.Time `db:"updated_at"`
 }

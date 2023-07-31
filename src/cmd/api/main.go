@@ -6,10 +6,8 @@ import (
 	"github.com/lowl11/lazyconfig/config"
 	"github.com/lowl11/lazylog/log"
 	"time"
-	"wkey-stock/src/controllers/admin"
-	"wkey-stock/src/controllers/client"
-
-	"wkey-stock/src/events"
+	"wkey-stock/src/controllers"
+	"wkey-stock/src/gateways"
 	"wkey-stock/src/repositories"
 )
 
@@ -18,12 +16,6 @@ func main() {
 
 	app.Use(middlewares.Timeout(time.Second * 10))
 
-	// инициализация ивентов
-	apiEvents, err := events.Get()
-	if err != nil {
-		log.Fatal(err, "Initializing events error")
-	}
-
 	// инициализация репозиториев
 	apiRepositories, err := repositories.Get(app)
 	if err != nil {
@@ -31,8 +23,9 @@ func main() {
 	}
 
 	// привязка роутов
-	admin.Bind(app, apiRepositories, apiEvents)
-	client.Bind(app, apiRepositories, apiEvents)
+	controllers.BindAPI(app, controllers.Dependencies{
+		Gateways: gateways.Get(apiRepositories),
+	})
 
 	// запуск сервера
 	app.Run(config.Get("port"))
