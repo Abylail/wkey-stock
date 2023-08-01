@@ -118,6 +118,7 @@ func (product *Product) EditCount(count int) {
 func (product *Product) Model() models.Product {
 	return models.Product{
 		ID:            product.id.String(),
+		ProskladID:    product.proskladID,
 		Title:         product.title,
 		DescriptionRU: product.Description(languages.RU),
 		DescriptionKZ: product.Description(languages.KZ),
@@ -152,6 +153,8 @@ func (product *Product) Entity() entities.Product {
 		DescriptionRU: product.descriptionRU,
 		DescriptionKZ: product.descriptionKZ,
 		Count:         product.count,
+		CreatedAt:     product.createdAt,
+		UpdatedAt:     product.updatedAt,
 	}
 }
 

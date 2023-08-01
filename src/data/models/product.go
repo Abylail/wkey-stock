@@ -2,6 +2,7 @@ package models
 
 type Product struct {
 	ID            string  `json:"id"`
+	ProskladID    int     `json:"prosklad_id"`
 	Title         string  `json:"title"`
 	DescriptionRU *string `json:"description_ru"`
 	DescriptionKZ *string `json:"description_kz"`
@@ -14,13 +15,13 @@ type ProductAdd struct {
 	Title            string `json:"title" validate:"required"`
 	Barcode          string `json:"barcode" validate:"required"`
 	CompanyID        int    `json:"company_id" validate:"required"`
-	ItemCategoryName string `json:"item_category_name" validate:"required"`
+	ItemCategoryName string `json:"item_category_name"`
 
 	// money
 	SellingPrice          float32 `json:"selling_price" validate:"required"`
 	OldSellingPrice       float32 `json:"old_selling_price" validate:"required"`
-	PreviousPurchasePrice float32 `json:"previous_purchase_price" validate:"required"`
-	AdditionalPercent     float32 `json:"additional_percent" validate:"required"`
+	PreviousPurchasePrice float32 `json:"previous_purchase_price"`
+	AdditionalPercent     float32 `json:"additional_percent"`
 
 	// flags
 	HasInventory bool `json:"has_inventory"`
@@ -34,7 +35,7 @@ type ProductAdd struct {
 	UnitType int    `json:"unit_type" validate:"required"`
 
 	// vendor
-	VendorID   int    `json:"vendor_id" validate:"required"`
+	VendorID   int    `json:"vendor_id"`
 	VendorCode string `json:"vendor_code" validate:"required"`
 }
 
