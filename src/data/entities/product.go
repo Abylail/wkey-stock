@@ -37,4 +37,5 @@ type Product struct {
 	Count         int       `db:"count"`
 	CreatedAt     time.Time `db:"created_at"`
 	UpdatedAt     time.Time `db:"updated_at"`
+	Deleted       bool      `db:"deleted"`
 }

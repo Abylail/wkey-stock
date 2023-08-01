@@ -2,10 +2,10 @@ package dtos
 
 import (
 	"github.com/google/uuid"
-	"github.com/lowl11/boost/pkg/types"
 	"time"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/models"
+	"wkey-stock/src/enums/languages"
 )
 
 type Product struct {
@@ -24,7 +24,7 @@ type Product struct {
 	additionalPercent     float32
 
 	// flags
-	havInventory bool
+	hasInventory bool
 	isVirtual    bool
 	marked       bool
 	isQuick      bool
@@ -38,11 +38,11 @@ type Product struct {
 	brandID int
 
 	// custom
-	DescriptionRU string
-	DescriptionKZ string
-	Count         int
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	descriptionRU *string
+	descriptionKZ *string
+	count         int
+	createdAt     time.Time
+	updatedAt     time.Time
 }
 
 func NewProduct(entity *entities.Product) *Product {
@@ -64,7 +64,7 @@ func NewProduct(entity *entities.Product) *Product {
 		additionalPercent:     entity.AdditionalPercent,
 
 		// flags
-		havInventory: entity.HasInventory,
+		hasInventory: entity.HasInventory,
 		isVirtual:    entity.IsVirtual,
 		marked:       entity.Marked,
 		isQuick:      entity.IsQuick,
@@ -78,21 +78,83 @@ func NewProduct(entity *entities.Product) *Product {
 		brandID: entity.BrandID,
 
 		// custom
-		DescriptionRU: types.ToString(entity.DescriptionRU),
-		DescriptionKZ: types.ToString(entity.DescriptionKZ),
-		Count:         entity.Count,
-		CreatedAt:     entity.CreatedAt,
-		UpdatedAt:     entity.UpdatedAt,
+		descriptionRU: entity.DescriptionRU,
+		descriptionKZ: entity.DescriptionKZ,
+		count:         entity.Count,
+		createdAt:     entity.CreatedAt,
+		updatedAt:     entity.UpdatedAt,
 	}
 }
 
-func (product Product) ID() uuid.UUID {
+func (product *Product) ID() uuid.UUID {
 	return product.id
 }
 
-func (product Product) Model() models.Product {
-	return models.Product{
-		ID:    product.id.String(),
-		Title: product.title,
+func (product *Product) Description(language string) *string {
+	if language == languages.KZ {
+		return product.descriptionKZ
 	}
+
+	return product.descriptionRU
+}
+
+func (product *Product) EditDescription(description, language string) {
+	defer product.update()
+
+	if language == languages.KZ {
+		product.descriptionKZ = &description
+		return
+	}
+
+	product.descriptionRU = &description
+}
+
+func (product *Product) EditCount(count int) {
+	defer product.update()
+
+	product.count = count
+}
+
+func (product *Product) Model() models.Product {
+	return models.Product{
+		ID:            product.id.String(),
+		Title:         product.title,
+		DescriptionRU: product.Description(languages.RU),
+		DescriptionKZ: product.Description(languages.KZ),
+		Count:         product.count,
+	}
+}
+
+func (product *Product) Entity() entities.Product {
+	return entities.Product{
+		ID:               product.id.String(),
+		ProskladID:       product.proskladID,
+		Title:            product.title,
+		Barcode:          product.barcode,
+		ItemCategoryName: product.itemCategoryName,
+
+		SellingPrice:          product.sellingPrice,
+		OldSellingPrice:       product.oldSellingPrice,
+		PreviousPurchasePrice: product.previousPurchasePrice,
+		AdditionalPercent:     product.additionalPercent,
+
+		HasInventory: product.hasInventory,
+		IsVirtual:    product.isVirtual,
+		Marked:       product.marked,
+		IsQuick:      product.isQuick,
+
+		UnitID:   product.unitID,
+		UnitName: product.unitName,
+		UnitType: product.unitType,
+
+		BrandID: product.brandID,
+
+		DescriptionRU: product.descriptionRU,
+		DescriptionKZ: product.descriptionKZ,
+		Count:         product.count,
+	}
+}
+
+func (product *Product) update() {
+	product.updatedAt = time.Now()
 }

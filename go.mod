@@ -5,8 +5,8 @@ go 1.20
 require (
 	github.com/google/uuid v1.3.0
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/lowl11/boost v0.0.18
-	github.com/lowl11/lazy-entity v0.1.8
+	github.com/lowl11/boost v0.0.19
+	github.com/lowl11/lazy-entity v0.1.9
 	github.com/lowl11/lazyconfig v1.2.0
 	github.com/lowl11/lazylog v1.2.9
 )
