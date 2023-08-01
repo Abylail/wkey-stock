@@ -27,7 +27,7 @@ func (controller Controller) GetByID(ctx boost.Context) error {
 }
 
 func (controller Controller) Add(ctx boost.Context) error {
-	model := models.ProductAdd{}
+	model := models.ProductProsklad{}
 	if err := ctx.Parse(&model); err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -38,6 +38,24 @@ func (controller Controller) Add(ctx boost.Context) error {
 	}
 
 	return controller.CreatedID(ctx, newID)
+}
+
+func (controller Controller) UpdateProsklad(ctx boost.Context) error {
+	proskladID := ctx.Param("prosklad-id").Int()
+	if proskladID == 0 {
+		return controller.Error(ctx, ErrorProskladIDRequired())
+	}
+
+	model := models.ProductProsklad{}
+	if err := ctx.Parse(&model); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	if err := controller.products.UpdateProsklad(proskladID, &model); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx)
 }
 
 func (controller Controller) UpdateDescription(ctx boost.Context) error {

@@ -6,7 +6,7 @@ import (
 	"wkey-stock/src/data/models"
 )
 
-func NewProductAdd(model *models.ProductAdd) *Product {
+func NewProductAdd(model *models.ProductProsklad) *Product {
 	return &Product{
 		id:         uuid.New(),
 		proskladID: model.ID,

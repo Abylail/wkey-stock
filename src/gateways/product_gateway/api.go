@@ -42,7 +42,7 @@ func (gateway Gateway) GetByProsklad(proskladID int) (*dtos.Product, error) {
 	return dtos.NewProduct(productEntity), nil
 }
 
-func (gateway Gateway) Add(model *models.ProductAdd) (string, error) {
+func (gateway Gateway) Add(model *models.ProductProsklad) (string, error) {
 	// пытаемся найти продукт по Prosklad ID
 	productEntity, err := gateway.productRepo.ByProsklad(model.ID)
 	if err != nil {
@@ -63,6 +63,21 @@ func (gateway Gateway) Add(model *models.ProductAdd) (string, error) {
 
 	// возвращаем ID сгенерированного продукта
 	return product.ID().String(), nil
+}
+
+func (gateway Gateway) UpdateProsklad(proskladID int, model *models.ProductProsklad) error {
+	product, err := gateway.GetByProsklad(proskladID)
+	if err != nil {
+		return err
+	}
+
+	product.EditProsklad(model)
+
+	if err = gateway.productRepo.UpdateProduct(product); err != nil {
+		return ErrorUpdateProduct(proskladID, err)
+	}
+
+	return nil
 }
 
 func (gateway Gateway) UpdateDescription(id string, model *models.ProductUpdateDescription) error {

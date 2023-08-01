@@ -98,6 +98,34 @@ func (product *Product) Description(language string) *string {
 	return product.descriptionRU
 }
 
+func (product *Product) EditProsklad(models *models.ProductProsklad) {
+	// common
+	product.title = models.Title
+	product.barcode = models.Barcode
+	product.companyID = models.CompanyID
+	product.itemCategoryName = models.ItemCategoryName
+
+	// price
+	product.sellingPrice = models.SellingPrice
+	product.oldSellingPrice = models.OldSellingPrice
+	product.previousPurchasePrice = models.PreviousPurchasePrice
+	product.additionalPercent = models.AdditionalPercent
+
+	// flags
+	product.hasInventory = models.HasInventory
+	product.isVirtual = models.IsVirtual
+	product.marked = models.Marked
+	product.isQuick = models.IsQuick
+
+	// unit
+	product.unitID = models.UnitID
+	product.unitName = models.UnitName
+	product.unitType = models.UnitType
+
+	// vendor
+	product.brandID = models.VendorID
+}
+
 func (product *Product) EditDescription(description, language string) {
 	defer product.update()
 

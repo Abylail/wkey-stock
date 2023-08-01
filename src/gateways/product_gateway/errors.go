@@ -74,7 +74,7 @@ func ErrorAddProduct(err error) error {
 		SetError(err)
 }
 
-func ErrorUpdateProduct(id string, err error) error {
+func ErrorUpdateProduct(id any, err error) error {
 	return errors.
 		New("Update product error").
 		SetType(typeErrorUpdateProduct).

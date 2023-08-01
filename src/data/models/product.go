@@ -9,7 +9,7 @@ type Product struct {
 	Count         int     `json:"count"`
 }
 
-type ProductAdd struct {
+type ProductProsklad struct {
 	// common
 	ID               int    `json:"id" validate:"required"`
 	Title            string `json:"title" validate:"required"`
