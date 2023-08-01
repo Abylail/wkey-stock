@@ -99,6 +99,8 @@ func (product *Product) Description(language string) *string {
 }
 
 func (product *Product) EditProsklad(models *models.ProductProsklad) {
+	defer product.updateDate()
+
 	// common
 	product.title = models.Title
 	product.barcode = models.Barcode
@@ -127,7 +129,7 @@ func (product *Product) EditProsklad(models *models.ProductProsklad) {
 }
 
 func (product *Product) EditDescription(description, language string) {
-	defer product.update()
+	defer product.updateDate()
 
 	if language == languages.KZ {
 		product.descriptionKZ = &description
@@ -138,7 +140,7 @@ func (product *Product) EditDescription(description, language string) {
 }
 
 func (product *Product) EditCount(count int) {
-	defer product.update()
+	defer product.updateDate()
 
 	product.count = count
 }
@@ -186,6 +188,6 @@ func (product *Product) Entity() entities.Product {
 	}
 }
 
-func (product *Product) update() {
+func (product *Product) updateDate() {
 	product.updatedAt = time.Now()
 }

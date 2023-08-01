@@ -5,11 +5,13 @@ import (
 	"github.com/lowl11/lazy-entity/services/connection_service"
 	"github.com/lowl11/lazyconfig/config"
 	"github.com/lowl11/lazylog/log"
+	"wkey-stock/src/repositories/category_repository"
 	"wkey-stock/src/repositories/product_repository"
 )
 
 type ApiRepositories struct {
-	Product *product_repository.Repository
+	Product  *product_repository.Repository
+	Category *category_repository.Repository
 }
 
 func Get(app *boost.App) (*ApiRepositories, error) {
@@ -30,6 +32,7 @@ func Get(app *boost.App) (*ApiRepositories, error) {
 	})
 
 	return &ApiRepositories{
-		Product: product_repository.New(connection),
+		Product:  product_repository.New(connection),
+		Category: category_repository.New(connection),
 	}, nil
 }
