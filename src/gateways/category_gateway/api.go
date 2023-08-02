@@ -1,13 +1,14 @@
 package category_gateway
 
 import (
+	"context"
 	"wkey-stock/src/adaptors/category_adaptor"
 	"wkey-stock/src/data/dtos"
 	"wkey-stock/src/data/models"
 )
 
-func (gateway Gateway) GetAll() ([]dtos.Category, error) {
-	categories, err := gateway.categoryRepo.All()
+func (gateway Gateway) GetAll(ctx context.Context) ([]dtos.Category, error) {
+	categories, err := gateway.categoryRepo.All(ctx)
 	if err != nil {
 		return nil, ErrorGetAllCategories(err)
 	}
@@ -15,8 +16,8 @@ func (gateway Gateway) GetAll() ([]dtos.Category, error) {
 	return category_adaptor.EntityToDTO(categories), nil
 }
 
-func (gateway Gateway) GetByID(id string) (*dtos.Category, error) {
-	categoryEntity, err := gateway.categoryRepo.ByID(id)
+func (gateway Gateway) GetByID(ctx context.Context, id string) (*dtos.Category, error) {
+	categoryEntity, err := gateway.categoryRepo.ByID(ctx, id)
 	if err != nil {
 		return nil, ErrorGetByID(id, err)
 	}
@@ -28,8 +29,8 @@ func (gateway Gateway) GetByID(id string) (*dtos.Category, error) {
 	return dtos.NewCategory(categoryEntity), nil
 }
 
-func (gateway Gateway) GetByProsklad(proskladID int) (*dtos.Category, error) {
-	categoryEntity, err := gateway.categoryRepo.ByProsklad(proskladID)
+func (gateway Gateway) GetByProsklad(ctx context.Context, proskladID int) (*dtos.Category, error) {
+	categoryEntity, err := gateway.categoryRepo.ByProsklad(ctx, proskladID)
 	if err != nil {
 		return nil, ErrorGetByProsklad(proskladID, err)
 	}
@@ -41,9 +42,9 @@ func (gateway Gateway) GetByProsklad(proskladID int) (*dtos.Category, error) {
 	return dtos.NewCategory(categoryEntity), nil
 }
 
-func (gateway Gateway) Add(model *models.CategoryProsklad) (string, error) {
+func (gateway Gateway) Add(ctx context.Context, model *models.CategoryProsklad) (string, error) {
 	// пытаемся найти категорию по Prosklad ID
-	categoryEntity, err := gateway.categoryRepo.ByProsklad(model.ID)
+	categoryEntity, err := gateway.categoryRepo.ByProsklad(ctx, model.ID)
 	if err != nil {
 		return "", err
 	}
@@ -56,7 +57,7 @@ func (gateway Gateway) Add(model *models.CategoryProsklad) (string, error) {
 	category := dtos.NewCategoryAdd(model)
 
 	// создаем запись в БД
-	if err = gateway.categoryRepo.Create(category); err != nil {
+	if err = gateway.categoryRepo.Create(ctx, category); err != nil {
 		return "", ErrorAddCategory(err)
 	}
 
@@ -64,23 +65,23 @@ func (gateway Gateway) Add(model *models.CategoryProsklad) (string, error) {
 	return category.ID().String(), nil
 }
 
-func (gateway Gateway) UpdateProsklad(proskladID int, model *models.CategoryProsklad) error {
-	category, err := gateway.GetByProsklad(proskladID)
+func (gateway Gateway) UpdateProsklad(ctx context.Context, proskladID int, model *models.CategoryProsklad) error {
+	category, err := gateway.GetByProsklad(ctx, proskladID)
 	if err != nil {
 		return err
 	}
 
 	category.EditProsklad(model)
 
-	if err = gateway.categoryRepo.UpdateCategory(category); err != nil {
+	if err = gateway.categoryRepo.UpdateCategory(ctx, category); err != nil {
 		return ErrorUpdateCategory(proskladID, err)
 	}
 
 	return nil
 }
 
-func (gateway Gateway) UpdateCount(id string, model *models.CategoryUpdateCount) error {
-	category, err := gateway.GetByID(id)
+func (gateway Gateway) UpdateCount(ctx context.Context, id string, model *models.CategoryUpdateCount) error {
+	category, err := gateway.GetByID(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -89,33 +90,33 @@ func (gateway Gateway) UpdateCount(id string, model *models.CategoryUpdateCount)
 
 	category.EditCount(updateDTO.Count())
 
-	if err = gateway.categoryRepo.UpdateCategory(category); err != nil {
+	if err = gateway.categoryRepo.UpdateCategory(ctx, category); err != nil {
 		return ErrorUpdateCategory(id, err)
 	}
 
 	return nil
 }
 
-func (gateway Gateway) RemoveByID(id string) error {
-	category, err := gateway.GetByID(id)
+func (gateway Gateway) RemoveByID(ctx context.Context, id string) error {
+	category, err := gateway.GetByID(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	if err = gateway.categoryRepo.MakeDeleted(category); err != nil {
+	if err = gateway.categoryRepo.MakeDeleted(ctx, category); err != nil {
 		return ErrorRemoveCategory(id, err)
 	}
 
 	return nil
 }
 
-func (gateway Gateway) RemoveByProsklad(proskladID int) error {
-	category, err := gateway.GetByProsklad(proskladID)
+func (gateway Gateway) RemoveByProsklad(ctx context.Context, proskladID int) error {
+	category, err := gateway.GetByProsklad(ctx, proskladID)
 	if err != nil {
 		return ErrorGetByProsklad(proskladID, err)
 	}
 
-	if err = gateway.categoryRepo.Remove(category); err != nil {
+	if err = gateway.categoryRepo.Remove(ctx, category); err != nil {
 		return ErrorRemoveCategory(proskladID, err)
 	}
 

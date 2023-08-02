@@ -7,7 +7,7 @@ import (
 )
 
 func (controller Controller) Get(ctx boost.Context) error {
-	products, err := controller.products.GetAll()
+	products, err := controller.products.GetAll(ctx.Context())
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -18,7 +18,7 @@ func (controller Controller) Get(ctx boost.Context) error {
 func (controller Controller) GetByID(ctx boost.Context) error {
 	productID := ctx.Param("product-id").String()
 
-	product, err := controller.products.GetByID(productID)
+	product, err := controller.products.GetByID(ctx.Context(), productID)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -32,7 +32,7 @@ func (controller Controller) Add(ctx boost.Context) error {
 		return controller.Error(ctx, err)
 	}
 
-	newID, err := controller.products.Add(&model)
+	newID, err := controller.products.Add(ctx.Context(), &model)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -51,7 +51,7 @@ func (controller Controller) UpdateProsklad(ctx boost.Context) error {
 		return controller.Error(ctx, err)
 	}
 
-	if err := controller.products.UpdateProsklad(proskladID, &model); err != nil {
+	if err := controller.products.UpdateProsklad(ctx.Context(), proskladID, &model); err != nil {
 		return controller.Error(ctx, err)
 	}
 
@@ -69,7 +69,7 @@ func (controller Controller) UpdateDescription(ctx boost.Context) error {
 		return controller.Error(ctx, err)
 	}
 
-	if err := controller.products.UpdateDescription(productID, &model); err != nil {
+	if err := controller.products.UpdateDescription(ctx.Context(), productID, &model); err != nil {
 		return controller.Error(ctx, err)
 	}
 
@@ -87,7 +87,7 @@ func (controller Controller) UpdateCount(ctx boost.Context) error {
 		return controller.Error(ctx, err)
 	}
 
-	if err := controller.products.UpdateCount(productID, &model); err != nil {
+	if err := controller.products.UpdateCount(ctx.Context(), productID, &model); err != nil {
 		return controller.Error(ctx, err)
 	}
 
@@ -101,7 +101,7 @@ func (controller Controller) Delete(ctx boost.Context) error {
 		return controller.Error(ctx, ErrorProductIDRequired())
 	}
 
-	if err := controller.products.RemoveByID(productID); err != nil {
+	if err := controller.products.RemoveByID(ctx.Context(), productID); err != nil {
 		return controller.Error(ctx, err)
 	}
 

@@ -7,7 +7,7 @@ import (
 )
 
 func (controller Controller) Get(ctx boost.Context) error {
-	categories, err := controller.categories.GetAll()
+	categories, err := controller.categories.GetAll(ctx.Context())
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -18,7 +18,7 @@ func (controller Controller) Get(ctx boost.Context) error {
 func (controller Controller) GetByID(ctx boost.Context) error {
 	categoryID := ctx.Param("category-id").String()
 
-	category, err := controller.categories.GetByID(categoryID)
+	category, err := controller.categories.GetByID(ctx.Context(), categoryID)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -32,7 +32,7 @@ func (controller Controller) Add(ctx boost.Context) error {
 		return controller.Error(ctx, err)
 	}
 
-	newID, err := controller.categories.Add(&model)
+	newID, err := controller.categories.Add(ctx.Context(), &model)
 	if err != nil {
 		return controller.Error(ctx, err)
 	}
@@ -51,7 +51,7 @@ func (controller Controller) UpdateProsklad(ctx boost.Context) error {
 		return controller.Error(ctx, err)
 	}
 
-	if err := controller.categories.UpdateProsklad(proskladID, &model); err != nil {
+	if err := controller.categories.UpdateProsklad(ctx.Context(), proskladID, &model); err != nil {
 		return controller.Error(ctx, err)
 	}
 
@@ -69,7 +69,7 @@ func (controller Controller) UpdateCount(ctx boost.Context) error {
 		return controller.Error(ctx, err)
 	}
 
-	if err := controller.categories.UpdateCount(categoryID, &model); err != nil {
+	if err := controller.categories.UpdateCount(ctx.Context(), categoryID, &model); err != nil {
 		return controller.Error(ctx, err)
 	}
 
@@ -83,7 +83,7 @@ func (controller Controller) Delete(ctx boost.Context) error {
 		return controller.Error(ctx, ErrorCategoryIDRequired())
 	}
 
-	if err := controller.categories.RemoveByID(categoryID); err != nil {
+	if err := controller.categories.RemoveByID(ctx.Context(), categoryID); err != nil {
 		return controller.Error(ctx, err)
 	}
 

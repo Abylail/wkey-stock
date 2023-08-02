@@ -1,14 +1,15 @@
 package product_gateway
 
 import (
+	"context"
 	"wkey-stock/src/adaptors/product_adaptor"
 	"wkey-stock/src/data/dtos"
 	"wkey-stock/src/data/models"
 	"wkey-stock/src/enums/languages"
 )
 
-func (gateway Gateway) GetAll() ([]dtos.Product, error) {
-	products, err := gateway.productRepo.All()
+func (gateway Gateway) GetAll(ctx context.Context) ([]dtos.Product, error) {
+	products, err := gateway.productRepo.All(ctx)
 	if err != nil {
 		return nil, ErrorGetAllProducts(err)
 	}
@@ -16,8 +17,8 @@ func (gateway Gateway) GetAll() ([]dtos.Product, error) {
 	return product_adaptor.EntityToDTO(products), nil
 }
 
-func (gateway Gateway) GetByID(id string) (*dtos.Product, error) {
-	productEntity, err := gateway.productRepo.ByID(id)
+func (gateway Gateway) GetByID(ctx context.Context, id string) (*dtos.Product, error) {
+	productEntity, err := gateway.productRepo.ByID(ctx, id)
 	if err != nil {
 		return nil, ErrorGetByID(id, err)
 	}
@@ -29,8 +30,8 @@ func (gateway Gateway) GetByID(id string) (*dtos.Product, error) {
 	return dtos.NewProduct(productEntity), nil
 }
 
-func (gateway Gateway) GetByProsklad(proskladID int) (*dtos.Product, error) {
-	productEntity, err := gateway.productRepo.ByProsklad(proskladID)
+func (gateway Gateway) GetByProsklad(ctx context.Context, proskladID int) (*dtos.Product, error) {
+	productEntity, err := gateway.productRepo.ByProsklad(ctx, proskladID)
 	if err != nil {
 		return nil, ErrorGetByProsklad(proskladID, err)
 	}
@@ -42,9 +43,9 @@ func (gateway Gateway) GetByProsklad(proskladID int) (*dtos.Product, error) {
 	return dtos.NewProduct(productEntity), nil
 }
 
-func (gateway Gateway) Add(model *models.ProductProsklad) (string, error) {
+func (gateway Gateway) Add(ctx context.Context, model *models.ProductProsklad) (string, error) {
 	// пытаемся найти продукт по Prosklad ID
-	productEntity, err := gateway.productRepo.ByProsklad(model.ID)
+	productEntity, err := gateway.productRepo.ByProsklad(ctx, model.ID)
 	if err != nil {
 		return "", err
 	}
@@ -57,7 +58,7 @@ func (gateway Gateway) Add(model *models.ProductProsklad) (string, error) {
 	product := dtos.NewProductAdd(model)
 
 	// создаем запись в БД
-	if err = gateway.productRepo.Create(product); err != nil {
+	if err = gateway.productRepo.Create(ctx, product); err != nil {
 		return "", ErrorAddProduct(err)
 	}
 
@@ -65,23 +66,23 @@ func (gateway Gateway) Add(model *models.ProductProsklad) (string, error) {
 	return product.ID().String(), nil
 }
 
-func (gateway Gateway) UpdateProsklad(proskladID int, model *models.ProductProsklad) error {
-	product, err := gateway.GetByProsklad(proskladID)
+func (gateway Gateway) UpdateProsklad(ctx context.Context, proskladID int, model *models.ProductProsklad) error {
+	product, err := gateway.GetByProsklad(ctx, proskladID)
 	if err != nil {
 		return err
 	}
 
 	product.EditProsklad(model)
 
-	if err = gateway.productRepo.UpdateProduct(product); err != nil {
+	if err = gateway.productRepo.UpdateProduct(ctx, product); err != nil {
 		return ErrorUpdateProduct(proskladID, err)
 	}
 
 	return nil
 }
 
-func (gateway Gateway) UpdateDescription(id string, model *models.ProductUpdateDescription) error {
-	product, err := gateway.GetByID(id)
+func (gateway Gateway) UpdateDescription(ctx context.Context, id string, model *models.ProductUpdateDescription) error {
+	product, err := gateway.GetByID(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -91,15 +92,15 @@ func (gateway Gateway) UpdateDescription(id string, model *models.ProductUpdateD
 	product.EditDescription(updateDTO.DescriptionRU(), languages.RU)
 	product.EditDescription(updateDTO.DescriptionKZ(), languages.KZ)
 
-	if err = gateway.productRepo.UpdateProduct(product); err != nil {
+	if err = gateway.productRepo.UpdateProduct(ctx, product); err != nil {
 		return ErrorUpdateProduct(id, err)
 	}
 
 	return nil
 }
 
-func (gateway Gateway) UpdateCount(id string, model *models.ProductUpdateCount) error {
-	product, err := gateway.GetByID(id)
+func (gateway Gateway) UpdateCount(ctx context.Context, id string, model *models.ProductUpdateCount) error {
+	product, err := gateway.GetByID(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -108,33 +109,33 @@ func (gateway Gateway) UpdateCount(id string, model *models.ProductUpdateCount) 
 
 	product.EditCount(updateDTO.Count())
 
-	if err = gateway.productRepo.UpdateProduct(product); err != nil {
+	if err = gateway.productRepo.UpdateProduct(ctx, product); err != nil {
 		return ErrorUpdateProduct(id, err)
 	}
 
 	return nil
 }
 
-func (gateway Gateway) RemoveByID(id string) error {
-	product, err := gateway.GetByID(id)
+func (gateway Gateway) RemoveByID(ctx context.Context, id string) error {
+	product, err := gateway.GetByID(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	if err = gateway.productRepo.MakeDeleted(product); err != nil {
+	if err = gateway.productRepo.MakeDeleted(ctx, product); err != nil {
 		return ErrorRemoveProductID(id, err)
 	}
 
 	return nil
 }
 
-func (gateway Gateway) RemoveByProsklad(proskladID int) error {
-	product, err := gateway.GetByProsklad(proskladID)
+func (gateway Gateway) RemoveByProsklad(ctx context.Context, proskladID int) error {
+	product, err := gateway.GetByProsklad(ctx, proskladID)
 	if err != nil {
 		return ErrorGetByProsklad(proskladID, err)
 	}
 
-	if err = gateway.productRepo.Remove(product); err != nil {
+	if err = gateway.productRepo.Remove(ctx, product); err != nil {
 		return ErrorRemoveProductProsklad(proskladID, err)
 	}
 
