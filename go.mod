@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/google/uuid v1.3.0
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/lowl11/boost v0.0.19
+	github.com/lowl11/boost v0.1.1
 	github.com/lowl11/lazy-entity v0.1.11
 	github.com/lowl11/lazyconfig v1.2.0
 	github.com/lowl11/lazylog v1.2.9
@@ -25,6 +25,7 @@ require (
 	github.com/lowl11/boostcron v0.0.4 // indirect
 	github.com/lowl11/boostrpc v0.0.6 // indirect
 	github.com/lowl11/lazyfile v0.1.6 // indirect
+	github.com/rabbitmq/amqp091-go v1.8.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.48.0 // indirect
 	golang.org/x/crypto v0.7.0 // indirect
