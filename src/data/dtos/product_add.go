@@ -10,7 +10,7 @@ func NewProductAdd(model *models.ProductProsklad) *Product {
 	return &Product{
 		id:         uuid.New(),
 		proskladID: model.ID,
-		title:      model.Title,
+		titleRU:    model.Title,
 		barcode:    model.Barcode,
 		companyID:  model.CompanyID,
 

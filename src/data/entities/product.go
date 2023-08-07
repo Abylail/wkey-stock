@@ -6,7 +6,7 @@ type Product struct {
 	// common
 	ID               string `db:"id"`
 	ProskladID       int    `db:"prosklad_id"`
-	Title            string `db:"title"`
+	TitleRU          string `db:"title_ru"`
 	Barcode          string `db:"barcode"`
 	CompanyID        int    `db:"company_id"`
 	ItemCategoryName string `db:"item_category_name"`
@@ -36,7 +36,7 @@ type Product struct {
 	DescriptionRU   *string `db:"description_ru"`
 	DescriptionKZ   *string `db:"description_kz"`
 	Count           int     `db:"count"`
-	PrimaryImage    string  `db:"primary_image"`
+	PrimaryImage    *string `db:"primary_image"`
 	SecondaryImages string  `db:"secondary_images"`
 	VendorCode      string  `db:"vendor_code"`
 

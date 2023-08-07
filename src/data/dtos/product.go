@@ -13,7 +13,7 @@ type Product struct {
 	// common
 	id               uuid.UUID
 	proskladID       int
-	title            string
+	titleRU          string
 	barcode          string
 	companyID        int
 	itemCategoryName string
@@ -44,7 +44,7 @@ type Product struct {
 	count           int
 	price           float32
 	vendorCode      string
-	primaryImage    string
+	primaryImage    *string
 	secondaryImages []string
 
 	createdAt time.Time
@@ -58,7 +58,7 @@ func NewProduct(entity *entities.Product) *Product {
 		// common
 		id:               id,
 		proskladID:       entity.ProskladID,
-		title:            entity.Title,
+		titleRU:          entity.TitleRU,
 		barcode:          entity.Barcode,
 		companyID:        entity.CompanyID,
 		itemCategoryName: entity.ItemCategoryName,
@@ -90,7 +90,7 @@ func NewProduct(entity *entities.Product) *Product {
 		price:           entity.Price,
 		vendorCode:      entity.VendorCode,
 		primaryImage:    entity.PrimaryImage,
-		secondaryImages: strings.Split(entity.SecondaryImages, ","),
+		secondaryImages: getSecondaryImages(entity.SecondaryImages),
 
 		createdAt: entity.CreatedAt,
 		updatedAt: entity.UpdatedAt,
@@ -113,7 +113,7 @@ func (product *Product) EditProsklad(models *models.ProductProsklad) {
 	defer product.updateDate()
 
 	// common
-	product.title = models.Title
+	product.titleRU = models.Title
 	product.barcode = models.Barcode
 	product.companyID = models.CompanyID
 	product.itemCategoryName = models.ItemCategoryName
@@ -160,7 +160,7 @@ func (product *Product) Model() models.Product {
 	return models.Product{
 		ID:              product.id.String(),
 		ProskladID:      product.proskladID,
-		Title:           product.title,
+		TitleRU:         product.titleRU,
 		DescriptionRU:   product.Description(languages.RU),
 		DescriptionKZ:   product.Description(languages.KZ),
 		Count:           product.count,
@@ -175,7 +175,7 @@ func (product *Product) Entity() entities.Product {
 	return entities.Product{
 		ID:               product.id.String(),
 		ProskladID:       product.proskladID,
-		Title:            product.title,
+		TitleRU:          product.titleRU,
 		Barcode:          product.barcode,
 		ItemCategoryName: product.itemCategoryName,
 
@@ -205,4 +205,13 @@ func (product *Product) Entity() entities.Product {
 
 func (product *Product) updateDate() {
 	product.updatedAt = time.Now()
+}
+
+func getSecondaryImages(images string) []string {
+	imagesArray := strings.Split(images, ",")
+	if len(imagesArray) == 1 && imagesArray[0] == "" {
+		return []string{}
+	}
+
+	return imagesArray
 }
