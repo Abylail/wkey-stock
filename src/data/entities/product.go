@@ -32,10 +32,15 @@ type Product struct {
 	BrandID int `db:"brand_id"`
 
 	// custom
-	DescriptionRU *string   `db:"description_ru"`
-	DescriptionKZ *string   `db:"description_kz"`
-	Count         int       `db:"count"`
-	CreatedAt     time.Time `db:"created_at"`
-	UpdatedAt     time.Time `db:"updated_at"`
-	Deleted       bool      `db:"deleted"`
+	Price          float32 `db:"price"`
+	DescriptionRU  *string `db:"description_ru"`
+	DescriptionKZ  *string `db:"description_kz"`
+	Count          int     `db:"count"`
+	PrimaryImage   string  `db:"primary_image"`
+	SecondaryImage string  `db:"secondary_image"`
+	VendorCode     string  `db:"vendor_code"`
+
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
+	Deleted   bool      `db:"deleted"`
 }

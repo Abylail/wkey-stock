@@ -1,14 +1,16 @@
 package entities
 
-import "time"
+import (
+	"time"
+)
 
-type Category struct {
+type Promotion struct {
 	ID         string `db:"id"`
-	ProskladID int    `db:"prosklad_id"`
-	TitleRU    string `db:"title_ru"`
-	TitleKZ    string `json:"title_kz"`
+	Link       string `db:"link"`
+	LinkTextRU string `db:"link_text_ru"`
+	LinkTextKZ string `db:"link_text_kz"`
+	Image      string `db:"image"`
 	Position   int    `db:"position"`
-	Count      int    `db:"count"`
 
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
