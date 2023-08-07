@@ -31,6 +31,10 @@ func NewSubCategory(entity *entities.SubCategory) *SubCategory {
 	}
 }
 
+func (subCategory *SubCategory) ID() uuid.UUID {
+	return subCategory.id
+}
+
 func (subCategory *SubCategory) Model() *models.SubCategory {
 	return &models.SubCategory{
 		ID:      subCategory.id.String(),

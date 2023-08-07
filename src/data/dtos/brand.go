@@ -31,6 +31,10 @@ func NewBrand(entity *entities.Brand) *Brand {
 	}
 }
 
+func (brand *Brand) ID() uuid.UUID {
+	return brand.id
+}
+
 func (brand *Brand) Model() *models.Brand {
 	return &models.Brand{
 		ID:    brand.id.String(),

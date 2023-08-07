@@ -35,6 +35,10 @@ func NewPromotion(entity *entities.Promotion) *Promotion {
 	}
 }
 
+func (promotion *Promotion) ID() uuid.UUID {
+	return promotion.id
+}
+
 func (promotion *Promotion) Entity() entities.Promotion {
 	return entities.Promotion{
 		ID:         promotion.id.String(),
