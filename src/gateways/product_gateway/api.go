@@ -74,7 +74,7 @@ func (gateway Gateway) UpdateProsklad(ctx context.Context, proskladID int, model
 
 	product.EditProsklad(model)
 
-	if err = gateway.productRepo.UpdateProduct(ctx, product); err != nil {
+	if err = gateway.productRepo.Change(ctx, product); err != nil {
 		return ErrorUpdateProduct(proskladID, err)
 	}
 
@@ -92,7 +92,7 @@ func (gateway Gateway) UpdateDescription(ctx context.Context, id string, model *
 	product.EditDescription(updateDTO.DescriptionRU(), languages.RU)
 	product.EditDescription(updateDTO.DescriptionKZ(), languages.KZ)
 
-	if err = gateway.productRepo.UpdateProduct(ctx, product); err != nil {
+	if err = gateway.productRepo.Change(ctx, product); err != nil {
 		return ErrorUpdateProduct(id, err)
 	}
 
@@ -109,7 +109,22 @@ func (gateway Gateway) UpdateCount(ctx context.Context, id string, model *models
 
 	product.EditCount(updateDTO.Count())
 
-	if err = gateway.productRepo.UpdateProduct(ctx, product); err != nil {
+	if err = gateway.productRepo.Change(ctx, product); err != nil {
+		return ErrorUpdateProduct(id, err)
+	}
+
+	return nil
+}
+
+func (gateway Gateway) UpdateImages(ctx context.Context, id string, model *models.ProductUpdateImages) error {
+	product, err := gateway.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	product.EditImages(model.Primary, model.Secondary)
+
+	if err = gateway.productRepo.Change(ctx, product); err != nil {
 		return ErrorUpdateProduct(id, err)
 	}
 

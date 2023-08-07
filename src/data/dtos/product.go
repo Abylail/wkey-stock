@@ -156,6 +156,13 @@ func (product *Product) EditCount(count int) {
 	product.count = count
 }
 
+func (product *Product) EditImages(primary string, secondary []string) {
+	defer product.updateDate()
+
+	product.primaryImage = &primary
+	product.secondaryImages = secondary
+}
+
 func (product *Product) Model() models.Product {
 	return models.Product{
 		ID:              product.id.String(),
@@ -195,11 +202,14 @@ func (product *Product) Entity() entities.Product {
 
 		BrandID: product.brandID,
 
-		DescriptionRU: product.descriptionRU,
-		DescriptionKZ: product.descriptionKZ,
-		Count:         product.count,
-		CreatedAt:     product.createdAt,
-		UpdatedAt:     product.updatedAt,
+		DescriptionRU:   product.descriptionRU,
+		DescriptionKZ:   product.descriptionKZ,
+		Count:           product.count,
+		PrimaryImage:    product.primaryImage,
+		SecondaryImages: strings.Join(product.secondaryImages, ","),
+
+		CreatedAt: product.createdAt,
+		UpdatedAt: product.updatedAt,
 	}
 }
 

@@ -51,3 +51,8 @@ type ProductUpdateDescription struct {
 type ProductUpdateCount struct {
 	Count int `json:"count" validate:"required"`
 }
+
+type ProductUpdateImages struct {
+	Primary   string   `json:"primary" validate:"required"`
+	Secondary []string `json:"secondary"`
+}

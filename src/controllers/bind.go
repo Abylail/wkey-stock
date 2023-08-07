@@ -31,6 +31,7 @@ func setProduct(router boost.Router, controller *product_controller.Controller) 
 	group.PUT("/update-prosklad/:prosklad-id", controller.UpdateProsklad)
 	group.PUT("/update-description/:product-id", controller.UpdateDescription)
 	group.PUT("/update-count/:product-id", controller.UpdateCount)
+	group.PUT("/update-images/:product-id", controller.UpdateImages)
 	group.DELETE("/delete/:product-id", controller.Delete)
 }
 

@@ -94,6 +94,24 @@ func (controller Controller) UpdateCount(ctx boost.Context) error {
 	return controller.Ok(ctx)
 }
 
+func (controller Controller) UpdateImages(ctx boost.Context) error {
+	productID := ctx.Param("product-id").String()
+	if productID == "" {
+		return controller.Error(ctx, ErrorProductIDRequired())
+	}
+
+	model := models.ProductUpdateImages{}
+	if err := ctx.Parse(&model); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	if err := controller.products.UpdateImages(ctx.Context(), productID, &model); err != nil {
+		return controller.Error(ctx, err)
+	}
+
+	return controller.Ok(ctx)
+}
+
 func (controller Controller) Delete(ctx boost.Context) error {
 	productID := ctx.Param("product-id").String()
 

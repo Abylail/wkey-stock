@@ -33,7 +33,7 @@ func (repo Repository) ByProsklad(ctx context.Context, proskladID int) (*entitie
 	})
 }
 
-func (repo Repository) UpdateProduct(ctx context.Context, product *dtos.Product) error {
+func (repo Repository) Change(ctx context.Context, product *dtos.Product) error {
 	return repo.UpdateByID(ctx, product.ID().String(), product.Entity())
 }
 
