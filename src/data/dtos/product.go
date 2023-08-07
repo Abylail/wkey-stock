@@ -2,6 +2,7 @@ package dtos
 
 import (
 	"github.com/google/uuid"
+	"strings"
 	"time"
 	"wkey-stock/src/data/entities"
 	"wkey-stock/src/data/models"
@@ -38,11 +39,16 @@ type Product struct {
 	brandID int
 
 	// custom
-	descriptionRU *string
-	descriptionKZ *string
-	count         int
-	createdAt     time.Time
-	updatedAt     time.Time
+	descriptionRU   *string
+	descriptionKZ   *string
+	count           int
+	price           float32
+	vendorCode      string
+	primaryImage    string
+	secondaryImages []string
+
+	createdAt time.Time
+	updatedAt time.Time
 }
 
 func NewProduct(entity *entities.Product) *Product {
@@ -78,11 +84,16 @@ func NewProduct(entity *entities.Product) *Product {
 		brandID: entity.BrandID,
 
 		// custom
-		descriptionRU: entity.DescriptionRU,
-		descriptionKZ: entity.DescriptionKZ,
-		count:         entity.Count,
-		createdAt:     entity.CreatedAt,
-		updatedAt:     entity.UpdatedAt,
+		descriptionRU:   entity.DescriptionRU,
+		descriptionKZ:   entity.DescriptionKZ,
+		count:           entity.Count,
+		price:           entity.Price,
+		vendorCode:      entity.VendorCode,
+		primaryImage:    entity.PrimaryImage,
+		secondaryImages: strings.Split(entity.SecondaryImages, ","),
+
+		createdAt: entity.CreatedAt,
+		updatedAt: entity.UpdatedAt,
 	}
 }
 
@@ -147,12 +158,16 @@ func (product *Product) EditCount(count int) {
 
 func (product *Product) Model() models.Product {
 	return models.Product{
-		ID:            product.id.String(),
-		ProskladID:    product.proskladID,
-		Title:         product.title,
-		DescriptionRU: product.Description(languages.RU),
-		DescriptionKZ: product.Description(languages.KZ),
-		Count:         product.count,
+		ID:              product.id.String(),
+		ProskladID:      product.proskladID,
+		Title:           product.title,
+		DescriptionRU:   product.Description(languages.RU),
+		DescriptionKZ:   product.Description(languages.KZ),
+		Count:           product.count,
+		Price:           product.price,
+		PrimaryImage:    product.primaryImage,
+		SecondaryImages: product.secondaryImages,
+		Type:            product.vendorCode,
 	}
 }
 

@@ -1,12 +1,16 @@
 package models
 
 type Product struct {
-	ID            string  `json:"id"`
-	ProskladID    int     `json:"prosklad_id"`
-	Title         string  `json:"title"`
-	DescriptionRU *string `json:"description_ru"`
-	DescriptionKZ *string `json:"description_kz"`
-	Count         int     `json:"count"`
+	ID              string   `json:"id"`
+	ProskladID      int      `json:"prosklad_id"`
+	Title           string   `json:"title"`
+	DescriptionRU   *string  `json:"description_ru"`
+	DescriptionKZ   *string  `json:"description_kz"`
+	Count           int      `json:"count"`
+	Price           float32  `json:"price"`
+	PrimaryImage    string   `json:"primary_image"`
+	SecondaryImages []string `json:"secondary_images"`
+	Type            string   `json:"type"`
 }
 
 type ProductProsklad struct {

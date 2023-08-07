@@ -3,7 +3,8 @@ package models
 type Category struct {
 	ID         string `json:"id"`
 	ProskladID int    `json:"prosklad_id"`
-	Title      string `json:"title"`
+	TitleRU    string `json:"title_ru"`
+	TitleKZ    string `json:"title_kz"`
 	Position   int    `json:"position"`
 	Count      int    `json:"count"`
 }

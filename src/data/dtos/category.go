@@ -10,7 +10,8 @@ import (
 type Category struct {
 	id         uuid.UUID
 	proskladID int
-	title      string
+	titleRU    string
+	titleKZ    string
 	position   int
 	count      int
 	createdAt  time.Time
@@ -22,7 +23,7 @@ func NewCategory(entity *entities.Category) *Category {
 	return &Category{
 		id:         id,
 		proskladID: entity.ProskladID,
-		title:      entity.Title,
+		titleRU:    entity.TitleRU,
 		position:   entity.Position,
 		count:      entity.Count,
 		createdAt:  entity.CreatedAt,
@@ -34,32 +35,10 @@ func (category *Category) ID() uuid.UUID {
 	return category.id
 }
 
-func (category *Category) Model() *models.Category {
-	return &models.Category{
-		ID:         category.ID().String(),
-		ProskladID: category.proskladID,
-		Title:      category.title,
-		Position:   category.position,
-		Count:      category.count,
-	}
-}
-
-func (category *Category) Entity() entities.Category {
-	return entities.Category{
-		ID:         category.ID().String(),
-		ProskladID: category.proskladID,
-		Title:      category.title,
-		Position:   category.position,
-		Count:      category.count,
-		CreatedAt:  category.createdAt,
-		UpdatedAt:  category.updatedAt,
-	}
-}
-
 func (category *Category) EditProsklad(model *models.CategoryProsklad) {
 	defer category.updateDate()
 
-	category.title = model.Title
+	category.titleRU = model.Title
 	category.count = model.Count
 	category.position = model.Position
 }
@@ -70,4 +49,28 @@ func (category *Category) EditCount(count int) {
 
 func (category *Category) updateDate() {
 	category.updatedAt = time.Now()
+}
+
+func (category *Category) Model() *models.Category {
+	return &models.Category{
+		ID:         category.ID().String(),
+		ProskladID: category.proskladID,
+		TitleRU:    category.titleRU,
+		TitleKZ:    category.titleKZ,
+		Position:   category.position,
+		Count:      category.count,
+	}
+}
+
+func (category *Category) Entity() entities.Category {
+	return entities.Category{
+		ID:         category.ID().String(),
+		ProskladID: category.proskladID,
+		TitleRU:    category.titleRU,
+		TitleKZ:    category.titleKZ,
+		Position:   category.position,
+		Count:      category.count,
+		CreatedAt:  category.createdAt,
+		UpdatedAt:  category.updatedAt,
+	}
 }
